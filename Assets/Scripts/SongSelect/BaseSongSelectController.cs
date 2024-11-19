@@ -5,17 +5,25 @@ using UnityEngine.UI;
 
 public class BaseBeatmapSelectController : MonoBehaviour
 {
-    public Button createButton;
-    public GameObject createMusicCanvas;
+    public Button beatmapCreateButton;
+    public Button beatmapBrowserButton;
+
+    public GameObject beatmapCreateCanvas;    
+    public GameObject beatmapBrowserCanvas;
     void Start()
     {
-        createButton.onClick.AddListener(OnOpenCreateMusicCanvas);
+        beatmapCreateButton.onClick.AddListener(OnOpenBeatmapCreateCanvas);
+        beatmapBrowserButton.onClick.AddListener(OnOpenBeatmapBrowserCanvas);
     }
 
 
-    void OnOpenCreateMusicCanvas()
+    void OnOpenBeatmapCreateCanvas()
     {
-        createMusicCanvas.SetActive(true);
+        beatmapCreateCanvas.SetActive(true);
+    }
+    void OnOpenBeatmapBrowserCanvas()
+    {
+        beatmapBrowserCanvas.SetActive(true);
     }
 
 }

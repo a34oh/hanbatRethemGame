@@ -48,7 +48,7 @@ public class BeatmapSet : IEnumerable<Beatmap>
         info[1] = $"Artist: {beatmap.artist}";
         info[2] = $"Creator: {beatmap.creator}";
         info[3] = $"Version: {beatmap.version}";
-        info[4] = $"AudioFilename: {beatmap.audioFilename}";
+        info[4] = $"AudioName: {beatmap.audioName}";
         info[5] = $"PreviewTime: {beatmap.previewTime}";
         info[6] = $"Tags: {beatmap.tags}";
 

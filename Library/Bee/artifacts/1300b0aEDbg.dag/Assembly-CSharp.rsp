@@ -370,6 +370,7 @@
 "Assets/Scripts/SongSelect/BackgroundManager.cs"
 "Assets/Scripts/SongSelect/BaseSongSelectController.cs"
 "Assets/Scripts/SongSelect/Beatmap.cs"
+"Assets/Scripts/SongSelect/BeatmapBrowser.cs"
 "Assets/Scripts/SongSelect/BeatmapCreator.cs"
 "Assets/Scripts/SongSelect/BeatmapGroup.cs"
 "Assets/Scripts/SongSelect/BeatmapParser.cs"

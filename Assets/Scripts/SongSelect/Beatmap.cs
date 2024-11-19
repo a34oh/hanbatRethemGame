@@ -7,17 +7,21 @@ using UnityEngine;
 [System.Serializable]
 public class Beatmap
 {
+    public string id;
     public string title;        
     public string artist;
     public string creator;
     public string version;      //난이도
-    public string audioFilename;//오디오 이름
-    public string imageFilename;//이미지 이름
-    public string audioPath;    // 오디오 주소
-    public string imagePath;    // 이미지 주소
+    public string audioName;//오디오 이름
+    public string imageName;//이미지 이름
+    public string localAudioPath;   // 로컬 오디오 주소
+    public string localImagePath;   // 로컬 이미지 주소
+    public string StorageAudioUrl;  // 서버 오디오 주소
+    public string StorageImageUrl;  // 서버 이미지 주소
+    public int audioLength;
     public int previewTime;
     public string tags;
-    public string folderName;
+
 
  
     public bool favorite;
@@ -33,7 +37,7 @@ public class Beatmap
     // 생성자
     public Beatmap()
     {
-        dateAdded = DateTime.Now;
+   //     dateAdded = DateTime.Now;
         playCount = 0;
         lastPlayed = DateTime.MinValue;
     }

@@ -6,6 +6,9 @@ using UnityEngine;
 
 public class BeatmapParser
 {
+  //  private Dictionary<string, List<Beatmap>> allBbeatmaps = new Dictionary<string, List<Beatmap>>();
+  //  private HashSet<string> loadedBeatmapPaths = new HashSet<string>();
+
     public async Task<List<Beatmap>> ParserAllBeatmapsAsync()
     {
         List<Beatmap> beatmaps = new List<Beatmap>();
@@ -14,9 +17,7 @@ public class BeatmapParser
 
         try
         {
-            Debug.Log("너냐1");
-            string songsDirectory = Path.Combine(Application.persistentDataPath, "Songs");
-            Debug.Log("너냐2");
+            string songsDirectory = Path.Combine(Application.persistentDataPath, "Songs").Replace("\\", "/");
             if (!Directory.Exists(songsDirectory))
             {
                 Debug.LogWarning("Songs 디렉토리가 존재하지 않습니다.");
@@ -32,18 +33,31 @@ public class BeatmapParser
 
                 foreach (FileInfo txtFile in txtFiles)
                 {
+                   /* if (loadedBeatmapPaths.Contains(txtFile.FullName))
+                    {
+                        Debug.Log("이미 로드 된 파일 : " + txtFile.FullName);
+                        continue; // 이미 로드된 곡은 스킵
+                    }*/
                     Beatmap beatmap = await ParseBeatmapFileAsync(txtFile.FullName);
 
                     if (beatmap != null)
                     {
-                        beatmap.audioPath = Path.Combine(songFolder.FullName, $"{beatmap.audioFilename}");
-                        beatmap.imagePath = Path.Combine(songFolder.FullName, $"{beatmap.imageFilename}");
+                        beatmap.localAudioPath = Path.Combine(songFolder.FullName, $"{beatmap.audioName}").Replace("\\", "/");
+                        beatmap.localImagePath = Path.Combine(songFolder.FullName, $"{beatmap.imageName}").Replace("\\", "/");
 
-                        audioPaths.Add(beatmap.audioPath);
-                        imagePaths.Add(beatmap.imagePath);
+                        audioPaths.Add(beatmap.localAudioPath);
+                        imagePaths.Add(beatmap.localImagePath);
 
                         beatmaps.Add(beatmap);
                     }
+                    /*
+                    if (!allBbeatmaps.ContainsKey(beatmap.id))
+                    {
+                        allBbeatmaps[beatmap.id] = new List<Beatmap>();
+                    }
+                    allBbeatmaps[beatmap.id].Add(beatmap);
+                    loadedBeatmapPaths.Add(txtFile.FullName);
+                    Debug.Log("새로 로드하는 파일 : " + txtFile.FullName);*/
                 }
             }
 
@@ -92,11 +106,11 @@ public class BeatmapParser
                     case "Version":
                         beatmap.version = value;
                         break;
-                    case "AudioFilename":
-                        beatmap.audioFilename = value;
+                    case "Audioname":
+                        beatmap.audioName = value;
                         break;
-                    case "ImageFilename":
-                        beatmap.imageFilename = value;
+                    case "Imagename":
+                        beatmap.imageName = value;
                         break;
                     case "PreviewTime":
                         beatmap.previewTime = int.Parse(value);
@@ -114,9 +128,6 @@ public class BeatmapParser
                         {
                             Debug.LogWarning($"DateAdded 형식이 올바르지 않음: {value}");
                         }
-                        break;
-                    case "FolderName":
-                        beatmap.folderName = value;
                         break;
                     // 필요한 경우 추가적인 키 처리 (예: BPM, EndTime 등)
                     default:

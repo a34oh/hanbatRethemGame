@@ -64,9 +64,9 @@ public class BeatmapSetNode
         artistText.text = beatmap.artist;
         versionText.text = beatmap.version;
 
-        if (!string.IsNullOrEmpty(beatmap.imagePath))
+        if (!string.IsNullOrEmpty(beatmap.localImagePath))
         {
-            Texture2D imageTexture = GameManager.ResourceCache.GetCachedImage(beatmap.imagePath);
+            Texture2D imageTexture = GameManager.ResourceCache.GetCachedImage(beatmap.localImagePath);
             if (imageTexture != null)
             {
                 image.texture = imageTexture;

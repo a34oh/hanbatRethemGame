@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 public class BeatmapSetList
 {
+
     // 전체 BeatmapSetNode 목록
     public List<BeatmapSetNode> parsedNodes { get; private set; }
 

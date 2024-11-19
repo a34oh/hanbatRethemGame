@@ -21,7 +21,7 @@ public class BeatmapCreator : MonoBehaviour
 
     private FileUploader fileUploader;
 
-    private string uploadedMusicPath;
+    private string uploadedAudioPath;
     private string uploadedImagePath;
 
 
@@ -35,7 +35,7 @@ public class BeatmapCreator : MonoBehaviour
     {
         // 버튼 클릭 이벤트 등록
         uploadBeatmapButton.onClick.AddListener(() => OnCreateBeatmap());
-        backButton.onClick.AddListener(OnCloseCreateBeatmapCanvas);
+        backButton.onClick.AddListener(OnCloseBeatmapCreateCanvas);
 
         uploadMusicButton.onClick.AddListener(() => StartCoroutine(OnUploadMusic()));
         uploadImageButton.onClick.AddListener(() => StartCoroutine(OnUploadImage()));
@@ -54,10 +54,10 @@ public class BeatmapCreator : MonoBehaviour
             yield return null;
         }
 
-        uploadedMusicPath = task.Result;
-        if (!string.IsNullOrEmpty(uploadedMusicPath))
+        uploadedAudioPath = task.Result;
+        if (!string.IsNullOrEmpty(uploadedAudioPath))
         {
-            debugText.text = "음악 파일이 업로드되었습니다: " + uploadedMusicPath;
+            debugText.text = "음악 파일이 업로드되었습니다: " + uploadedAudioPath;
         }
         else
         {
@@ -89,10 +89,11 @@ public class BeatmapCreator : MonoBehaviour
     // 곡 생성
     private async void OnCreateBeatmap()
     {
-        string title = titleInput.text;
-        string artist = artistInput.text;
-        string creator = creatorInput.text;
-        string level = versionInput.text;
+        string title = SanitizeFileName(titleInput.text);
+        string artist = SanitizeFileName(artistInput.text);
+        string creator = SanitizeFileName(creatorInput.text);
+        string level = SanitizeFileName(versionInput.text);
+
 
         // 입력값 검증
         if (string.IsNullOrEmpty(title) || string.IsNullOrEmpty(artist) || string.IsNullOrEmpty(creator) || string.IsNullOrEmpty(level))
@@ -101,7 +102,7 @@ public class BeatmapCreator : MonoBehaviour
             return;
         }
 
-        if (string.IsNullOrEmpty(uploadedMusicPath) || string.IsNullOrEmpty(uploadedImagePath))
+        if (string.IsNullOrEmpty(uploadedAudioPath) || string.IsNullOrEmpty(uploadedImagePath))
         {
             debugText.text = "음악과 이미지를 업로드해주세요.";
             return;
@@ -110,28 +111,84 @@ public class BeatmapCreator : MonoBehaviour
         // 중복되지 않는 큰 값의 랜덤 ID 생성
         string uniqueId = GenerateUniqueID();
 
-        var createTask = CreateBeatmapFolderAsync(uniqueId, title, artist, creator, level, uploadedMusicPath, uploadedImagePath);
-        await createTask;
+        // 곡 폴더 이름 생성
+        string folderName = $"{uniqueId} {artist} - {title}";
+        string folderPath = Path.Combine(Application.persistentDataPath, "Songs", folderName).Replace("\\", "/");
+        Debug.Log($"folderPath : {folderPath}");
 
-        if (createTask.Exception == null)
+
+        try
         {
+            var beatmap = await CreateBeatmapObjectAndFolderAsync(uniqueId, title, artist, creator, level, uploadedAudioPath, uploadedImagePath, folderPath);
+
             // 곡 생성 성공 시 Firebase 업로드
-            await UploadBeatmapToFirebase(uniqueId);
+            await UploadBeatmapToFirebase(beatmap);
+            debugText.text = "곡 생성이 완료되었습니다!";
             gameObject.SetActive(false);
         }
-        else
+        catch (Exception ex)
         {
-            debugText.text = "곡 생성 중 오류 발생: " + createTask.Exception.Message;
+            debugText.text = $"곡 생성 중 오류 발생: {ex.Message}";
         }
     }
 
-    // Firebase에 비트맵 업로드
-    private async Task UploadBeatmapToFirebase(string uniqueId)
+    // Beatmap 객체 생성 및 폴더 생성
+    private async Task<Beatmap> CreateBeatmapObjectAndFolderAsync(string uniqueId, string title, string artist, string creator, string version, string uploadedAudioPath, string uploadedImagePath, string folderPath)
     {
-        string localFolderPath = Path.Combine(Application.persistentDataPath, "Songs", $"{uniqueId} {artistInput.text} - {titleInput.text}").Replace("/", "\\");
+        DateTime dateAdded = DateTime.Now;
+
+        //오디오 이름 가져오기
+        string audioExtension = Path.GetExtension(uploadedAudioPath);
+        string audioName = $"song{audioExtension}";
+        string audioPath = Path.Combine(folderPath, audioName).Replace("\\", "/");
+        Debug.Log($"audioPath : {audioPath}");
+
+
+        //이미지 이름 가져오기
+        string imageExtension = Path.GetExtension(uploadedImagePath);
+        string imageName = $"image{imageExtension}";
+        string imagePath = Path.Combine(folderPath, imageName).Replace("\\", "/");
+
+
+
+        Beatmap beatmap = new Beatmap
+        {
+            id = uniqueId,
+            title = title,
+            artist = artist,
+            creator = creator,
+            version = version,
+            audioName = audioName,
+            imageName = imageName,
+            localAudioPath = audioPath,
+            localImagePath = imagePath,
+            audioLength = 0,
+            previewTime = 0,
+            dateAdded = dateAdded
+            //기타 bpm, 검색지원 tag, favorite.. 채보 등
+        };
+        // 폴더 및 파일 생성
+        await CreateBeatmapFolderAsync(beatmap, folderPath, uploadedAudioPath, uploadedImagePath);
+
+        // 오디오 길이 가져오기
+        await AssignPreviewTimeAsync(beatmap);
+
+        // 레벨 파일 생성
+        await CreateLevelFileAsync(beatmap, folderPath);
+
+
+
+        return beatmap;
+    }
+    // Firebase에 비트맵 업로드
+    private async Task UploadBeatmapToFirebase(Beatmap beatmap)
+    {
         try
         {
-            await GameManager.FBManager.UploadBeatmapAsync(localFolderPath);
+            await GameManager.FBManager.UploadBeatmapToFirebase(beatmap);
+            //            await GameManager.FBManager.UploadMetadataToDatabase(beatmap);
+
+
             debugText.text = "곡이 Firebase에 성공적으로 업로드되었습니다!";
         }
         catch (Exception ex)
@@ -140,19 +197,10 @@ public class BeatmapCreator : MonoBehaviour
         }
     }
 
-    public async Task CreateBeatmapFolderAsync(string uniqueId, string title, string artist, string creator, string level, string mp3Path, string imagePath)
+    public async Task CreateBeatmapFolderAsync(Beatmap beatmap, string folderPath, string uploadedAudioPath, string uploadedImagePath)
     {
         try
         {
-            // 파일 이름에 사용할 수 없는 문자 제거
-            string sanitizedTitle = SanitizeFileName(title);
-            string sanitizedArtist = SanitizeFileName(artist);
-            string sanitizedCreater = SanitizeFileName(creator);
-
-            // 곡 폴더 이름 생성
-            string folderName = $"{uniqueId} {sanitizedArtist} - {sanitizedTitle}";
-            string folderPath = Path.Combine(Application.persistentDataPath, "Songs", folderName);
-            Debug.Log($"folderPath : {folderPath}");
             // 폴더 생성 여부 확인
             if (!Directory.Exists(folderPath))
             {
@@ -161,8 +209,8 @@ public class BeatmapCreator : MonoBehaviour
             }
 
             // 동일한 레벨 파일 존재 여부 확인
-            string levelFileName = $"{sanitizedArtist} {sanitizedTitle} ({sanitizedCreater}) [{level}].txt";
-            string levelFilePath = Path.Combine(folderPath, levelFileName);
+            string levelFileName = $"{beatmap.artist} {beatmap.title} ({beatmap.creator}) [{beatmap.version}].txt";
+            string levelFilePath = Path.Combine(folderPath, levelFileName).Replace("\\", "/");
 
             if (File.Exists(levelFilePath))
             {
@@ -171,21 +219,15 @@ public class BeatmapCreator : MonoBehaviour
             }
 
             // 음악 파일 복사
-            string audioExtension = Path.GetExtension(mp3Path);
-            string audioName = $"song{audioExtension}";
-            string audioPath = Path.Combine(folderPath, audioName);
-            await CopyFileAsync(mp3Path, audioPath);
-            Debug.Log($"음악 파일이 song{audioExtension}로 저장되었습니다: {audioPath}");
+            await CopyFileAsync(uploadedAudioPath, beatmap.localAudioPath);
+            Debug.Log($"음악 파일이 {beatmap.audioName}로 저장되었습니다: {beatmap.localAudioPath}");
 
             // 이미지 파일 복사
-            string imageExtension = Path.GetExtension(imagePath);
-            string imageName = $"image{imageExtension}";
-            string imageDestinationPath = Path.Combine(folderPath, imageName);
-            await CopyFileAsync(imagePath, imageDestinationPath);
-            Debug.Log($"이미지 파일이 image{imageExtension}로 저장되었습니다: {imageDestinationPath}");
+            await CopyFileAsync(uploadedImagePath, beatmap.localImagePath);
+            Debug.Log($"이미지 파일이 {beatmap.imageName}로 저장되었습니다: {beatmap.localImagePath}");
 
             // 레벨 파일 생성
-            await CreateLevelFileAsync(uniqueId, folderPath, sanitizedTitle, sanitizedArtist, sanitizedCreater, level, audioPath, audioName, imageName);
+        //    await CreateLevelFileAsync(beatmap, folderPath);
 
         }
         catch (Exception ex)
@@ -213,33 +255,23 @@ public class BeatmapCreator : MonoBehaviour
     }
 
     // 레벨 파일 생성
-    private async Task CreateLevelFileAsync(string uniqueId, string folderPath, string title, string artist, string creator, string version, string audioPath, string audioName, string imageName)
+    private async Task CreateLevelFileAsync(Beatmap beatmap, string folderPath)
     {
         try
         {
-            string levelFileName = $"{artist} - {title} ({creator}) {version}.txt";
-            string levelFilePath = Path.Combine(folderPath, levelFileName);
+            string levelFileName = $"{beatmap.artist} - {beatmap.title} ({beatmap.creator}) {beatmap.version}.txt";
+            string levelFilePath = Path.Combine(folderPath, levelFileName).Replace("\\", "/");
 
-            string mp3FileName = Path.GetFileName(audioPath);
 
-            // 오디오 길이 가져오기
-            int audioLength = await GetAudioLengthAsync(audioPath);
-            int previewTime = UnityEngine.Random.Range(0, audioLength);
-
-            // 현재 시간 (dateAdded)
-            DateTime dateAdded = DateTime.Now;
-
-            // 파일 내용 작성
             string fileContent =
-                $@"Id:{uniqueId }
-Title:{title}
-Artist:{artist}
-Creator:{creator}
-Version:{version}
-AudioFilename:{audioName}
-ImageFilename:{imageName}
-PreviewTime:{previewTime}
-DateAdded:{dateAdded.ToString("yyyy/MM/dd HH:mm:ss")}"
+$@"Id:{beatmap.id }
+Title:{beatmap.title}
+Artist:{beatmap.artist}
+Creator:{beatmap.creator}
+Version:{beatmap.version}
+Audioname:{beatmap.audioName}
+Imagename:{beatmap.imageName}
+PreviewTime:{beatmap.previewTime}"
 ;
 
             await File.WriteAllTextAsync(levelFilePath, fileContent);
@@ -252,23 +284,47 @@ DateAdded:{dateAdded.ToString("yyyy/MM/dd HH:mm:ss")}"
         }
     }
 
+    private async Task AssignPreviewTimeAsync(Beatmap beatmap)
+    {
+        if (string.IsNullOrEmpty(beatmap.localAudioPath))
+        {
+            Debug.LogError("오디오 파일 경로가 비어있습니다.");
+            return;
+        }
+
+        int audioLength = await GetAudioLengthAsync(beatmap.localAudioPath);
+        beatmap.previewTime = UnityEngine.Random.Range(0, audioLength);
+        Debug.Log($"PreviewTime이 {beatmap.previewTime}으로 설정되었습니다.");
+    }
+
+
     // 오디오 길이 가져오기
     private async Task<int> GetAudioLengthAsync(string audioPath)
     {
-        using (UnityEngine.Networking.UnityWebRequest www = UnityEngine.Networking.UnityWebRequestMultimedia.GetAudioClip("file://" + audioPath, AudioType.MPEG))
-        {
-            await www.SendWebRequestAsync();
+        string uriPath = "file://" + audioPath;
 
-            if (www.result == UnityEngine.Networking.UnityWebRequest.Result.Success)
+        try
+        {
+            using (UnityEngine.Networking.UnityWebRequest www = UnityEngine.Networking.UnityWebRequestMultimedia.GetAudioClip(uriPath, AudioType.MPEG))
             {
-                AudioClip clip = UnityEngine.Networking.DownloadHandlerAudioClip.GetContent(www);
-                return (int)(clip.length * 1000); // 밀리초 단위로 변환
+                await www.SendWebRequestAsync();
+
+                if (www.result == UnityEngine.Networking.UnityWebRequest.Result.Success)
+                {
+                    AudioClip clip = UnityEngine.Networking.DownloadHandlerAudioClip.GetContent(www);
+                    return (int)(clip.length * 1000); // 밀리초 단위로 변환
+                }
+                else
+                {
+                    Debug.LogError($"오디오 길이 가져오기 실패: {www.error} - URL: {uriPath}");
+                    return 120000; // 기본값으로 2분 설정
+                }
             }
-            else
-            {
-                Debug.LogError("오디오 길이 가져오기 실패: " + www.error);
-                return 120000; // 기본값으로 2분 설정
-            }
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"예외 발생: {ex.Message}");
+            return 120000; // 기본값으로 반환
         }
     }
 
@@ -288,7 +344,7 @@ DateAdded:{dateAdded.ToString("yyyy/MM/dd HH:mm:ss")}"
         return fileName;
     }
     // 곡 생성 화면 닫기
-    void OnCloseCreateBeatmapCanvas()
+    void OnCloseBeatmapCreateCanvas()
     {
         gameObject.SetActive(false);
     }
