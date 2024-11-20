@@ -56,6 +56,23 @@
   </PropertyGroup>
   <ItemGroup>
     <Analyzer Include="C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\IDE\Extensions\Microsoft\Visual Studio Tools for Unity\Analyzers\Microsoft.Unity.Analyzers.dll" />
+    <Analyzer Include="F:\Unity\Hub\Editor\Project\hanbatRethemGame\Assets\ExternalDependencyManager\Editor\1.2.183\Google.PackageManagerResolver.dll" />
+    <Analyzer Include="F:\Unity\Hub\Editor\Project\hanbatRethemGame\Assets\Firebase\Plugins\iOS\Firebase.Storage.dll" />
+    <Analyzer Include="F:\Unity\Hub\Editor\Project\hanbatRethemGame\Assets\Firebase\Editor\Firebase.Editor.dll" />
+    <Analyzer Include="F:\Unity\Hub\Editor\Project\hanbatRethemGame\Assets\Firebase\Plugins\Firebase.Auth.dll" />
+    <Analyzer Include="F:\Unity\Hub\Editor\Project\hanbatRethemGame\Assets\Firebase\Plugins\Firebase.TaskExtension.dll" />
+    <Analyzer Include="F:\Unity\Hub\Editor\Project\hanbatRethemGame\Assets\Firebase\Plugins\Google.MiniJson.dll" />
+    <Analyzer Include="F:\Unity\Hub\Editor\Project\hanbatRethemGame\Assets\ExternalDependencyManager\Editor\1.2.183\Google.IOSResolver.dll" />
+    <Analyzer Include="F:\Unity\Hub\Editor\Project\hanbatRethemGame\Assets\ExternalDependencyManager\Editor\1.2.183\Google.VersionHandlerImpl.dll" />
+    <Analyzer Include="F:\Unity\Hub\Editor\Project\hanbatRethemGame\Assets\Firebase\Plugins\iOS\Firebase.App.dll" />
+    <Analyzer Include="F:\Unity\Hub\Editor\Project\hanbatRethemGame\Assets\Firebase\Plugins\Firebase.Storage.dll" />
+    <Analyzer Include="F:\Unity\Hub\Editor\Project\hanbatRethemGame\Assets\Firebase\Plugins\Firebase.Platform.dll" />
+    <Analyzer Include="F:\Unity\Hub\Editor\Project\hanbatRethemGame\Assets\ExternalDependencyManager\Editor\1.2.183\Google.JarResolver.dll" />
+    <Analyzer Include="F:\Unity\Hub\Editor\Project\hanbatRethemGame\Assets\Firebase\Plugins\iOS\Firebase.Auth.dll" />
+    <Analyzer Include="F:\Unity\Hub\Editor\Project\hanbatRethemGame\Assets\Firebase\Plugins\Firebase.App.dll" />
+    <Analyzer Include="F:\Unity\Hub\Editor\Project\hanbatRethemGame\Assets\ExternalDependencyManager\Editor\Google.VersionHandler.dll" />
+    <Analyzer Include="F:\Unity\Hub\Editor\Project\hanbatRethemGame\Assets\Firebase\Plugins\iOS\Firebase.Database.dll" />
+    <Analyzer Include="F:\Unity\Hub\Editor\Project\hanbatRethemGame\Assets\Firebase\Plugins\Firebase.Database.dll" />
     <Analyzer Include="F:\Unity\Hub\Editor\2022.3.43f1\Editor\Data\Tools\Unity.SourceGenerators\Unity.SourceGenerators.dll" />
     <Analyzer Include="F:\Unity\Hub\Editor\2022.3.43f1\Editor\Data\Tools\Unity.SourceGenerators\Unity.Properties.SourceGenerator.dll" />
   </ItemGroup>
@@ -88,8 +105,8 @@
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\VertexJitter.cs" />
     <Compile Include="Assets\Scripts\SongSelect\ResourceCache.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_DigitValidator.cs" />
-    <Compile Include="Assets\Scripts\SongSelect\BeatmapParser.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_FrameRateCounter.cs" />
+    <Compile Include="Assets\Scripts\SongSelect\BeatmapParser.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TextConsoleSimulator.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TeleType.cs" />
     <Compile Include="Assets\Scripts\SongSelect\FileUploader.cs" />
