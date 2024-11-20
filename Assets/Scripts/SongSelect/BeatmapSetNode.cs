@@ -66,7 +66,7 @@ public class BeatmapSetNode
 
         if (!string.IsNullOrEmpty(beatmap.localImagePath))
         {
-            Texture2D imageTexture = GameManager.ResourceCache.GetCachedImage(beatmap.localImagePath);
+            Texture2D imageTexture = GameManager.ResourceCache.GetCachedImage(beatmap.localImagePath, SourceType.Local);
             if (imageTexture != null)
             {
                 image.texture = imageTexture;

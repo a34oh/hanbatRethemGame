@@ -125,7 +125,7 @@ public class BeatmapSetManager : MonoBehaviour
             songItem.transform.Find("Artist").GetComponent<TextMeshProUGUI>().text = beatmap.artist;
             songItem.transform.Find("Version").GetComponent<TextMeshProUGUI>().text = beatmap.version;
 
-            songItem.transform.Find("Image").GetComponent<RawImage>().texture = GameManager.ResourceCache.GetCachedImage(beatmap.localImagePath);
+            songItem.transform.Find("Image").GetComponent<RawImage>().texture = GameManager.ResourceCache.GetCachedImage(beatmap.localImagePath, SourceType.Local);
             // 곡 아이템 클릭 이벤트 등록
             songItem.GetComponent<Button>().onClick.AddListener(() => OnSongItemClick(beatmap));
 
@@ -143,8 +143,8 @@ public class BeatmapSetManager : MonoBehaviour
             return;
         }
 
-        GameManager.AudioManager.PlayPreview(beatmap);
-        GameManager.BackgroundManager.SetBackgroundImage(beatmap, backgroundImage);
+        GameManager.AudioManager.PlayPreview(beatmap, SourceType.Local);
+        GameManager.BackgroundManager.SetBackgroundImage(beatmap, backgroundImage, SourceType.Local);
 
         // 현재 재생 중인 곡 업데이트
         currentBeatmap = beatmap;

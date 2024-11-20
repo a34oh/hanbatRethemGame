@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -35,6 +36,8 @@ public class BeatmapBrowser : MonoBehaviour
         downloadButton.interactable = false;
         // 버튼 초기 상태 설정
         UpdateNavigationButtons();
+
+
     }
 
     private async void ChangePage(int direction)
@@ -53,15 +56,36 @@ public class BeatmapBrowser : MonoBehaviour
 
         var beatmapData = await GameManager.FBManager.FetchBeatmapMetadataAsync(startIndex, itemsPerPage);
 
-        currentPageItemCount = beatmapData.Count;
+        
         if (beatmapData != null && beatmapData.Count > 0)
         {
+            // 비트맵의 오디오 및 이미지 URL 리스트 생성
+            var audioUrls = new List<string>();
+            var imageUrls = new List<string>();
+
+            foreach (var beatmap in beatmapData)
+            {
+                if (!string.IsNullOrEmpty(beatmap.StorageAudioUrl))
+                {
+                    audioUrls.Add(beatmap.StorageAudioUrl);
+                }
+                if (!string.IsNullOrEmpty(beatmap.StorageImageUrl))
+                {
+                    imageUrls.Add(beatmap.StorageImageUrl);
+                }
+            }
+
+            // 리소스 캐시에 미리 로드
+            await GameManager.ResourceCache.PreloadResourcesAsync(audioUrls, imageUrls, SourceType.Server);
+
+            // 스크롤 뷰 업데이트
             UpdateScrollView(beatmapData);
         }
         else
         {
             Debug.LogWarning("해당 페이지에 비트맵 데이터가 없습니다.");
         }
+        currentPageItemCount = beatmapData.Count;
     }
 
     private void UpdateScrollView(List<Beatmap> beatmaps)
@@ -80,7 +104,7 @@ public class BeatmapBrowser : MonoBehaviour
             songItem.transform.Find("Artist").GetComponent<TextMeshProUGUI>().text = beatmap.artist;
             songItem.transform.Find("Version").GetComponent<TextMeshProUGUI>().text = beatmap.version;
 
-            songItem.transform.Find("Image").GetComponent<RawImage>().texture = GameManager.ResourceCache.GetCachedImage(beatmap.StorageImageUrl);
+            songItem.transform.Find("Image").GetComponent<RawImage>().texture = GameManager.ResourceCache.GetCachedImage(beatmap.StorageImageUrl, SourceType.Server);
             // 곡 아이템 클릭시 이벤트 등록.. 
             songItem.GetComponent<Button>().onClick.AddListener(() => OnBeatmapItemClick(beatmap));
 
@@ -97,12 +121,9 @@ public class BeatmapBrowser : MonoBehaviour
         {
             return;
         }
-
-        Debug.Log($"beatmap.StorageImageUrl : {beatmap.StorageImageUrl}");
-        Debug.Log($"beatmap.StorageAudioUrl : {beatmap.StorageAudioUrl}");
         // Firebase Storage에서 오디오 및 이미지 로드
-        GameManager.AudioManager.PlayPreviewFromFirebase(beatmap);
-        GameManager.BackgroundManager.SetBackgroundImageFromFirebase(beatmap.StorageImageUrl, backgroundImage);
+        GameManager.AudioManager.PlayPreview(beatmap, SourceType.Server);
+        GameManager.BackgroundManager.SetBackgroundImage(beatmap, backgroundImage, SourceType.Server);
 
         // 현재 클릭 된 곡 업데이트
         currentBeatmap = beatmap;
@@ -120,18 +141,23 @@ public class BeatmapBrowser : MonoBehaviour
         nextPageButton.gameObject.SetActive(currentPageItemCount == itemsPerPage);
     }
 
-    private void OnDownloadButtonClick()
+    private async void OnDownloadButtonClick()
     {
         if (currentBeatmap == null)
         {
             Debug.LogWarning("다운로드할 곡이 선택되지 않았습니다.");
             return;
         }
-
-
-        // 다운로드 작업 요청
-        GameManager.FBManager.DownloadBeatmap(currentBeatmap);
+        try
+        {
+            await GameManager.FBManager.DownloadBeatmapAsync(currentBeatmap);
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"다운로드 중 오류 발생: {ex.Message}");
+        }
     }
+
 
     void OnCloseBeatmapBrowserCanvas()
     {

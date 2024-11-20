@@ -11,9 +11,10 @@ public class Beatmap
     public string title;        
     public string artist;
     public string creator;
-    public string version;      //난이도
-    public string audioName;//오디오 이름
-    public string imageName;//이미지 이름
+    public string version;           //난이도
+    public string audioName;         //오디오 이름
+    public string imageName;         //이미지 이름
+    public List<string> textNames;   // 난이도 파일 이름
     public string localAudioPath;   // 로컬 오디오 주소
     public string localImagePath;   // 로컬 이미지 주소
     public string StorageAudioUrl;  // 서버 오디오 주소

@@ -33,13 +33,12 @@ public class BeatmapParser
 
                 foreach (FileInfo txtFile in txtFiles)
                 {
-                   /* if (loadedBeatmapPaths.Contains(txtFile.FullName))
-                    {
-                        Debug.Log("이미 로드 된 파일 : " + txtFile.FullName);
-                        continue; // 이미 로드된 곡은 스킵
-                    }*/
+                    /* if (loadedBeatmapPaths.Contains(txtFile.FullName))
+                     {
+                         Debug.Log("이미 로드 된 파일 : " + txtFile.FullName);
+                         continue; // 이미 로드된 곡은 스킵
+                     }*/
                     Beatmap beatmap = await ParseBeatmapFileAsync(txtFile.FullName);
-
                     if (beatmap != null)
                     {
                         beatmap.localAudioPath = Path.Combine(songFolder.FullName, $"{beatmap.audioName}").Replace("\\", "/");
@@ -60,8 +59,7 @@ public class BeatmapParser
                     Debug.Log("새로 로드하는 파일 : " + txtFile.FullName);*/
                 }
             }
-
-            await GameManager.ResourceCache.PreloadBeatmapResourcesAsync(audioPaths, imagePaths);
+            await GameManager.ResourceCache.PreloadResourcesAsync(audioPaths, imagePaths, SourceType.Local);
 
         }
         catch (Exception ex)

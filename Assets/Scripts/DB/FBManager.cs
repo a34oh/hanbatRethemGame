@@ -8,6 +8,7 @@ using Firebase.Storage;
 using Firebase.Extensions;
 using UnityEngine;
 using System.Linq;
+using System.Net.Http;
 
 //Beatmap.cs            비트맵의 정보를 보유한 클래스 
 //FBManager.cs          파이어베이스 관리
@@ -252,6 +253,9 @@ public class FBManager
         { "Artist", beatmap.artist },
         { "Creator", beatmap.creator },
         { "Version", beatmap.version },
+        {"AudioName", beatmap.audioName },
+        {"ImageName", beatmap.imageName },
+         { "TextNames", new List<string>() },
         { "PreviewTime", beatmap.previewTime },
         { "DateAdded", beatmap.dateAdded.ToString("yyyy/MM/dd HH:mm:ss") },
         { "StorageTextUrls", new List<string>() },
@@ -276,6 +280,7 @@ public class FBManager
                     break;
                 case FileType.Text:
                     ((List<string>)metadata["StorageTextUrls"]).Add(result.downloadUrl);
+                    ((List<string>)metadata["TextNames"]).Add(result.fileName);
                     break;
    //             case "Skin":
    //                 ((List<string>)metadata["StorageSkinUrls"]).Add(result.downloadUrl);
@@ -389,23 +394,124 @@ public class FBManager
     }
     private Beatmap ParseBeatmapFromMetadata(Dictionary<string, object> data)
     {
-        return new Beatmap
+        // TextNames 파싱
+        var textNames = data.ContainsKey("TextNames")
+            ? (data["TextNames"] as List<object>)?.Select(o => o.ToString()).ToList()
+            : new List<string>();
+
+        Beatmap beatmap = new Beatmap
         {
             id = data.ContainsKey("Id") ? data["Id"].ToString() : "",
             title = data.ContainsKey("Title") ? data["Title"].ToString() : "",
             artist = data.ContainsKey("Artist") ? data["Artist"].ToString() : "",
             creator = data.ContainsKey("Creator") ? data["Creator"].ToString() : "",
             version = data.ContainsKey("Version") ? data["Version"].ToString() : "",
+            audioName = data.ContainsKey("AudioName") ? data["AudioName"].ToString() : "",
+            imageName = data.ContainsKey("ImageName") ? data["ImageName"].ToString() : "",
             StorageAudioUrl = data.ContainsKey("StorageAudioUrl") ? data["StorageAudioUrl"].ToString() : "",
             StorageImageUrl = data.ContainsKey("StorageImageUrl") ? data["StorageImageUrl"].ToString() : "",
             previewTime = data.ContainsKey("PreviewTime") ? int.Parse(data["PreviewTime"].ToString()) : 0,
-            dateAdded = data.ContainsKey("DateAdded") ? DateTime.Parse(data["DateAdded"].ToString()) : DateTime.MinValue
+            dateAdded = data.ContainsKey("DateAdded") ? DateTime.Parse(data["DateAdded"].ToString()) : DateTime.MinValue,
+            textNames = textNames
         };
+        return beatmap;
     }
 
-    public void DownloadBeatmap(Beatmap beatmap)
+    public async Task DownloadBeatmapAsync(Beatmap beatmap)
     {
-        Debug.Log($"다운로드 버튼 클릭: {beatmap.title}");
+        string firebaseFolderName = GetBeatmapFolderName(beatmap);
+        var firebaseFolderPath = storage.GetReference("Songs").Child(firebaseFolderName);
 
+        string localFolderPath = Path.Combine(Application.persistentDataPath, "Songs", firebaseFolderName).Replace("\\", "/");
+
+        // 로컬 폴더가 없으면 생성
+        if (!Directory.Exists(localFolderPath))
+        {
+            Directory.CreateDirectory(localFolderPath);
+        }
+
+        try
+        {
+            var snapshot = await databaseRef.Child("Songs").Child(firebaseFolderName).GetValueAsync();
+            if (snapshot.Exists)
+            {
+                string audioUrl = snapshot.Child("StorageAudioUrl").Value?.ToString().Replace(" ", "%20");
+                string imageUrl = snapshot.Child("StorageImageUrl").Value?.ToString().Replace(" ", "%20");
+                
+                imageUrl.Replace(" ", "%20");
+                Debug.Log($"audioUrl : {audioUrl}");
+                Debug.Log($"imageUrl : {imageUrl}");
+                var downloadTasks = new List<Task>();
+
+                // 오디오 파일 다운로드
+                if (!string.IsNullOrEmpty(audioUrl))
+                {
+                    downloadTasks.Add(DownloadFileFromUrlAsync(audioUrl, localFolderPath, beatmap.audioName));
+                }
+
+                // 이미지 파일 다운로드
+                if (!string.IsNullOrEmpty(imageUrl))
+                {
+                    downloadTasks.Add(DownloadFileFromUrlAsync(imageUrl, localFolderPath, beatmap.imageName));
+                }
+
+                // 텍스트 파일 다운로드
+                foreach (string textName in beatmap.textNames)
+                {
+                    string textUrl = snapshot.Child("StorageTextUrls")
+                        .Children
+                        .FirstOrDefault(child => child.Value?.ToString()?.Contains(textName) == true)
+                        ?.Value?.ToString()?.Replace(" ", "%20");
+
+                    if (!string.IsNullOrEmpty(textUrl))
+                    {
+                        Debug.Log($"다운로드할 텍스트 파일 URL: {textUrl}, 파일 이름: {textName}");
+                        downloadTasks.Add(DownloadFileFromUrlAsync(textUrl, localFolderPath, textName));
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"URL이 존재하지 않거나 텍스트 파일 이름을 찾을 수 없습니다: {textName}");
+                    }
+                }
+
+                Debug.Log($"비트맵 {firebaseFolderName} 다운로드 중...");
+
+                await Task.WhenAll(downloadTasks);
+
+                Debug.Log($"비트맵 {firebaseFolderName}의 모든 파일이 다운로드되었습니다.");
+            }
+            else
+            {
+                Debug.LogWarning($"비트맵 {firebaseFolderName}에 해당하는 데이터가 없습니다.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"파일 다운로드 중 오류 발생: {ex.Message}");
+        }
     }
+    private async Task DownloadFileFromUrlAsync(string url, string localFolderPath, string fileName)
+    {
+        try
+        {
+            Debug.Log($"localFolderPath : {localFolderPath}");
+            Debug.Log($"fileName : {fileName}");
+
+            string localFilePath = Path.Combine(localFolderPath, fileName);
+
+            using (HttpClient client = new HttpClient())
+            {
+                var fileBytes = await client.GetByteArrayAsync(url); 
+                await File.WriteAllBytesAsync(localFilePath, fileBytes);
+            }
+
+            Debug.Log($"파일 다운로드 완료: {fileName}");
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"파일 다운로드 중 오류 발생 ({fileName}): {ex.Message}");
+        }
+    }
+
+
 }

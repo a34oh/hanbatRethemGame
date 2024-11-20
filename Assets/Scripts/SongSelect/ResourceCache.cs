@@ -1,102 +1,220 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.Networking;
+
+public enum SourceType
+{
+    Local,
+    Server
+}
 
 public class ResourceCache
 {
-    private Dictionary<string, AudioClip> audioCache = new Dictionary<string, AudioClip>();
-    private Dictionary<string, Texture2D> imageCache = new Dictionary<string, Texture2D>();
+    private Dictionary<string, AudioClip> localAudioCache = new Dictionary<string, AudioClip>();
+    private Dictionary<string, Texture2D> localImageCache = new Dictionary<string, Texture2D>();
 
-    // 썸네일과 곡 미리 로드 메서드
-    public async Task PreloadBeatmapResourcesAsync(List<string> audioPaths, List<string> imagePaths)
+
+    private Dictionary<string, AudioClip> serverAudioCache = new Dictionary<string, AudioClip>();
+    private Dictionary<string, Texture2D> serverImageCache = new Dictionary<string, Texture2D>();
+
+    // 캐시 초기화
+    public void ClearCache(SourceType sourceType)
     {
+        if (sourceType == SourceType.Server)
+        {
+            serverAudioCache.Clear();
+            serverImageCache.Clear();
+            Debug.Log("서버 캐시 초기화 완료.");
+        }
+        else
+        {
+            localAudioCache.Clear();
+            localImageCache.Clear();
+            Debug.Log("로컬 캐시 초기화 완료.");
+        }
+    }
+
+    public async Task PreloadResourcesAsync(List<string> audioPaths, List<string> imagePaths, SourceType sourceType)
+    {
+        var audioTasks = new List<Task<AudioClip>>();
+        var imageTasks = new List<Task<Texture2D>>();
+
+        // 오디오 로드 작업 생성
         foreach (string audioPath in audioPaths)
         {
-            if (!audioCache.ContainsKey(audioPath))
+            if (!GetCache(sourceType).audioCache.ContainsKey(audioPath))
             {
-                AudioClip clip = await GetAudioClipAsync(audioPath);
-                if (clip != null)
-                {
-                    audioCache[audioPath] = clip;
-                }
+                audioTasks.Add(LoadAudioAsync(audioPath, sourceType));
             }
         }
 
+        // 이미지 로드 작업 생성
         foreach (string imagePath in imagePaths)
         {
-            if (!imageCache.ContainsKey(imagePath))
+            if (!GetCache(sourceType).imageCache.ContainsKey(imagePath))
             {
-                Texture2D texture = await GetImageTextureAsync(imagePath);
-                if (texture != null)
-                {
-                    imageCache[imagePath] = texture;
-                }
+                imageTasks.Add(LoadImageAsync(imagePath, sourceType));
             }
         }
+
+        // 오디오와 이미지를 병렬로 처리
+        var audioTask = Task.Run(async () =>
+        {
+            var audioResults = await Task.WhenAll(audioTasks);
+
+            for (int i = 0; i < audioPaths.Count; i++)
+            {
+                if (audioResults[i] != null)
+                {
+                    GetCache(sourceType).audioCache[audioPaths[i]] = audioResults[i];
+                }
+            }
+        });
+
+        var imageTask = Task.Run(async () =>
+        {
+            var imageResults = await Task.WhenAll(imageTasks);
+
+            for (int i = 0; i < imagePaths.Count; i++)
+            {
+                if (imageResults[i] != null)
+                {
+                    GetCache(sourceType).imageCache[imagePaths[i]] = imageResults[i];
+                }
+            }
+        });
+
+        // 두 작업을 병렬로 처리
+        Debug.Log("오디오, 이미지 로드 작업 시작");
+        await Task.WhenAll(audioTask, imageTask);
+        Debug.Log("오디오, 이미지 로드 작업 끝");
     }
 
 
     // 미리 로드된 오디오 클립을 반환하는 메서드
-    public AudioClip GetCachedAudio(string audioPath)
+    public AudioClip GetCachedAudio(string audioPath, SourceType sourceType)
     {
-        audioCache.TryGetValue(audioPath, out AudioClip cachedClip);
-        return cachedClip;
+        var cache = GetCache(sourceType).audioCache;
+        if (cache.TryGetValue(audioPath, out AudioClip cachedClip))
+        {
+            return cachedClip;
+        }
+        return null;
     }
 
     // 미리 로드한 이미지 텍스처를 반환하는 메서드
-    public Texture2D GetCachedImage(string imagePath)
+    public Texture2D GetCachedImage(string imagePath, SourceType sourceType)
     {
-        imageCache.TryGetValue(imagePath, out Texture2D cachedTexture);
-        return cachedTexture;
+        var cache = GetCache(sourceType).imageCache;
+        if (cache.TryGetValue(imagePath, out Texture2D cachedTexture))
+        {
+            return cachedTexture;
+        }
+        return null;
     }
 
     // 오디오 파일 로드
-    public async Task<AudioClip> GetAudioClipAsync(string audioPath)
+    private async Task<AudioClip> LoadAudioAsync(string path, SourceType sourceType)
     {
-        if (audioCache.TryGetValue(audioPath, out AudioClip cachedClip))
+        var cache = GetCache(sourceType).audioCache;
+        if (cache.TryGetValue(path, out AudioClip cachedClip))
         {
             return cachedClip; // 캐시에 존재하면 반환
         }
 
-        using (UnityEngine.Networking.UnityWebRequest www = UnityEngine.Networking.UnityWebRequestMultimedia.GetAudioClip("file://" + audioPath, AudioType.MPEG))
+        string finalPath = sourceType == SourceType.Server ? path.Replace(" ", "%20") : "file://" + path;
+
+        using (UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip(finalPath, AudioType.MPEG))
         {
             await www.SendWebRequestAsync();
-            if (www.result == UnityEngine.Networking.UnityWebRequest.Result.Success)
+            if (www.result == UnityWebRequest.Result.Success)
             {
-                AudioClip clip = UnityEngine.Networking.DownloadHandlerAudioClip.GetContent(www);
-                audioCache[audioPath] = clip; // 캐시에 저장
+                AudioClip clip = DownloadHandlerAudioClip.GetContent(www);
+                cache[path] = clip; // 캐시에 저장
                 return clip;
             }
             else
             {
-                Debug.LogError("오디오 로드 실패: " + www.error);
+                Debug.LogError($"오디오 로드 실패: {www.error} - {finalPath}");
                 return null;
             }
         }
     }
 
     // 이미지 파일 로드
-    public async Task<Texture2D> GetImageTextureAsync(string imagePath)
+    private async Task<Texture2D> LoadImageAsync(string path, SourceType sourceType)
     {
-        if (imageCache.TryGetValue(imagePath, out Texture2D cachedTexture))
+        var cache = GetCache(sourceType).imageCache;
+        if (cache.TryGetValue(path, out Texture2D cachedTexture))
         {
             return cachedTexture; // 캐시에 존재하면 반환
         }
 
-        using (UnityEngine.Networking.UnityWebRequest uwr = UnityEngine.Networking.UnityWebRequestTexture.GetTexture("file://" + imagePath))
+        string finalPath = sourceType == SourceType.Server ? path.Replace(" ", "%20") : "file://" + path;
+
+        using (UnityWebRequest www = UnityWebRequestTexture.GetTexture(finalPath))
         {
-            await uwr.SendWebRequestAsync();
-            if (uwr.result == UnityEngine.Networking.UnityWebRequest.Result.Success)
+            await www.SendWebRequestAsync();
+            if (www.result == UnityWebRequest.Result.Success)
             {
-                Texture2D texture = UnityEngine.Networking.DownloadHandlerTexture.GetContent(uwr);
-                imageCache[imagePath] = texture; // 캐시에 저장
+                Texture2D texture = DownloadHandlerTexture.GetContent(www);
+                cache[path] = texture; // 캐시에 저장
                 return texture;
             }
             else
             {
-                Debug.LogError("이미지 로드 실패: " + uwr.error);
+                Debug.LogError($"이미지 로드 실패: {www.error} - {finalPath}");
                 return null;
             }
         }
     }
+
+    // 캐시 선택 메서드
+    private (Dictionary<string, AudioClip> audioCache, Dictionary<string, Texture2D> imageCache) GetCache(SourceType sourceType)
+    {
+        return sourceType == SourceType.Server
+            ? (serverAudioCache, serverImageCache)
+            : (localAudioCache, localImageCache);
+    }
+
+
+    // PreloadResourcesAsync을 메인 쓰레드로 병렬 처리 하는 코드. 위에 코드가 오류가 난다면 비상용으로 사용
+    /*public async Task PreloadResourcesAsync(List<string> audioPaths, List<string> imagePaths, SourceType sourceType)
+{
+    var preloadTasks = new List<Task>();
+
+    // 오디오 로드 작업 추가
+    foreach (string audioPath in audioPaths)
+    {
+        if (!GetCache(sourceType).audioCache.ContainsKey(audioPath))
+        {
+            preloadTasks.Add(LoadAudioAsync(audioPath, sourceType).ContinueWith(task =>
+            {
+                if (task.Result != null)
+                {
+                    GetCache(sourceType).audioCache[audioPath] = task.Result;
+                }
+            }, TaskScheduler.FromCurrentSynchronizationContext())); // 메인 스레드에서 실행 보장
+        }
+    }
+
+    // 이미지 로드 작업 추가
+    foreach (string imagePath in imagePaths)
+    {
+        if (!GetCache(sourceType).imageCache.ContainsKey(imagePath))
+        {
+            preloadTasks.Add(LoadImageAsync(imagePath, sourceType).ContinueWith(task =>
+            {
+                if (task.Result != null)
+                {
+                    GetCache(sourceType).imageCache[imagePath] = task.Result;
+                }
+            }, TaskScheduler.FromCurrentSynchronizationContext())); // 메인 스레드에서 실행 보장
+        }
+    }
+
+    // 모든 작업이 완료될 때까지 대기
+    await Task.WhenAll(preloadTasks);
+}*/
 }
