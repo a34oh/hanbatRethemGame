@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using TMPro;
 using System.Threading.Tasks;
 using System;
+using UnityEngine.SceneManagement;
 
 public class BeatmapSetManager : MonoBehaviour
 {
@@ -139,7 +140,7 @@ public class BeatmapSetManager : MonoBehaviour
         // 동일한 곡인지 확인
         if (currentBeatmap == beatmap)
         {
-            // 동일한 곡이면 아무 동작도 하지 않음
+            SceneManager.LoadScene(SceneType.Editor.ToString());
             return;
         }
 

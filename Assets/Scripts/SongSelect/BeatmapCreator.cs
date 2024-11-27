@@ -5,6 +5,7 @@ using System.Collections;
 using System.IO;
 using System.Threading.Tasks;
 using System;
+using UnityEngine.SceneManagement;
 
 // 곡 입력 처리 클래스
 public class BeatmapCreator : MonoBehaviour
@@ -18,8 +19,10 @@ public class BeatmapCreator : MonoBehaviour
     public Button uploadBeatmapButton;
     public Button backButton;
     public TextMeshProUGUI debugText;
-
     private FileUploader fileUploader;
+
+    public event Action<Beatmap> OnBeatmapCreated;
+
 
     private string uploadedAudioPath;
     private string uploadedImagePath;
@@ -35,7 +38,7 @@ public class BeatmapCreator : MonoBehaviour
     {
         // 버튼 클릭 이벤트 등록
         uploadBeatmapButton.onClick.AddListener(() => OnCreateBeatmap());
-        backButton.onClick.AddListener(OnCloseBeatmapCreateCanvas);
+        backButton.onClick.AddListener(OnBackBeatmapCreateCanvas);
 
         uploadMusicButton.onClick.AddListener(() => StartCoroutine(OnUploadMusic()));
         uploadImageButton.onClick.AddListener(() => StartCoroutine(OnUploadImage()));
@@ -119,11 +122,19 @@ public class BeatmapCreator : MonoBehaviour
 
         try
         {
+            // 곡 생성 성공
+            // 생성 성공시 , BeatPerSec, BarPerSec 계산. bpm을 세팅하고, offset은 beatmap에서 받아옴
             var beatmap = await CreateBeatmapObjectAndFolderAsync(uniqueId, title, artist, creator, level, uploadedAudioPath, uploadedImagePath, folderPath);
+            await GameManager.ResourceCache.PreloadResourcesAsync(beatmap.localAudioPath, beatmap.localImagePath, SourceType.Local);
+
+            OnBeatmapCreated?.Invoke(beatmap); // Beatmap 생성 이벤트 호출
 
             // 곡 생성 성공 시 Firebase 업로드
             await UploadBeatmapToFirebase(beatmap);
+
+
             debugText.text = "곡 생성이 완료되었습니다!";
+
             gameObject.SetActive(false);
         }
         catch (Exception ex)
@@ -292,6 +303,7 @@ PreviewTime:{beatmap.previewTime}"
         }
 
         int audioLength = await GetAudioLengthAsync(beatmap.localAudioPath);
+        beatmap.audioLength = audioLength;
         beatmap.previewTime = UnityEngine.Random.Range(0, audioLength);
         Debug.Log($"PreviewTime이 {beatmap.previewTime}으로 설정되었습니다.");
     }
@@ -343,9 +355,9 @@ PreviewTime:{beatmap.previewTime}"
         return fileName;
     }
     // 곡 생성 화면 닫기
-    void OnCloseBeatmapCreateCanvas()
+    void OnBackBeatmapCreateCanvas()
     {
-        gameObject.SetActive(false);
+        SceneManager.LoadScene(SceneType.SongSelect.ToString());
     }
 
 }

@@ -91,6 +91,14 @@ public class ResourceCache
         Debug.Log("오디오, 이미지 로드 작업 끝");
     }
 
+    public async Task PreloadResourcesAsync(string audioPath, string imagePath, SourceType sourceType)
+    {
+        var audioPaths = new List<string> { audioPath };
+        var imagePaths = new List<string> { imagePath };
+
+        await PreloadResourcesAsync(audioPaths, imagePaths, sourceType);
+    }
+
 
     // 미리 로드된 오디오 클립을 반환하는 메서드
     public AudioClip GetCachedAudio(string audioPath, SourceType sourceType)
@@ -99,6 +107,10 @@ public class ResourceCache
         if (cache.TryGetValue(audioPath, out AudioClip cachedClip))
         {
             return cachedClip;
+        }
+        else
+        {
+            Debug.Log("오디오 클립이 없음." + audioPath);
         }
         return null;
     }

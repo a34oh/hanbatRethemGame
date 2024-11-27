@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class BaseBeatmapSelectController : MonoBehaviour
@@ -19,6 +20,7 @@ public class BaseBeatmapSelectController : MonoBehaviour
 
     void OnOpenBeatmapCreateCanvas()
     {
+        SceneManager.LoadScene(SceneType.Editor.ToString());
         beatmapCreateCanvas.SetActive(true);
     }
     void OnOpenBeatmapBrowserCanvas()
