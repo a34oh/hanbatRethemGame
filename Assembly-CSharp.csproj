@@ -81,6 +81,7 @@
     <Compile Include="Assets\Scripts\Edit\SheetEditorController.cs" />
     <Compile Include="Assets\Scripts\SongSelect\BeatmapGroup.cs" />
     <Compile Include="Assets\Scripts\Scene\BaseScene.cs" />
+    <Compile Include="Assets\Scripts\Score\ScoreCalc.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_TextSelector_A.cs" />
     <Compile Include="Assets\Scripts\SongSelect\BeatmapSetList.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark01_UGUI.cs" />
@@ -129,6 +130,7 @@
     <Compile Include="Assets\Scripts\SongSelect\BeatmapCreator.cs" />
     <Compile Include="Assets\Scripts\SongSelect\BeatmapBrowser.cs" />
     <Compile Include="Assets\Scenes\SampleScene_config\UsrLog.cs" />
+    <Compile Include="Assets\Scripts\Score\ResultManager.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_TextInfoDebugTool.cs" />
   </ItemGroup>
   <ItemGroup>

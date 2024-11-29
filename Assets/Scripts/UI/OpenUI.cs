@@ -65,7 +65,7 @@ public class OpenUI : MonoBehaviour
         }
         string player_id = Input_id.text;
         string player_pw = Input_pw.text;
-        AuthManager.instance.login(player_id, player_pw);
+        fbManager.login(player_id, player_pw);
     }
 
     public void Create_Account()
@@ -77,6 +77,6 @@ public class OpenUI : MonoBehaviour
         }
         string player_id = Input_new_id.text;
         string player_pw = Input_new_pw.text;
-        AuthManager.instance.register(player_id,player_pw);
+        fbManager.register(player_id,player_pw);
     }
 }

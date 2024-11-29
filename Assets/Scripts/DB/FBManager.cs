@@ -10,6 +10,7 @@ using UnityEngine;
 using System.Linq;
 using System.Net.Http;
 using Firebase.Auth;
+using UnityEngine.SceneManagement;
 
 //Beatmap.cs            ��Ʈ���� ������ ������ Ŭ���� 
 //FBManager.cs          ���̾�̽� ����
@@ -33,7 +34,8 @@ public class FBManager
     private DatabaseReference databaseRef; // 파이어베이스 데이터베이스 참조
     private FirebaseStorage storage; // 파이어베이스 스토리지 객체
     private bool isOnline = true; // 온라인 상태 확인
-
+    AuthResult authResult;
+    FirebaseUser newUser;
     enum FileType
     {
         Audio,
@@ -64,6 +66,61 @@ public class FBManager
         }
     }
 
+    public void login(string id, string pw)
+    {
+        // auth = FirebaseAuth.DefaultInstance;
+        // 제공되는 함수 : 이메일과 비밀번호로 로그인 시켜 줌
+        auth.SignInWithEmailAndPasswordAsync(id, pw).ContinueWithOnMainThread(
+            task => {
+                if (task.IsCanceled)
+                {
+                    Debug.LogError("로그인 취소");
+                    return;
+                }
+                if (task.IsFaulted)
+                {
+                    foreach (var exception in task.Exception.Flatten().InnerExceptions)
+                    {
+                        Debug.LogError($"로그인 실패 이유: {exception.Message}");
+                    }
+                    return;
+                }
+
+                authResult = task.Result;
+                newUser = authResult.User;
+
+                Debug.Log($"로그인 성공: {newUser.Email}, UID: {newUser.UserId}");
+                SceneManager.LoadScene("SongSelectScene");
+            });
+        
+    }
+    public void register(string id, string pw) 
+    {
+        // auth = FirebaseAuth.DefaultInstance;
+        // 제공되는 함수 : 이메일과 비밀번호로 회원가입 시켜 줌
+        auth.CreateUserWithEmailAndPasswordAsync(id, pw).ContinueWithOnMainThread(
+            task => 
+            {
+                if (task.IsCanceled)
+                {
+                    Debug.LogError("회원가입 취소");
+                    return;
+                }
+                if (task.IsFaulted)
+                {
+                    foreach (var exception in task.Exception.Flatten().InnerExceptions)
+                    {
+                        Debug.LogError($"회원가입 실패 이유: {exception.Message}");
+                    }
+                    return;
+                }
+
+                AuthResult register_authResult = task.Result;
+                FirebaseUser register_newUser = authResult.User;
+
+                Debug.Log($"회원가입 성공: {register_newUser.Email}, UID: {register_newUser.UserId}");
+            });
+    }
     public bool isauth()
     {
         if(auth == null || FirebaseApp.DefaultInstance == null) return false;

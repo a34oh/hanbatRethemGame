@@ -390,6 +390,8 @@
 "Assets/Scripts/Edit/SheetEditorController.cs"
 "Assets/Scripts/Scene/BaseScene.cs"
 "Assets/Scripts/Scene/EditScene.cs"
+"Assets/Scripts/Score/ResultManager.cs"
+"Assets/Scripts/Score/ScoreCalc.cs"
 "Assets/Scripts/SongSelect/AudioManager.cs"
 "Assets/Scripts/SongSelect/BackgroundManager.cs"
 "Assets/Scripts/SongSelect/BaseSongSelectController.cs"
