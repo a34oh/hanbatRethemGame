@@ -17,12 +17,10 @@ public class OpenUI : MonoBehaviour
     public TMP_InputField Input_new_pw;
     public GameObject OpenSettingCanvas;
     public GameObject AccountSettingCanvas;
-    FBManager fbManager;
+    
 
     void Start()
     {
-        fbManager = new FBManager();
-        FBInitailize();
         OpenSettingButton.onClick.AddListener(OnOpenSettingCanvas);
         CloseSettingButton.onClick.AddListener(OnCloseSettingCanvas);
         CreateAccountSetting.onClick.AddListener(OnOpenAccountCanvas);
@@ -32,11 +30,6 @@ public class OpenUI : MonoBehaviour
             Debug.LogError("인터넷에 연결되어 있지 않습니다.");
         }
     }
-    async void FBInitailize()
-    {
-        await fbManager.InitializeFirebase();
-    }
-
     void OnOpenSettingCanvas()
     {
         OpenSettingCanvas.SetActive(true);
@@ -58,25 +51,25 @@ public class OpenUI : MonoBehaviour
 
     public void LogIn_Button()
     {
-        if (!fbManager.isauth())
+        if (!GameManager.FBManager.isauth())
         {
             Debug.LogError("Firebase 인증이 초기화되지 않았습니다.");
             return;
         }
         string player_id = Input_id.text;
         string player_pw = Input_pw.text;
-        fbManager.login(player_id, player_pw);
+        GameManager.FBManager.login(player_id, player_pw);
     }
 
     public void Create_Account()
     {
-        if (!fbManager.isauth())
+        if (!GameManager.FBManager.isauth())
         {
             Debug.LogError("Firebase 인증이 초기화되지 않았습니다.");
             return;
         }
         string player_id = Input_new_id.text;
         string player_pw = Input_new_pw.text;
-        fbManager.register(player_id,player_pw);
+        GameManager.FBManager.register(player_id,player_pw);
     }
 }
