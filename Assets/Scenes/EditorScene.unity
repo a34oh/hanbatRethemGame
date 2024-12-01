@@ -3095,6 +3095,54 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &763781670
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 763781672}
+  - component: {fileID: 763781671}
+  m_Layer: 0
+  m_Name: Scene
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &763781671
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 763781670}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d55b308cfb64e04f9414304536c6693, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  beatmapCreator: {fileID: 802041801}
+  scrollViewManager: {fileID: 1103856778}
+  BeatmapCreateCanvasButton: {fileID: 2053315069}
+  BeatmapCreateCanvas: {fileID: 802041800}
+--- !u!4 &763781672
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 763781670}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1039.8923, y: 815.3479, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &770889046
 GameObject:
   m_ObjectHideFlags: 0
@@ -3232,7 +3280,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &802041801
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3254,6 +3302,7 @@ MonoBehaviour:
   uploadBeatmapButton: {fileID: 252685485}
   backButton: {fileID: 505183826}
   debugText: {fileID: 349569373}
+  handler: {fileID: 966691833}
 --- !u!224 &802041802
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3843,6 +3892,50 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &966691832
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 966691834}
+  - component: {fileID: 966691833}
+  m_Layer: 0
+  m_Name: MobileFileBrowserHandler
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &966691833
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 966691832}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 233b2d990efcb8e42ae7c558df899574, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &966691834
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 966691832}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 890.26306, y: 853.8297, z: -22.730196}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1022062978
 GameObject:
   m_ObjectHideFlags: 0
@@ -4110,6 +4203,7 @@ GameObject:
   - component: {fileID: 1095274166}
   - component: {fileID: 1095274165}
   - component: {fileID: 1095274164}
+  - component: {fileID: 1095274167}
   m_Layer: 5
   m_Name: Scrollbar
   m_TagString: Untagged
@@ -4224,6 +4318,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1095274162}
   m_CullTransparentMesh: 1
+--- !u!114 &1095274167
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1095274162}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates: []
 --- !u!1 &1103856776
 GameObject:
   m_ObjectHideFlags: 0
@@ -4285,15 +4392,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01a08f57c354ab1408beb80e54f13595, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scrollView: {fileID: 0}
-  scrollContent: {fileID: 0}
-  snapLineParent: {fileID: 0}
-  snapLinePrefab: {fileID: 3074295128598793770, guid: fa8f883d2feb20040b4cce3dd6186abd, type: 3}
-  progressText: {fileID: 0}
-  timerText: {fileID: 1237977339}
-  start: {fileID: 572996131}
-  scrollbar: {fileID: 0}
-  heightPerSecond: 100
   a: {fileID: 643010903}
   sheetEditor: {fileID: 0}
   gridGenerator: {fileID: 2079093611}
@@ -6541,7 +6639,7 @@ MonoBehaviour:
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 1920, y: 1080}
   m_ScreenMatchMode: 0
-  m_MatchWidthOrHeight: 0
+  m_MatchWidthOrHeight: 1
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
@@ -7956,6 +8054,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isPlay: 0
+  sheetController: {fileID: 0}
 --- !u!4 &1947637331
 Transform:
   m_ObjectHideFlags: 0
@@ -9456,3 +9555,5 @@ SceneRoots:
   - {fileID: 1947637331}
   - {fileID: 643010904}
   - {fileID: 663562269}
+  - {fileID: 966691834}
+  - {fileID: 763781672}

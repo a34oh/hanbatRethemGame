@@ -6,8 +6,7 @@ using UnityEngine;
 
 public class BeatmapParser
 {
-  //  private Dictionary<string, List<Beatmap>> allBbeatmaps = new Dictionary<string, List<Beatmap>>();
-  //  private HashSet<string> loadedBeatmapPaths = new HashSet<string>();
+   private HashSet<string> loadedBeatmapPaths = new HashSet<string>();
 
     public async Task<List<Beatmap>> ParserAllBeatmapsAsync()
     {
@@ -20,7 +19,7 @@ public class BeatmapParser
             string songsDirectory = Path.Combine(Application.persistentDataPath, "Songs").Replace("\\", "/");
             if (!Directory.Exists(songsDirectory))
             {
-                Debug.LogWarning("Songs µğ·ºÅä¸®°¡ Á¸ÀçÇÏÁö ¾Ê½À´Ï´Ù.");
+                Debug.LogWarning("Songs ë””ë ‰í† ë¦¬ê°€ ì¡´ì¬í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤.");
                 return beatmaps;
             }
             Debug.Log(songsDirectory);
@@ -30,14 +29,12 @@ public class BeatmapParser
             foreach (DirectoryInfo songFolder in songFolders)
             {
                 FileInfo[] txtFiles = songFolder.GetFiles("*.txt");
-
                 foreach (FileInfo txtFile in txtFiles)
                 {
-                    /* if (loadedBeatmapPaths.Contains(txtFile.FullName))
+                     if (loadedBeatmapPaths.Contains(txtFile.FullName))
                      {
-                         Debug.Log("ÀÌ¹Ì ·Îµå µÈ ÆÄÀÏ : " + txtFile.FullName);
-                         continue; // ÀÌ¹Ì ·ÎµåµÈ °îÀº ½ºÅµ
-                     }*/
+                         continue;
+                     }
                     Beatmap beatmap = await ParseBeatmapFileAsync(txtFile.FullName);
                     if (beatmap != null)
                     {
@@ -49,22 +46,17 @@ public class BeatmapParser
 
                         beatmaps.Add(beatmap);
                     }
-                    /*
-                    if (!allBbeatmaps.ContainsKey(beatmap.id))
-                    {
-                        allBbeatmaps[beatmap.id] = new List<Beatmap>();
-                    }
-                    allBbeatmaps[beatmap.id].Add(beatmap);
+                    
                     loadedBeatmapPaths.Add(txtFile.FullName);
-                    Debug.Log("»õ·Î ·ÎµåÇÏ´Â ÆÄÀÏ : " + txtFile.FullName);*/
+                    Debug.Log("ìƒˆë¡œ ë¡œë“œí•˜ëŠ” íŒŒì¼ : " + txtFile.FullName);
                 }
             }
             await GameManager.ResourceCache.PreloadResourcesAsync(audioPaths, imagePaths, SourceType.Local);
-
+            GameManager.BeatmapRepository.AddBeatmaps(beatmaps);
         }
         catch (Exception ex)
         {
-            Debug.LogError("°î ·Îµù Áß ¿À·ù ¹ß»ı: " + ex.Message);
+            Debug.LogError("ê³¡ ë¡œë”© ì¤‘ ì˜¤ë¥˜ ë°œìƒ: " + ex.Message);
             throw;
         }
 
@@ -83,9 +75,9 @@ public class BeatmapParser
                 if (string.IsNullOrWhiteSpace(line) || line.StartsWith("//"))
                     continue;
 
-                // Ã¹ ¹øÂ° Äİ·Ğ À§Ä¡ Ã£±â
+                // ì²« ë²ˆì§¸ ì½œë¡  ìœ„ì¹˜ ì°¾ê¸°
                 int colonIndex = line.IndexOf(':');
-                if (colonIndex == -1) continue;  // Äİ·ĞÀÌ ¾øÀ¸¸é °Ç³Ê¶Ü
+                if (colonIndex == -1) continue;  // ì½œë¡ ì´ ì—†ìœ¼ë©´ ê±´ë„ˆëœ€
 
                 string key = line.Substring(0, colonIndex).Trim();
                 string value = line.Substring(colonIndex + 1).Trim();
@@ -124,10 +116,10 @@ public class BeatmapParser
                         }
                         catch (FormatException)
                         {
-                            Debug.LogWarning($"DateAdded Çü½ÄÀÌ ¿Ã¹Ù¸£Áö ¾ÊÀ½: {value}");
+                            Debug.LogWarning($"DateAdded í˜•ì‹ì´ ì˜¬ë°”ë¥´ì§€ ì•ŠìŒ: {value}");
                         }
                         break;
-                    // ÇÊ¿äÇÑ °æ¿ì Ãß°¡ÀûÀÎ Å° Ã³¸® (¿¹: BPM, EndTime µî)
+                    // í•„ìš”í•œ ê²½ìš° ì¶”ê°€ì ì¸ í‚¤ ì²˜ë¦¬ (ì˜ˆ: BPM, EndTime ë“±)
                     default:
                         break;
                 }
@@ -137,7 +129,7 @@ public class BeatmapParser
         }
         catch (Exception ex)
         {
-            Debug.LogError("°î ÆÄ½Ì Áß ¿À·ù ¹ß»ı: " + ex.Message);
+            Debug.LogError("ê³¡ íŒŒì‹± ì¤‘ ì˜¤ë¥˜ ë°œìƒ: " + ex.Message);
             return null;
         }
     }

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System;
 using UnityEngine.SceneManagement;
 
-// °î ÀÔ·Â Ã³¸® Å¬·¡½º
+// ê³¡ ì…ë ¥ ì²˜ë¦¬ í´ë˜ìŠ¤
 public class BeatmapCreator : MonoBehaviour
 {
     public TMP_InputField titleInput;
@@ -22,21 +22,38 @@ public class BeatmapCreator : MonoBehaviour
     private FileUploader fileUploader;
 
     public event Action<Beatmap> OnBeatmapCreated;
-
+    [SerializeField]
+    private MobileFileBrowserHandler handler;
 
     private string uploadedAudioPath;
     private string uploadedImagePath;
 
+    IFileBrowser fileBrowser;
 
     void Awake()
     {
+        // ëª¨ë°”ì¼ë¡œ ëŒë¦´ ë•Œ
+        /*
+        MobileFileBrowser mobileFileBrowser = new MobileFileBrowser();
+        handler.Initialize(mobileFileBrowser);
+        fileUploader = new FileUploader(mobileFileBrowser);*/
+        //PC ì—ë””í„°ë¡œ ëŒë¦´ ë•Œ
         fileUploader = new FileUploader(new PCFileBrowser());
 
     }
+        /*
+#if UNITY_ANDROID && !UNITY_EDITOR
+fileBrowser = new MobileFileBrowser();
+#else
+        fileBrowser = new PCFileBrowser();
+#endif
+
+        fileUploader = new FileUploader(fileBrowser);
+        */
 
     void Start()
     {
-        // ¹öÆ° Å¬¸¯ ÀÌº¥Æ® µî·Ï
+        // ë²„íŠ¼ í´ë¦­ ì´ë²¤íŠ¸ ë“±ë¡
         uploadBeatmapButton.onClick.AddListener(() => OnCreateBeatmap());
         backButton.onClick.AddListener(OnBackBeatmapCreateCanvas);
 
@@ -47,11 +64,11 @@ public class BeatmapCreator : MonoBehaviour
 
 
 
-    // À½¾Ç ÆÄÀÏ ¾÷·Îµå
+    // ìŒì•… íŒŒì¼ ì—…ë¡œë“œ
     IEnumerator OnUploadMusic()
     {
         var task = fileUploader.UploadMusicFileAsync();
-
+        
         while (!task.IsCompleted)
         {
             yield return null;
@@ -60,15 +77,15 @@ public class BeatmapCreator : MonoBehaviour
         uploadedAudioPath = task.Result;
         if (!string.IsNullOrEmpty(uploadedAudioPath))
         {
-            debugText.text = "À½¾Ç ÆÄÀÏÀÌ ¾÷·ÎµåµÇ¾ú½À´Ï´Ù: " + uploadedAudioPath;
+            debugText.text = "ìŒì•… íŒŒì¼ì´ ì—…ë¡œë“œë˜ì—ˆìŠµë‹ˆë‹¤: " + uploadedAudioPath;
         }
         else
         {
-            debugText.text = "À½¾Ç ÆÄÀÏ ¾÷·Îµå ½ÇÆĞ.";
+            debugText.text = "ìŒì•… íŒŒì¼ ì—…ë¡œë“œ ì‹¤íŒ¨.";
         }
     }
 
-    // ÀÌ¹ÌÁö ÆÄÀÏ ¾÷·Îµå
+    // ì´ë¯¸ì§€ íŒŒì¼ ì—…ë¡œë“œ
     IEnumerator OnUploadImage()
     {
         var task = fileUploader.UploadImageFileAsync();
@@ -81,15 +98,15 @@ public class BeatmapCreator : MonoBehaviour
         uploadedImagePath = task.Result;
         if (!string.IsNullOrEmpty(uploadedImagePath))
         {
-            debugText.text = "ÀÌ¹ÌÁö ÆÄÀÏÀÌ ¾÷·ÎµåµÇ¾ú½À´Ï´Ù: " + uploadedImagePath;
+            debugText.text = "ì´ë¯¸ì§€ íŒŒì¼ì´ ì—…ë¡œë“œë˜ì—ˆìŠµë‹ˆë‹¤: " + uploadedImagePath;
         }
         else
         {
-            debugText.text = "ÀÌ¹ÌÁö ÆÄÀÏ ¾÷·Îµå ½ÇÆĞ.";
+            debugText.text = "ì´ë¯¸ì§€ íŒŒì¼ ì—…ë¡œë“œ ì‹¤íŒ¨.";
         }
     }
 
-    // °î »ı¼º
+    // ê³¡ ìƒì„±
     private async void OnCreateBeatmap()
     {
         string title = SanitizeFileName(titleInput.text);
@@ -98,23 +115,23 @@ public class BeatmapCreator : MonoBehaviour
         string level = SanitizeFileName(versionInput.text);
 
 
-        // ÀÔ·Â°ª °ËÁõ
+        // ì…ë ¥ê°’ ê²€ì¦
         if (string.IsNullOrEmpty(title) || string.IsNullOrEmpty(artist) || string.IsNullOrEmpty(creator) || string.IsNullOrEmpty(level))
         {
-            debugText.text = "¸ğµç ÇÊµå¸¦ Ã¤¿öÁÖ¼¼¿ä.";
+            debugText.text = "ëª¨ë“  í•„ë“œë¥¼ ì±„ì›Œì£¼ì„¸ìš”.";
             return;
         }
 
         if (string.IsNullOrEmpty(uploadedAudioPath) || string.IsNullOrEmpty(uploadedImagePath))
         {
-            debugText.text = "À½¾Ç°ú ÀÌ¹ÌÁö¸¦ ¾÷·ÎµåÇØÁÖ¼¼¿ä.";
+            debugText.text = "ìŒì•…ê³¼ ì´ë¯¸ì§€ë¥¼ ì—…ë¡œë“œí•´ì£¼ì„¸ìš”.";
             return;
         }
 
-        // Áßº¹µÇÁö ¾Ê´Â Å« °ªÀÇ ·£´ı ID »ı¼º
+        // ì¤‘ë³µë˜ì§€ ì•ŠëŠ” í° ê°’ì˜ ëœë¤ ID ìƒì„±
         string uniqueId = GenerateUniqueID();
 
-        // °î Æú´õ ÀÌ¸§ »ı¼º
+        // ê³¡ í´ë” ì´ë¦„ ìƒì„±
         string folderName = $"{uniqueId} {artist} - {title}";
         string folderPath = Path.Combine(Application.persistentDataPath, "Songs", folderName).Replace("\\", "/");
         Debug.Log($"folderPath : {folderPath}");
@@ -122,40 +139,40 @@ public class BeatmapCreator : MonoBehaviour
 
         try
         {
-            // °î »ı¼º ¼º°ø
-            // »ı¼º ¼º°ø½Ã , BeatPerSec, BarPerSec °è»ê. bpmÀ» ¼¼ÆÃÇÏ°í, offsetÀº beatmap¿¡¼­ ¹Ş¾Æ¿È
+            // ê³¡ ìƒì„± ì„±ê³µ
+            // ìƒì„± ì„±ê³µì‹œ , BeatPerSec, BarPerSec ê³„ì‚°. bpmì„ ì„¸íŒ…í•˜ê³ , offsetì€ beatmapì—ì„œ ë°›ì•„ì˜´
             var beatmap = await CreateBeatmapObjectAndFolderAsync(uniqueId, title, artist, creator, level, uploadedAudioPath, uploadedImagePath, folderPath);
             await GameManager.ResourceCache.PreloadResourcesAsync(beatmap.localAudioPath, beatmap.localImagePath, SourceType.Local);
 
-            OnBeatmapCreated?.Invoke(beatmap); // Beatmap »ı¼º ÀÌº¥Æ® È£Ãâ
+            OnBeatmapCreated?.Invoke(beatmap); // Beatmap ìƒì„± ì´ë²¤íŠ¸ í˜¸ì¶œ
 
-            // °î »ı¼º ¼º°ø ½Ã Firebase ¾÷·Îµå
+            // ê³¡ ìƒì„± ì„±ê³µ ì‹œ Firebase ì—…ë¡œë“œ
             await UploadBeatmapToFirebase(beatmap);
 
 
-            debugText.text = "°î »ı¼ºÀÌ ¿Ï·áµÇ¾ú½À´Ï´Ù!";
+            debugText.text = "ê³¡ ìƒì„±ì´ ì™„ë£Œë˜ì—ˆìŠµë‹ˆë‹¤!";
 
             gameObject.SetActive(false);
         }
         catch (Exception ex)
         {
-            debugText.text = $"°î »ı¼º Áß ¿À·ù ¹ß»ı: {ex.Message}";
+            debugText.text = $"ê³¡ ìƒì„± ì¤‘ ì˜¤ë¥˜ ë°œìƒ: {ex.Message}";
         }
     }
 
-    // Beatmap °´Ã¼ »ı¼º ¹× Æú´õ »ı¼º
+    // Beatmap ê°ì²´ ìƒì„± ë° í´ë” ìƒì„±
     private async Task<Beatmap> CreateBeatmapObjectAndFolderAsync(string uniqueId, string title, string artist, string creator, string version, string uploadedAudioPath, string uploadedImagePath, string folderPath)
     {
         DateTime dateAdded = DateTime.Now;
 
-        //¿Àµğ¿À ÀÌ¸§ °¡Á®¿À±â
+        //ì˜¤ë””ì˜¤ ì´ë¦„ ê°€ì ¸ì˜¤ê¸°
         string audioExtension = Path.GetExtension(uploadedAudioPath);
         string audioName = $"song{audioExtension}";
         string audioPath = Path.Combine(folderPath, audioName).Replace("\\", "/");
         Debug.Log($"audioPath : {audioPath}");
 
 
-        //ÀÌ¹ÌÁö ÀÌ¸§ °¡Á®¿À±â
+        //ì´ë¯¸ì§€ ì´ë¦„ ê°€ì ¸ì˜¤ê¸°
         string imageExtension = Path.GetExtension(uploadedImagePath);
         string imageName = $"image{imageExtension}";
         string imagePath = Path.Combine(folderPath, imageName).Replace("\\", "/");
@@ -176,21 +193,21 @@ public class BeatmapCreator : MonoBehaviour
             audioLength = 0,
             previewTime = 0,
             dateAdded = dateAdded
-            //±âÅ¸ bpm, °Ë»öÁö¿ø tag, favorite.. Ã¤º¸ µî
+            //ê¸°íƒ€ bpm, ê²€ìƒ‰ì§€ì› tag, favorite.. ì±„ë³´ ë“±
         };
-        // Æú´õ ¹× ÆÄÀÏ »ı¼º
+        // í´ë” ë° íŒŒì¼ ìƒì„±
         await CreateBeatmapFolderAsync(beatmap, folderPath, uploadedAudioPath, uploadedImagePath);
 
-        // ¿Àµğ¿À ±æÀÌ °¡Á®¿À±â
+        // ì˜¤ë””ì˜¤ ê¸¸ì´ ê°€ì ¸ì˜¤ê¸°
         await AssignPreviewTimeAsync(beatmap);
 
-        // ·¹º§ ÆÄÀÏ »ı¼º
+        // ë ˆë²¨ íŒŒì¼ ìƒì„±
         await CreateLevelFileAsync(beatmap, folderPath);
 
 
         return beatmap;
     }
-    // Firebase¿¡ ºñÆ®¸Ê ¾÷·Îµå
+    // Firebaseì— ë¹„íŠ¸ë§µ ì—…ë¡œë“œ
     private async Task UploadBeatmapToFirebase(Beatmap beatmap)
     {
         try
@@ -199,11 +216,11 @@ public class BeatmapCreator : MonoBehaviour
             //            await GameManager.FBManager.UploadMetadataToDatabase(beatmap);
 
 
-            debugText.text = "°îÀÌ Firebase¿¡ ¼º°øÀûÀ¸·Î ¾÷·ÎµåµÇ¾ú½À´Ï´Ù!";
+            debugText.text = "ê³¡ì´ Firebaseì— ì„±ê³µì ìœ¼ë¡œ ì—…ë¡œë“œë˜ì—ˆìŠµë‹ˆë‹¤!";
         }
         catch (Exception ex)
         {
-            debugText.text = "Firebase ¾÷·Îµå Áß ¿À·ù ¹ß»ı: " + ex.Message;
+            debugText.text = "Firebase ì—…ë¡œë“œ ì¤‘ ì˜¤ë¥˜ ë°œìƒ: " + ex.Message;
         }
     }
 
@@ -211,42 +228,42 @@ public class BeatmapCreator : MonoBehaviour
     {
         try
         {
-            // Æú´õ »ı¼º ¿©ºÎ È®ÀÎ
+            // í´ë” ìƒì„± ì—¬ë¶€ í™•ì¸
             if (!Directory.Exists(folderPath))
             {
                 Directory.CreateDirectory(folderPath);
-                Debug.Log($"Æú´õ°¡ »ı¼ºµÇ¾ú½À´Ï´Ù: {folderPath}");
+                Debug.Log($"í´ë”ê°€ ìƒì„±ë˜ì—ˆìŠµë‹ˆë‹¤: {folderPath}");
             }
 
-            // µ¿ÀÏÇÑ ·¹º§ ÆÄÀÏ Á¸Àç ¿©ºÎ È®ÀÎ
+            // ë™ì¼í•œ ë ˆë²¨ íŒŒì¼ ì¡´ì¬ ì—¬ë¶€ í™•ì¸
             string levelFileName = $"{beatmap.artist} {beatmap.title} ({beatmap.creator}) [{beatmap.version}].txt";
             string levelFilePath = Path.Combine(folderPath, levelFileName).Replace("\\", "/");
 
             if (File.Exists(levelFilePath))
             {
-                Debug.LogError("°°Àº ·¹º§ÀÇ ÆÄÀÏÀÌ ÀÌ¹Ì Á¸ÀçÇÕ´Ï´Ù.");
+                Debug.LogError("ê°™ì€ ë ˆë²¨ì˜ íŒŒì¼ì´ ì´ë¯¸ ì¡´ì¬í•©ë‹ˆë‹¤.");
                 return;
             }
 
-            // À½¾Ç ÆÄÀÏ º¹»ç
+            // ìŒì•… íŒŒì¼ ë³µì‚¬
             await CopyFileAsync(uploadedAudioPath, beatmap.localAudioPath);
-            Debug.Log($"À½¾Ç ÆÄÀÏÀÌ {beatmap.audioName}·Î ÀúÀåµÇ¾ú½À´Ï´Ù: {beatmap.localAudioPath}");
+            Debug.Log($"ìŒì•… íŒŒì¼ì´ {beatmap.audioName}ë¡œ ì €ì¥ë˜ì—ˆìŠµë‹ˆë‹¤: {beatmap.localAudioPath}");
 
-            // ÀÌ¹ÌÁö ÆÄÀÏ º¹»ç
+            // ì´ë¯¸ì§€ íŒŒì¼ ë³µì‚¬
             await CopyFileAsync(uploadedImagePath, beatmap.localImagePath);
-            Debug.Log($"ÀÌ¹ÌÁö ÆÄÀÏÀÌ {beatmap.imageName}·Î ÀúÀåµÇ¾ú½À´Ï´Ù: {beatmap.localImagePath}");
+            Debug.Log($"ì´ë¯¸ì§€ íŒŒì¼ì´ {beatmap.imageName}ë¡œ ì €ì¥ë˜ì—ˆìŠµë‹ˆë‹¤: {beatmap.localImagePath}");
 
-            // ·¹º§ ÆÄÀÏ »ı¼º
+            // ë ˆë²¨ íŒŒì¼ ìƒì„±
         //    await CreateLevelFileAsync(beatmap, folderPath);
 
         }
         catch (Exception ex)
         {
-            Debug.LogError("ºñÆ®¸Ê »ı¼º Áß ¿À·ù ¹ß»ı: " + ex.Message);
+            Debug.LogError("ë¹„íŠ¸ë§µ ìƒì„± ì¤‘ ì˜¤ë¥˜ ë°œìƒ: " + ex.Message);
         }
     }
 
-    // ÆÄÀÏ º¹»ç ºñµ¿±â Ã³¸®
+    // íŒŒì¼ ë³µì‚¬ ë¹„ë™ê¸° ì²˜ë¦¬
     private async Task CopyFileAsync(string sourcePath, string destinationPath)
     {
         try
@@ -259,12 +276,12 @@ public class BeatmapCreator : MonoBehaviour
         }
         catch (Exception ex)
         {
-            Debug.LogError("ÆÄÀÏ º¹»ç Áß ¿À·ù ¹ß»ı: " + ex.Message);
+            Debug.LogError("íŒŒì¼ ë³µì‚¬ ì¤‘ ì˜¤ë¥˜ ë°œìƒ: " + ex.Message);
             throw;
         }
     }
 
-    // ·¹º§ ÆÄÀÏ »ı¼º
+    // ë ˆë²¨ íŒŒì¼ ìƒì„±
     private async Task CreateLevelFileAsync(Beatmap beatmap, string folderPath)
     {
         try
@@ -285,11 +302,11 @@ PreviewTime:{beatmap.previewTime}"
 ;
 
             await File.WriteAllTextAsync(levelFilePath, fileContent);
-            Debug.Log($"·¹º§ ÆÄÀÏÀÌ ÀúÀåµÇ¾ú½À´Ï´Ù: {levelFilePath}");
+            Debug.Log($"ë ˆë²¨ íŒŒì¼ì´ ì €ì¥ë˜ì—ˆìŠµë‹ˆë‹¤: {levelFilePath}");
         }
         catch (Exception ex)
         {
-            Debug.LogError("·¹º§ ÆÄÀÏ »ı¼º Áß ¿À·ù ¹ß»ı: " + ex.Message);
+            Debug.LogError("ë ˆë²¨ íŒŒì¼ ìƒì„± ì¤‘ ì˜¤ë¥˜ ë°œìƒ: " + ex.Message);
             throw;
         }
     }
@@ -298,18 +315,18 @@ PreviewTime:{beatmap.previewTime}"
     {
         if (string.IsNullOrEmpty(beatmap.localAudioPath))
         {
-            Debug.LogError("¿Àµğ¿À ÆÄÀÏ °æ·Î°¡ ºñ¾îÀÖ½À´Ï´Ù.");
+            Debug.LogError("ì˜¤ë””ì˜¤ íŒŒì¼ ê²½ë¡œê°€ ë¹„ì–´ìˆìŠµë‹ˆë‹¤.");
             return;
         }
 
         int audioLength = await GetAudioLengthAsync(beatmap.localAudioPath);
         beatmap.audioLength = audioLength;
         beatmap.previewTime = UnityEngine.Random.Range(0, audioLength);
-        Debug.Log($"PreviewTimeÀÌ {beatmap.previewTime}À¸·Î ¼³Á¤µÇ¾ú½À´Ï´Ù.");
+        Debug.Log($"PreviewTimeì´ {beatmap.previewTime}ìœ¼ë¡œ ì„¤ì •ë˜ì—ˆìŠµë‹ˆë‹¤.");
     }
 
 
-    // ¿Àµğ¿À ±æÀÌ °¡Á®¿À±â
+    // ì˜¤ë””ì˜¤ ê¸¸ì´ ê°€ì ¸ì˜¤ê¸°
     private async Task<int> GetAudioLengthAsync(string audioPath)
     {
         string uriPath = "file://" + audioPath;
@@ -323,29 +340,29 @@ PreviewTime:{beatmap.previewTime}"
                 if (www.result == UnityEngine.Networking.UnityWebRequest.Result.Success)
                 {
                     AudioClip clip = UnityEngine.Networking.DownloadHandlerAudioClip.GetContent(www);
-                    return (int)(clip.length * 1000); // ¹Ğ¸®ÃÊ ´ÜÀ§·Î º¯È¯
+                    return (int)(clip.length * 1000); // ë°€ë¦¬ì´ˆ ë‹¨ìœ„ë¡œ ë³€í™˜
                 }
                 else
                 {
-                    Debug.LogError($"¿Àµğ¿À ±æÀÌ °¡Á®¿À±â ½ÇÆĞ: {www.error} - URL: {uriPath}");
-                    return 120000; // ±âº»°ªÀ¸·Î 2ºĞ ¼³Á¤
+                    Debug.LogError($"ì˜¤ë””ì˜¤ ê¸¸ì´ ê°€ì ¸ì˜¤ê¸° ì‹¤íŒ¨: {www.error} - URL: {uriPath}");
+                    return 120000; // ê¸°ë³¸ê°’ìœ¼ë¡œ 2ë¶„ ì„¤ì •
                 }
             }
         }
         catch (Exception ex)
         {
-            Debug.LogError($"¿¹¿Ü ¹ß»ı: {ex.Message}");
-            return 120000; // ±âº»°ªÀ¸·Î ¹İÈ¯
+            Debug.LogError($"ì˜ˆì™¸ ë°œìƒ: {ex.Message}");
+            return 120000; // ê¸°ë³¸ê°’ìœ¼ë¡œ ë°˜í™˜
         }
     }
 
-    // °íÀ¯ ID »ı¼º
+    // ê³ ìœ  ID ìƒì„±
     private string GenerateUniqueID()
     {
         return Guid.NewGuid().ToString("N");
     }
 
-    // ÆÄÀÏ ÀÌ¸§ Á¤±ÔÈ­ (Æ¯¼ö ¹®ÀÚ Á¦°Å)
+    // íŒŒì¼ ì´ë¦„ ì •ê·œí™” (íŠ¹ìˆ˜ ë¬¸ì ì œê±°)
     private string SanitizeFileName(string fileName)
     {
         foreach (char c in Path.GetInvalidFileNameChars())
@@ -354,10 +371,11 @@ PreviewTime:{beatmap.previewTime}"
         }
         return fileName;
     }
-    // °î »ı¼º È­¸é ´İ±â
+    // ê³¡ ìƒì„± í™”ë©´ ë‹«ê¸°
     void OnBackBeatmapCreateCanvas()
     {
-        SceneManager.LoadScene(SceneType.SongSelect.ToString());
+        GameManager.AudioManager.ClearAudio();
+        SceneManager.LoadScene(SceneType.SongSelectScene.ToString());
     }
 
 }

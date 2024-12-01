@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-
+using System.Net.NetworkInformation;
 public class OpenUI : MonoBehaviour
 {
     public Button CreateAccountSetting;
@@ -21,6 +21,7 @@ public class OpenUI : MonoBehaviour
 
     void Start()
     {
+        Debug.Log(IsDeviceOnline());
         OpenSettingButton.onClick.AddListener(OnOpenSettingCanvas);
         CloseSettingButton.onClick.AddListener(OnCloseSettingCanvas);
         CreateAccountSetting.onClick.AddListener(OnOpenAccountCanvas);
@@ -28,6 +29,19 @@ public class OpenUI : MonoBehaviour
         if (Application.internetReachability == NetworkReachability.NotReachable)
         {
             Debug.LogError("인터넷에 연결되어 있지 않습니다.");
+        }
+    }
+    public bool IsDeviceOnline()
+    {
+        try
+        {
+            System.Net.NetworkInformation.Ping ping = new System.Net.NetworkInformation.Ping();
+            PingReply reply = ping.Send("google.com", 1000);  // 인터넷 연결이 가능한지 확인
+            return reply.Status == IPStatus.Success;
+        }
+        catch
+        {
+            return false;
         }
     }
     void OnOpenSettingCanvas()

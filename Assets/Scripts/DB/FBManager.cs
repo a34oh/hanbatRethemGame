@@ -23,17 +23,17 @@ using UnityEngine.SceneManagement;
 //??????????????.cs   ?????????? ???��? ?? ??????? ScrollView?? ??????? UI ?????(???? ???? ?????????? ???��? ?? ??????? ???????? ??? 30?? ????????. ?? ????? ???? ????? ???? ?��?)
 //??????????????.cs   ????? ????? ??????? ScrollView?? ??????? UI ?????
 
-//(?????? ???��? ?? ??????? ScrollView?? ??????? UI ????????? ????? ??? ?? ???? db?? ??????? ????? ???) - ??? ??? ?????��? ??????
+//(?????? ???��? ?? ??????? ScrollView?? ??????? UI ????????? ????? ??? ?? ???? db?? ??????? ????? ???) - ??? ??? ?????��???????
 //(???? ?????? ?????? ??? ??????? ???? db?? ?????????? ?????. ???? ??? ?????? ???????? ?? ??? ?��??? ??? ?? ??? ????.))
 public class FBManager
 {
-    private FirebaseAuth auth; // ���̾�̽� ���� ��ü
-    public string FBurl = "https://rethemgame-default-rtdb.firebaseio.com/";  // ���̾�̽� �����ͺ��̽� URL
-    public string StorageBucketUrl = "gs://rethemgame.appspot.com"; // ���̾�̽� ���丮�� ��Ŷ URL
+    private FirebaseAuth auth; // 파이어베이스 인증 객체
+    public string FBurl = "https://rethemgame-default-rtdb.firebaseio.com/";  // 파이어베이스 데이터베이스 URL
+    public string StorageBucketUrl = "gs://rethemgame.firebasestorage.app"; // 파이어베이스 스토리지 버킷 URL
 
-    private DatabaseReference databaseRef; // ���̾�̽� �����ͺ��̽� ����
-    private FirebaseStorage storage; // ���̾�̽� ���丮�� ��ü
-    private bool isOnline = true; // �¶��� ���� Ȯ��
+    private DatabaseReference databaseRef; // 파이어베이스 데이터베이스 참조
+    private FirebaseStorage storage; // 파이어베이스 스토리지 객체
+    private bool isOnline = true; // 온라인 상태 확인
     AuthResult authResult;
     public FirebaseUser newUser;
     enum FileType
@@ -42,7 +42,7 @@ public class FBManager
         Image,
         Text
     }
-    // Firebase ????
+    // Firebase 초기화
     public async Task InitializeFirebase()
     {
         var dependencyStatus = await FirebaseApp.CheckAndFixDependenciesAsync();
@@ -55,13 +55,13 @@ public class FBManager
             databaseRef = FirebaseDatabase.GetInstance(app, FBurl).RootReference;
             storage = FirebaseStorage.GetInstance(app, StorageBucketUrl);
 
-            auth = FirebaseAuth.GetAuth(app); // FirebaseAuth ��ü �ʱ�ȭ
+            auth = FirebaseAuth.GetAuth(app); // FirebaseAuth 객체 초기화
 
-            Debug.Log("���̾�̽��� ���������� �ʱ�ȭ�Ǿ����ϴ�.");
+            Debug.Log("파이어베이스가 성공적으로 초기화되었습니다.");
         }
         else
         {
-            Debug.LogError("���̾�̽� ���Ӽ� Ȯ�� ����: " + dependencyStatus);
+            Debug.LogError("파이어베이스 종속성 확인 실패: " + dependencyStatus);
             isOnline = false;
         }
     }
@@ -90,7 +90,7 @@ public class FBManager
                 newUser = authResult.User;
 
                 Debug.Log($"�α��� ����: {newUser.Email}, UID: {newUser.UserId}");
-                SceneManager.LoadScene("ScoreScene");
+                SceneManager.LoadScene(SceneType.SongSelectScene.ToString());
             });
         
     }
@@ -205,52 +205,51 @@ public class FBManager
     {
         public List<T> Items;
     }
-
-    // ????? ???��?. ????? ???? ?????? ???? ?? ???? ??? ?? ???? ???? ???? ??? ???, ???????? metaData ???��? ???? ??, stroage ???��? ?????? ??.
+    // 비트맵 업로드. 예기치 못한 이유로 실패 시 폴더 이름 및 텍스트 파일 변경 취소 추가, 파이어베이스 metaData 업로드 실패 시, stroage 업로드도 취소해야 함.
     public async Task UploadBeatmapToFirebase(Beatmap beatmap)
     {
         if (!IsOnline())
         {
-            Debug.LogWarning("???????? ????????. Firebase?? ???��??? ?? ???????.");
+            Debug.LogWarning("오프라인 상태입니다. Firebase에 업로드할 수 없습니다.");
             return;
         }
 
         string localFolderName = GetBeatmapFolderName(beatmap);
 
-        // Firebase???? ???? ID ????????
+        // Firebase에서 고유 ID 가져오기
         string uniqueId = await GetNextBeatmapIdAsync();
-       
-        beatmap.id = uniqueId; // Beatmap ID ???????
 
-        // ???? ??? ????
+        beatmap.id = uniqueId; // Beatmap ID 업데이트
+
+        // 폴더 이름 생성
         string folderName = GetBeatmapFolderName(beatmap);
         string newFolderPath = RenameLocalBeatmapFolder(localFolderName, folderName);
 
         if (string.IsNullOrEmpty(newFolderPath))
         {
-            Debug.LogError("???? ??? ???? ???��? ???��? ???????.");
+            Debug.LogError("폴더 이름 변경 실패로 업로드를 중단합니다.");
             return;
         }
         DirectoryInfo dirInfo = new DirectoryInfo(newFolderPath);
 
-        // ??????? Firebase Storage?? ????? ???��?
+        // 파일들을 Firebase Storage에 병렬로 업로드
         var uploadResults = await UploadFilesToFirebaseStorageAsync(dirInfo, beatmap, folderName);
 
-        // ???��? ??? ??? ?? ????????? ???
+        // 업로드 결과 처리 및 메타데이터 준비
         var metadata = PrepareMetadataForServer(uploadResults, beatmap);
 
         if (metadata == null)
         {
-            Debug.LogError("???? ???��? ???��? ????????? ?????? ??????????.");
+            Debug.LogError("파일 업로드 실패로 메타데이터 생성이 중단되었습니다.");
             return;
         }
 
-        // ?????????? Firebase Realtime Database?? ???��?
+        // 메타데이터를 Firebase Realtime Database에 업로드
         if (await UploadMetadataToDatabaseAsync(metadata, folderName))
         {
-            // ID ????
+            // ID 증가
             await IncrementBeatmapIdAsync(uniqueId);
-            Debug.Log("ID?? ?????????? ????????????.");
+            Debug.Log("ID가 성공적으로 증가되었습니다.");
         }
     }
     private string GetBeatmapFolderName(Beatmap beatmap)
@@ -266,12 +265,12 @@ public class FBManager
         try
         {
             Directory.Move(localFolderPath, newFolderPath);
-            Debug.Log("???? ??? ???? ???.");
+            Debug.Log("폴더 이름 변경 완료.");
             return newFolderPath;
         }
         catch (Exception ex)
         {
-            Debug.LogError($"???? ??? ???? ????: {ex.Message}");
+            Debug.LogError($"폴더 이름 변경 실패: {ex.Message}");
             return null;
         }
     }
@@ -279,7 +278,7 @@ public class FBManager
     {
         var uploadTasks = new List<Task<(FileType fileType, string fileName, string downloadUrl)>>();
 
-        // ???? ???? ???��?
+        // 텍스트 파일 업로드
         foreach (var txtFile in dirInfo.GetFiles("*.txt"))
         {
             try
@@ -290,11 +289,11 @@ public class FBManager
             }
             catch (Exception ex)
             {
-                Debug.LogError($"???? ???? ??? ?? ???? ???: {txtFile.Name}, ????: {ex.Message}");
+                Debug.LogError($"텍스트 파일 처리 중 오류 발생: {txtFile.Name}, 오류: {ex.Message}");
             }
         }
 
-        // ????? ?? ????? ???? ???��?
+        // 오디오 및 이미지 파일 업로드
         foreach (var file in dirInfo.GetFiles())
         {
             if (file.Name == beatmap.audioName || file.Name == beatmap.imageName)
@@ -307,25 +306,25 @@ public class FBManager
                 }
                 catch (Exception ex)
                 {
-                    Debug.LogError($"???? ???��? ?? ???? ???: {file.Name}, ????: {ex.Message}");
+                    Debug.LogError($"파일 업로드 중 오류 발생: {file.Name}, 오류: {ex.Message}");
                 }
             }
         }
 
-       /* // ??? ???? ???��?
-        foreach (var skinFile in dirInfo.GetFiles("*.skin"))
-        {
-            try
-            {
-                string firebaseStoragePath = $"Songs/{beatmap.id} {beatmap.artist} - {beatmap.title}/{skinFile.Name}";
-                uploadTasks.Add(UploadFileToFirebaseStorage(skinFile.FullName, firebaseStoragePath, FileType.Skin));
-            }
-            catch (Exception ex)
-            {
-                Debug.LogError($"??? ???? ??? ?? ???? ???: {skinFile.Name}, ????: {ex.Message}");
-            }
-        }
-      */
+        /* // 스킨 파일 업로드
+         foreach (var skinFile in dirInfo.GetFiles("*.skin"))
+         {
+             try
+             {
+                 string firebaseStoragePath = $"Songs/{beatmap.id} {beatmap.artist} - {beatmap.title}/{skinFile.Name}";
+                 uploadTasks.Add(UploadFileToFirebaseStorage(skinFile.FullName, firebaseStoragePath, FileType.Skin));
+             }
+             catch (Exception ex)
+             {
+                 Debug.LogError($"스킨 파일 처리 중 오류 발생: {skinFile.Name}, 오류: {ex.Message}");
+             }
+         }
+       */
 
         var results = await Task.WhenAll(uploadTasks);
 
@@ -333,7 +332,7 @@ public class FBManager
     }
 
 
-    // ???? ??????? Id ???? ???????
+    // 텍스트 파일에서 Id 값을 업데이트
     private async Task UpdateIdInTextFile(string filePath, string newId)
     {
         var updatedLines = new List<string>();
@@ -369,14 +368,14 @@ public class FBManager
             }
         }
 
-        // ???? ???????
+        // 파일 업데이트
         await File.WriteAllLinesAsync(filePath, updatedLines);
 
         return;
     }
 
-    // Firebase Database?? ????? ????????? ???��?. beatmap?? ??��?? ?? ??????? ?????? beatmap?? ??? ??????? ????? ?? ?????? ???, (audioPath, imagePath ??)
-    // ???????? ??????? ??? ????????? ??? ????. (AudioStroageUrl, ImageStroageUrl ??)
+    // Firebase Database에 비트맵 메타데이터 업로드. beatmap을 통째로 안 올ㄹ리는 이유는 beatmap의 모든 데이터가 필요할 것 같지는 않고, (audioPath, imagePath 등)
+    // 서버에만 존재해야 하는 데이터들이 있기 때문. (AudioStroageUrl, ImageStroageUrl 등)
     private Dictionary<string, object> PrepareMetadataForServer(
     IEnumerable<(FileType fileType, string fileName, string downloadUrl)> uploadResults,
     Beatmap beatmap)
@@ -401,7 +400,7 @@ public class FBManager
         {
             if (result.downloadUrl == null)
             {
-                Debug.LogError($"???? ???��? ???? - ????: {result.fileType}, ?????: {result.fileName}");
+                Debug.LogError($"파일 업로드 실패 - 유형: {result.fileType}, 파일명: {result.fileName}");
                 return null;
             }
 
@@ -417,9 +416,9 @@ public class FBManager
                     ((List<string>)metadata["StorageTextUrls"]).Add(result.downloadUrl);
                     ((List<string>)metadata["TextNames"]).Add(result.fileName);
                     break;
-   //             case "Skin":
-   //                 ((List<string>)metadata["StorageSkinUrls"]).Add(result.downloadUrl);
-   //                 break;
+                    //             case "Skin":
+                    //                 ((List<string>)metadata["StorageSkinUrls"]).Add(result.downloadUrl);
+                    //                 break;
             }
         }
 
@@ -430,38 +429,105 @@ public class FBManager
         try
         {
             await databaseRef.Child("Songs").Child(folderName).SetValueAsync(metadata);
-            Debug.Log("?????????? Realtime Database?? ?????????? ???��????????.");
+            Debug.Log("메타데이터가 Realtime Database에 성공적으로 업로드되었습니다.");
             return true;
         }
         catch (Exception ex)
         {
-            Debug.LogError($"????????? ???��? ?? ???? ???: {ex.Message}");
+            Debug.LogError($"메타데이터 업로드 중 오류 발생: {ex.Message}");
             return false;
         }
     }
-    // Firebase Storage?? ???? ???��? ?????
+    /*
+    // Firebase Storage에 파일 업로드 메서드
+    private async Task<(FileType fileType, string fileName, string downloadUrl)> UploadFileToFirebaseStorage(string localFilePath, string firebaseStoragePath, FileType fileType)
+    {
+        var storageReference = storage.GetReferenceFromUrl(StorageBucketUrl).Child(firebaseStoragePath);
+        try
+        {
+            var reference = storage.GetReferenceFromUrl(StorageBucketUrl);
+            Debug.Log("Firebase Storage Reference 생성 성공!");
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"Firebase Storage Reference 생성 실패: {ex.Message}");
+        }
+        try
+        {
+            Debug.Log($"StorageBucketUrl: {StorageBucketUrl}");
+            // Firebase Storage 경로 확인 로그 추가
+            Debug.Log($"업로드 대상 Firebase 경로: {firebaseStoragePath}");
+
+
+            // 파일명 디코딩
+            string fileName = Uri.UnescapeDataString(Path.GetFileName(localFilePath));
+            Debug.Log($"디코딩된 파일명: {fileName}");
+
+            Debug.Log($"파일 업로드 중: {fileType} - {Path.GetFileName(localFilePath)}");
+            Debug.Log($"localFilePath : {localFilePath}");
+
+            var uriObject = GetContentUriFromFilePath(localFilePath);
+            string uriString = uriObject.Call<string>("toString");
+            uriString.Replace("%20", " ");
+            Debug.Log($"uriString : {uriString}");
+
+            await storageReference.PutFileAsync(localFilePath);
+            Uri uri = await storageReference.GetDownloadUrlAsync();
+            Debug.Log($"파일 업로드 성공: {fileType} - {Path.GetFileName(localFilePath)} - URL: {uri}");
+            return (fileType, Path.GetFileName(localFilePath), uri.ToString());
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"파일 업로드 실패 - 유형: {fileType}, 파일명: {Path.GetFileName(localFilePath)}, 오류: {ex.Message}");
+            return (fileType, Path.GetFileName(localFilePath), null);
+        }
+    }*/
+
+    // Firebase Storage에 파일 업로드 메서드
     private async Task<(FileType fileType, string fileName, string downloadUrl)> UploadFileToFirebaseStorage(string localFilePath, string firebaseStoragePath, FileType fileType)
     {
         var storageReference = storage.GetReferenceFromUrl(StorageBucketUrl).Child(firebaseStoragePath);
 
         try
         {
-            Debug.Log($"???? ???��? ??: {fileType} - {Path.GetFileName(localFilePath)}");
+            Debug.Log($"파일 업로드 중: {fileType} - {Path.GetFileName(localFilePath)}");
 
+            //모바일로 돌릴 때
+          /*  var uriObject = GetContentUriFromFilePath(localFilePath);
+            string uriString = uriObject.Call<string>("toString").Replace("%20", " ");
+            Debug.Log($"uriString : {uriString}");
+        
+            await storageReference.PutFileAsync(uriString);*/
+            //PC 에디터로 돌릴 때
             await storageReference.PutFileAsync(localFilePath);
             Uri uri = await storageReference.GetDownloadUrlAsync();
-            Debug.Log($"???? ???��? ????: {fileType} - {Path.GetFileName(localFilePath)} - URL: {uri}");
+            Debug.Log($"파일 업로드 성공: {fileType} - {Path.GetFileName(localFilePath)} - URL: {uri}");
             return (fileType, Path.GetFileName(localFilePath), uri.ToString());
         }
         catch (Exception ex)
         {
-            Debug.LogError($"???? ???��? ???? - ????: {fileType}, ?????: {Path.GetFileName(localFilePath)}, ????: {ex.Message}");
+            Debug.LogError($"파일 업로드 실패 - 유형: {fileType}, 파일명: {Path.GetFileName(localFilePath)}, 오류: {ex.Message}");
             return (fileType, Path.GetFileName(localFilePath), null);
         }
     }
 
 
-    // Firebase???? ???? ???? ID ????????
+
+
+    private AndroidJavaObject GetContentUriFromFilePath(string filePath)
+    {
+        // Create a Java File object
+        using (var file = new AndroidJavaObject("java.io.File", filePath))
+        {
+            // Get the Uri from android.net.Uri.fromFile(File)
+            var uri = new AndroidJavaClass("android.net.Uri")
+                .CallStatic<AndroidJavaObject>("fromFile", file);
+            return uri;
+        }
+    }
+
+
+    // Firebase에서 다음 고유 ID 가져오기
     private async Task<string> GetNextBeatmapIdAsync()
     {
         var idSnapshot = await databaseRef.Child("NextBeatmapId").GetValueAsync();
@@ -470,25 +536,31 @@ public class FBManager
         return currentId.ToString();
     }
 
-    // ???��? ???? ?? ???? ID?? ????
+    // 업로드 성공 시 고유 ID를 증가
     private async Task IncrementBeatmapIdAsync(string currentId)
     {
         int nextId = int.Parse(currentId) + 1;
         await databaseRef.Child("NextBeatmapId").SetValueAsync(nextId);
-        Debug.Log($"NextBeatmapId id???? {nextId}");
+        Debug.Log($"NextBeatmapId id증가 {nextId}");
     }
 
-    //????? ???? ???????
+    //비트맵 정보 불러오기
     public async Task<List<Beatmap>> FetchBeatmapMetadataAsync(int startIndex = 0, int limit = 10)
     {
+        if (databaseRef != null)
+            Debug.Log($"databaseRef : {databaseRef }");
+        else
+        {
+            Debug.Log("databaseRef is null");
+        }
         var beatmaps = new List<Beatmap>();
         try
         {
-            // Firebase???? Songs ????? ??????? ??? ???????? ????
+            // Firebase에서 Songs 노드의 데이터를 날짜 기준으로 정렬
             var snapshot = await databaseRef
                 .Child("Songs")
                 .OrderByChild("DateAdded")
-                .LimitToLast(startIndex + limit) // ???? ?��??? + ???? ????
+                .LimitToLast(startIndex + limit) // 시작 인덱스 + 제한 갯수
                 .GetValueAsync();
 
             if (snapshot.Exists)
@@ -496,7 +568,7 @@ public class FBManager
                 var allData = snapshot.Children
                     .Select(child => child.Value as Dictionary<string, object>)
                     .Where(data => data != null)
-                    .OrderByDescending(data => data["DateAdded"].ToString()) // ??? ?? ????
+                    .OrderByDescending(data => data["DateAdded"].ToString()) // 최신 순 정렬
                     .Skip(startIndex)
                     .Take(limit)
                     .ToList();
@@ -510,26 +582,26 @@ public class FBManager
                     }
                     catch (Exception ex)
                     {
-                        Debug.LogError($"????? ??????? ??? ?? ???? ???: {ex.Message}");
+                        Debug.LogError($"비트맵 데이터를 변환 중 오류 발생: {ex.Message}");
                     }
                 }
 
-                Debug.Log($"?? {allData.Count}???? ????? ??????? ?????????.");
+                Debug.Log($"총 {allData.Count}개의 비트맵 데이터를 불러왔습니다.");
             }
             else
             {
-                Debug.LogWarning("????? ??????? ???????.");
+                Debug.LogWarning("비트맵 데이터가 없습니다.");
             }
         }
         catch (Exception ex)
         {
-            Debug.LogError($"????? ??????? ??????? ?? ???? ???: {ex.Message}");
+            Debug.LogError($"비트맵 데이터를 불러오는 중 오류 발생: {ex.Message}");
         }
         return beatmaps;
     }
     private Beatmap ParseBeatmapFromMetadata(Dictionary<string, object> data)
     {
-        // TextNames ???
+        // TextNames 파싱
         var textNames = data.ContainsKey("TextNames")
             ? (data["TextNames"] as List<object>)?.Select(o => o.ToString()).ToList()
             : new List<string>();
@@ -559,7 +631,7 @@ public class FBManager
 
         string localFolderPath = Path.Combine(Application.persistentDataPath, "Songs", firebaseFolderName).Replace("\\", "/");
 
-        // ???? ?????? ?????? ????
+        // 로컬 폴더가 없으면 생성
         if (!Directory.Exists(localFolderPath))
         {
             Directory.CreateDirectory(localFolderPath);
@@ -572,25 +644,25 @@ public class FBManager
             {
                 string audioUrl = snapshot.Child("StorageAudioUrl").Value?.ToString().Replace(" ", "%20");
                 string imageUrl = snapshot.Child("StorageImageUrl").Value?.ToString().Replace(" ", "%20");
-                
+
                 imageUrl.Replace(" ", "%20");
                 Debug.Log($"audioUrl : {audioUrl}");
                 Debug.Log($"imageUrl : {imageUrl}");
                 var downloadTasks = new List<Task>();
 
-                // ????? ???? ???��?
+                // 오디오 파일 다운로드
                 if (!string.IsNullOrEmpty(audioUrl))
                 {
                     downloadTasks.Add(DownloadFileFromUrlAsync(audioUrl, localFolderPath, beatmap.audioName));
                 }
 
-                // ????? ???? ???��?
+                // 이미지 파일 다운로드
                 if (!string.IsNullOrEmpty(imageUrl))
                 {
                     downloadTasks.Add(DownloadFileFromUrlAsync(imageUrl, localFolderPath, beatmap.imageName));
                 }
 
-                // ???? ???? ???��?
+                // 텍스트 파일 다운로드
                 foreach (string textName in beatmap.textNames)
                 {
                     string textUrl = snapshot.Child("StorageTextUrls")
@@ -600,29 +672,29 @@ public class FBManager
 
                     if (!string.IsNullOrEmpty(textUrl))
                     {
-                        Debug.Log($"???��??? ???? ???? URL: {textUrl}, ???? ???: {textName}");
+                        Debug.Log($"다운로드할 텍스트 파일 URL: {textUrl}, 파일 이름: {textName}");
                         downloadTasks.Add(DownloadFileFromUrlAsync(textUrl, localFolderPath, textName));
                     }
                     else
                     {
-                        Debug.LogWarning($"URL?? ???????? ???? ???? ???? ????? ??? ?? ???????: {textName}");
+                        Debug.LogWarning($"URL이 존재하지 않거나 텍스트 파일 이름을 찾을 수 없습니다: {textName}");
                     }
                 }
 
-                Debug.Log($"????? {firebaseFolderName} ???��? ??...");
+                Debug.Log($"비트맵 {firebaseFolderName} 다운로드 중...");
 
                 await Task.WhenAll(downloadTasks);
 
-                Debug.Log($"????? {firebaseFolderName}?? ??? ?????? ???��????????.");
+                Debug.Log($"비트맵 {firebaseFolderName}의 모든 파일이 다운로드되었습니다.");
             }
             else
             {
-                Debug.LogWarning($"????? {firebaseFolderName}?? ?????? ??????? ???????.");
+                Debug.LogWarning($"비트맵 {firebaseFolderName}에 해당하는 데이터가 없습니다.");
             }
         }
         catch (Exception ex)
         {
-            Debug.LogError($"???? ???��? ?? ???? ???: {ex.Message}");
+            Debug.LogError($"파일 다운로드 중 오류 발생: {ex.Message}");
         }
     }
     private async Task DownloadFileFromUrlAsync(string url, string localFolderPath, string fileName)
@@ -636,15 +708,15 @@ public class FBManager
 
             using (HttpClient client = new HttpClient())
             {
-                var fileBytes = await client.GetByteArrayAsync(url); 
+                var fileBytes = await client.GetByteArrayAsync(url);
                 await File.WriteAllBytesAsync(localFilePath, fileBytes);
             }
 
-            Debug.Log($"???? ???��? ???: {fileName}");
+            Debug.Log($"파일 다운로드 완료: {fileName}");
         }
         catch (Exception ex)
         {
-            Debug.LogError($"???? ???��? ?? ???? ??? ({fileName}): {ex.Message}");
+            Debug.LogError($"파일 다운로드 중 오류 발생 ({fileName}): {ex.Message}");
         }
     }
 

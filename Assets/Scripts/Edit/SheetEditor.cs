@@ -2,19 +2,24 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class SheetEditor : MonoBehaviour
 {
     public bool isPlay = false;
+    public SheetEditorController sheetController;
     public float Speed { get; set; } = 4;
-    // Start is called before the first frame update
-    void Start()
+    private int currentBarNumber;
+
+
+    void DetectionPreNote()
     {
-        
+        if(sheetController.mRay.transform.gameObject.layer == (int)LayerTypes.Grid)
+        {
+            GameObject go = sheetController.mRay.transform.gameObject;
+            Grid grid = go.GetComponent<Grid>();
+            currentBarNumber = grid.barNumber;
+        }
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+
 }

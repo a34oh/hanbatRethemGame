@@ -55,7 +55,7 @@ public class SheetEditorController : MonoBehaviour
             if (Physics.Raycast(mainCam.transform.position, dir, out mRay))
             {
                 // 터치한 오브젝트 처리
-                Debug.Log("터치한 오브젝트: " + mRay.transform.name);
+                //Debug.Log("터치한 오브젝트: " + mRay.transform.name);
             }
         }
     }

@@ -20,8 +20,9 @@ public class BaseBeatmapSelectController : MonoBehaviour
 
     void OnOpenBeatmapCreateCanvas()
     {
-        SceneManager.LoadScene(SceneType.Editor.ToString());
-        beatmapCreateCanvas.SetActive(true);
+        GameManager.AudioManager.ClearAudio();
+        SceneManager.LoadScene(SceneType.EditorScene.ToString());
+//        beatmapCreateCanvas.SetActive(true);
     }
     void OnOpenBeatmapBrowserCanvas()
     {

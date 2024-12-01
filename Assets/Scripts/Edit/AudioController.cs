@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class AudioController : MonoBehaviour
@@ -14,18 +15,51 @@ public class AudioController : MonoBehaviour
     public TextMeshProUGUI endTimerText;
     public Button playorPauseButton;
     public Scrollbar scrollbar;
+    private bool isUserInteracting = false;
 
     private void Start()
     {
         a.OnAudioSetting += SetEndTime;
 
         playorPauseButton.onClick.AddListener(a.PlayorPause);
+        ScrollbarSetEventTrigger();
+        scrollbar.onValueChanged.AddListener(OnScrollBarValueChanged);
     }
     private void Update()
     {
         MoveProgressBarPos();
         UpdateProgressUI();
     }
+
+    private void ScrollbarSetEventTrigger()
+    {
+        EventTrigger eventTrigger = scrollbar.gameObject.AddComponent<EventTrigger>();
+
+        EventTrigger.Entry pointerDownEntry = new EventTrigger.Entry
+        {
+            eventID = EventTriggerType.PointerDown
+        };
+        pointerDownEntry.callback.AddListener((data) => { OnBeginUserInteraction(); });
+        eventTrigger.triggers.Add(pointerDownEntry);
+
+        EventTrigger.Entry pointerUpEntry = new EventTrigger.Entry
+        {
+            eventID = EventTriggerType.PointerUp
+        };
+        pointerUpEntry.callback.AddListener((data) => { OnEndUserInteraction(); });
+        eventTrigger.triggers.Add(pointerUpEntry);
+
+    }
+    public void OnBeginUserInteraction()
+    {
+        isUserInteracting = true;
+    }
+
+    public void OnEndUserInteraction()
+    {
+        isUserInteracting = false;
+    }
+
 
     public void Scroll(int scrollDir)
     {
@@ -50,34 +84,37 @@ public class AudioController : MonoBehaviour
             scrollbar.value = GameManager.AudioManager.GetAudioTime() / a.audioSource.clip.length;
     }
 
-    public void ControlProgressBarPos() // 사용자 조작에 의한
+    public void OnScrollBarValueChanged(float value) // 사용자 조작에 의한
     {
         float pos = scrollbar.value;
-        ChangePosByProgressBar(pos);
-        CalculatePos(pos);
+        if (isUserInteracting)
+        {
+            ChangeAudioSourceTime(pos);
+            CalculatePos(pos);
+        }
     }
 
-    public void ChangePosByProgressBar(float pos)
+    public void ChangeAudioSourceTime(float pos)
     {
         float time = a.audioSource.clip.length * pos;
 
         a.audioSource.time = time;
     }
-    void CalculatePos(float pos)
+    private void CalculatePos(float pos)
     {
         float value = a.audioSource.clip.length * pos;
         gridGenerator.ChangeFixedPos(-value);
     }
 
 
-    void UpdateProgressUI()
+    private void UpdateProgressUI()
     {
         float progress = a.audioSource.time / a.audioLength;
         progressText.text = $"{progress * 100:F1}%";
         startTimerText.text = a.FormatTime(a.audioSource.time);
     }
 
-    void SetEndTime()
+    private void SetEndTime()
     {
         endTimerText.text = a.FormatTime(a.audioLength);
     }

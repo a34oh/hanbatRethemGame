@@ -24,13 +24,13 @@ public class GridController : MonoBehaviour
     }
     void OnScrollUp()
     {
-        gridGenerator.ChangePos(1);
+        gridGenerator.ChangePos(-1);
         audioController.Scroll(1);
     }
 
     void OnScrollDown()
     {
-        gridGenerator.ChangePos(-1);
+        gridGenerator.ChangePos(1);
         audioController.Scroll(-1);
     }
 

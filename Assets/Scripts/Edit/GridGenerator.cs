@@ -35,8 +35,9 @@ public class GridGenerator : MonoBehaviour
 
     // 그리드 생성
     void Create()
-    {
-        for (int i = 0; i < 20; i++)
+    {   
+        int totalBars = Mathf.CeilToInt(a.audioLength / a.BarPerSec) + 2;
+        for (int i = 0; i < totalBars; i++)
         {
             GameObject obj = Instantiate(grid_Beatbar, new Vector3(0f, i * 6f * scrollSpeed, 0f), Quaternion.identity);
             Grid grid = obj.GetComponent<Grid>();
@@ -111,15 +112,14 @@ public class GridGenerator : MonoBehaviour
         }
     }
 
-    // 고정된 위치로 변경한다. 코드 수정 필요. 원하는 위치로 옮겼으면 그 위치에 맞게 grids를 이동해야 함.
     public void ChangeFixedPos(float pos)
     {
         for (int i = 0; i < grids.Count; i++)
         {
             GameObject obj = grids[i];
+            float value = pos * scrollSpeed;
 
-            obj.transform.position = new Vector3(0f, pos + i * a.BarPerSec * scrollSpeed, 0f);
-
+            obj.transform.position = new Vector3(0f, value + i * a.BarPerSec * scrollSpeed, 0f);
         }
     }
 

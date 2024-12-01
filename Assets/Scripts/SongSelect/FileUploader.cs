@@ -3,18 +3,19 @@ using System.IO;
 using System.Threading.Tasks;
 using System;
 
-// ÆÄÀÏ ¼±ÅÃ ÀÎÅÍÆäÀÌ½º
+// íŒŒì¼ ì„ íƒ ì¸í„°í˜ì´ìŠ¤
 public interface IFileBrowser
 {
     Task<string> OpenFilePanelAsync(string title, string fileTypes);
+
 }
 
-// PC¿ë ÆÄÀÏ ¼±ÅÃ±â ±¸Çö
+// PCìš© íŒŒì¼ ì„ íƒê¸° êµ¬í˜„
 public class PCFileBrowser : IFileBrowser
 {
     public Task<string> OpenFilePanelAsync(string title, string fileTypes)
     {
-        // Áö¿øÇÏ´Â ÆÄÀÏ È®ÀåÀÚ ÇÊÅÍ »ı¼º
+        // ì§€ì›í•˜ëŠ” íŒŒì¼ í™•ì¥ì í•„í„° ìƒì„±
         string[] extensions = fileTypes.Split(',');
         string filters = string.Join(",", extensions);
         string path = UnityEditor.EditorUtility.OpenFilePanelWithFilters(title, "", new string[] { "Files", filters });
@@ -23,9 +24,86 @@ public class PCFileBrowser : IFileBrowser
     }
 }
 
+// ì•ˆë“œë¡œì´ë“œìš© íŒŒì¼ ì„ íƒê¸° êµ¬í˜„
+public class MobileFileBrowser : IFileBrowser
+{
+    private static string selectedFilePath;
+    private TaskCompletionSource<string> taskCompletionSource;
+
+    public MobileFileBrowser()
+    {
+        
+    }
+    public static void SetSelectedFile(string path)
+    {
+        selectedFilePath = path;
+    }
+
+    public Task<string> OpenFilePanelAsync(string title, string fileTypes)
+    {
+#if UNITY_ANDROID && !UNITY_EDITOR
+        taskCompletionSource = new TaskCompletionSource<string>();
+
+        try
+        {
+            AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
+            AndroidJavaObject currentActivity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
+
+            // Intent ìƒì„±
+            AndroidJavaObject intent = new AndroidJavaObject("android.content.Intent", "android.intent.action.GET_CONTENT");
+            intent.Call<AndroidJavaObject>("setType", ConvertFileTypeToMimeType(fileTypes));
+            intent.Call<AndroidJavaObject>("addCategory", "android.intent.category.OPENABLE");
+
+            // UnityPlayerActivityì— ê²°ê³¼ ì²˜ë¦¬ ë“±ë¡
+            currentActivity.Call("startActivityForResult", intent, 1); // requestCode = 1
+        }
+        catch (Exception e)
+        {
+            Debug.LogError("MobileFileBrowser: íŒŒì¼ ì„ íƒ ì¤‘ ì˜¤ë¥˜ ë°œìƒ - " + e.Message);
+            taskCompletionSource.SetResult(null);
+        }
+        return taskCompletionSource.Task;
+#else
+        Debug.LogError("MobileFileBrowserëŠ” ì•ˆë“œë¡œì´ë“œì—ì„œë§Œ ë™ì‘í•©ë‹ˆë‹¤.");
+        return Task.FromResult<string>(null);
+#endif
+    }
+
+    // íŒŒì¼ ì„ íƒ ê²°ê³¼ ì²˜ë¦¬
+    public void HandleFileSelection(string path)
+    {
+        if (taskCompletionSource != null)
+        {
+            Debug.Log($"íŒŒì¼ ê²½ë¡œ ì„¤ì •ë¨: {path}");
+            taskCompletionSource.SetResult(path);
+            taskCompletionSource = null;
+        }
+        else
+        {
+            Debug.LogError("TaskCompletionSourceê°€ ì„¤ì •ë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤.");
+        }
+    }
+
+    private string ConvertFileTypeToMimeType(string fileTypes)
+    {
+        string[] extensions = fileTypes.Split(',');
+        if (extensions.Length == 1)
+        {
+            switch (extensions[0].ToLower())
+            {
+                case "mp3": return "audio/*";
+                case "png":
+                case "jpg":
+                case "jpeg": return "image/*";
+                default: return "*/*";
+            }
+        }
+        return "*/*";
+    }
+}
 
 
-// ÆÄÀÏ ¾÷·Îµå Å¬·¡½º
+// íŒŒì¼ ì—…ë¡œë“œ í´ë˜ìŠ¤
 public class FileUploader
 {
     private IFileBrowser fileBrowser;
@@ -35,54 +113,54 @@ public class FileUploader
         this.fileBrowser = fileBrowser;
     }
 
-    // À½¾Ç ÆÄÀÏ ¾÷·Îµå
+    // ìŒì•… íŒŒì¼ ì—…ë¡œë“œ
     public async Task<string> UploadMusicFileAsync()
     {
         try
         {
-            // mp3 ÆÄÀÏ ¼±ÅÃ
+            // mp3 íŒŒì¼ ì„ íƒ
             string path = await fileBrowser.OpenFilePanelAsync("Select MP3 file", "mp3");
 
             if (!string.IsNullOrEmpty(path) && File.Exists(path))
             {
-                Debug.Log("À½¾Ç ÆÄÀÏÀÌ ¼º°øÀûÀ¸·Î ¼±ÅÃµÇ¾ú½À´Ï´Ù: " + path);
+                Debug.Log("ìŒì•… íŒŒì¼ì´ ì„±ê³µì ìœ¼ë¡œ ì„ íƒë˜ì—ˆìŠµë‹ˆë‹¤: " + path);
                 return path;
             }
             else
             {
-                Debug.Log("À½¾Ç ÆÄÀÏÀ» ¼±ÅÃÇÏÁö ¾Ê¾Ò°Å³ª ÆÄÀÏÀÌ Á¸ÀçÇÏÁö ¾Ê½À´Ï´Ù.");
+                Debug.Log("ìŒì•… íŒŒì¼ì„ ì„ íƒí•˜ì§€ ì•Šì•˜ê±°ë‚˜ íŒŒì¼ì´ ì¡´ì¬í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤.");
                 return null;
             }
         }
         catch (Exception ex)
         {
-            Debug.LogError("À½¾Ç ÆÄÀÏ ¾÷·Îµå Áß ¿À·ù ¹ß»ı: " + ex.Message);
+            Debug.LogError("ìŒì•… íŒŒì¼ ì—…ë¡œë“œ ì¤‘ ì˜¤ë¥˜ ë°œìƒ: " + ex.Message);
             return null;
         }
     }
 
-    // ÀÌ¹ÌÁö ÆÄÀÏ ¾÷·Îµå (PNG, JPG Áö¿ø)
+    // ì´ë¯¸ì§€ íŒŒì¼ ì—…ë¡œë“œ (PNG, JPG ì§€ì›)
     public async Task<string> UploadImageFileAsync()
     {
         try
         {
-            // ÀÌ¹ÌÁö ÆÄÀÏ ¼±ÅÃ
+            // ì´ë¯¸ì§€ íŒŒì¼ ì„ íƒ
             string path = await fileBrowser.OpenFilePanelAsync("Select Image file", "png,jpg,jpeg");
 
             if (!string.IsNullOrEmpty(path) && File.Exists(path))
             {
-                Debug.Log("ÀÌ¹ÌÁö ÆÄÀÏÀÌ ¼º°øÀûÀ¸·Î ¼±ÅÃµÇ¾ú½À´Ï´Ù: " + path);
+                Debug.Log("ì´ë¯¸ì§€ íŒŒì¼ì´ ì„±ê³µì ìœ¼ë¡œ ì„ íƒë˜ì—ˆìŠµë‹ˆë‹¤: " + path);
                 return path;
             }
             else
             {
-                Debug.Log("ÀÌ¹ÌÁö ÆÄÀÏÀ» ¼±ÅÃÇÏÁö ¾Ê¾Ò°Å³ª ÆÄÀÏÀÌ Á¸ÀçÇÏÁö ¾Ê½À´Ï´Ù.");
+                Debug.Log("ì´ë¯¸ì§€ íŒŒì¼ì„ ì„ íƒí•˜ì§€ ì•Šì•˜ê±°ë‚˜ íŒŒì¼ì´ ì¡´ì¬í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤.");
                 return null;
             }
         }
         catch (Exception ex)
         {
-            Debug.LogError("ÀÌ¹ÌÁö ÆÄÀÏ ¾÷·Îµå Áß ¿À·ù ¹ß»ı: " + ex.Message);
+            Debug.LogError("ì´ë¯¸ì§€ íŒŒì¼ ì—…ë¡œë“œ ì¤‘ ì˜¤ë¥˜ ë°œìƒ: " + ex.Message);
             return null;
         }
     }
