@@ -33,7 +33,7 @@ public class ScoreCalc : MonoBehaviour
         fBManager = new FBManager();
         double finalScore = Score(1531,0, 0, 0, 0, 1531);
         Rank(finalScore);
-        PlayerResult playerResult = new PlayerResult(finalScore, GameManager.FBManager.newUser.Email);
+        PlayerResult playerResult = new PlayerResult(finalScore, GameManager.FBManager.newUser.UserId);
         await GameManager.FBManager.SaveResultAsync(playerResult,"beatmapid");
         // // 결과를 로컬에 저장
         // ResultManager resultManager = new ResultManager();

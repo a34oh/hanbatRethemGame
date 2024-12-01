@@ -481,13 +481,13 @@ public class FBManager
             Debug.Log($"파일 업로드 중: {fileType} - {Path.GetFileName(localFilePath)}");
 
             //모바일로 돌릴 때
-            /*var uriObject = GetContentUriFromFilePath(localFilePath);
+            var uriObject = GetContentUriFromFilePath(localFilePath);
             string uriString = uriObject.Call<string>("toString").Replace("%20", " ");
             Debug.Log($"uriString : {uriString}");
         
-            await storageReference.PutFileAsync(uriString);*/
+            await storageReference.PutFileAsync(uriString);
             //PC 에디터로 돌릴 때
-            await storageReference.PutFileAsync(localFilePath);
+            //await storageReference.PutFileAsync(localFilePath);
             Uri uri = await storageReference.GetDownloadUrlAsync();
             Debug.Log($"파일 업로드 성공: {fileType} - {Path.GetFileName(localFilePath)} - URL: {uri}");
             return (fileType, Path.GetFileName(localFilePath), uri.ToString());

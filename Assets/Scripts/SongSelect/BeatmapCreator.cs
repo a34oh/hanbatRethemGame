@@ -35,12 +35,12 @@ public class BeatmapCreator : MonoBehaviour
     void Awake()
     {
         // 모바일로 돌릴 때
-      /*  
+      
         MobileFileBrowser mobileFileBrowser = new MobileFileBrowser();
         handler.Initialize(mobileFileBrowser);
-        fileUploader = new FileUploader(mobileFileBrowser);*/
+        fileUploader = new FileUploader(mobileFileBrowser);
         //PC 에디터로 돌릴 때
-        fileUploader = new FileUploader(new PCFileBrowser());
+       // fileUploader = new FileUploader(new PCFileBrowser());
 
     }
         /*
@@ -326,7 +326,7 @@ PreviewTime:{beatmap.previewTime}"
             var sortedNotes = beatmap.noteDataList.OrderBy(note => note.spawnTime).ToList();
 
             // 노트 데이터 텍스트 구성
-            List<string> noteLines = new List<string> { "\n[Notes]" };
+            List<string> noteLines = new List<string> { "\n\n[Notes]" };
             foreach (var note in sortedNotes)
             {
                 noteLines.Add($"{note.xPosition},{note.spawnTime}");
@@ -338,6 +338,8 @@ PreviewTime:{beatmap.previewTime}"
 
             // 전부 완료 시 Firebase에 업로드
             await UploadBeatmapToFirebase(beatmap);
+
+            SceneManager.LoadScene(SceneType.SongSelectScene.ToString());
         }
         catch (Exception ex)
         {

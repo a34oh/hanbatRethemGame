@@ -84,6 +84,9 @@ public class BeatmapParser
 
                 switch (key)
                 {
+                    case "Id":
+                        beatmap.id = value;
+                        break;
                     case "Title":
                         beatmap.title = value;
                         break;
@@ -119,6 +122,7 @@ public class BeatmapParser
                             Debug.LogWarning($"DateAdded 형식이 올바르지 않음: {value}");
                         }
                         break;
+
                     // 필요한 경우 추가적인 키 처리 (예: BPM, EndTime 등)
                     default:
                         break;
