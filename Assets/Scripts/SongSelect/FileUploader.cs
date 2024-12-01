@@ -9,7 +9,7 @@ public interface IFileBrowser
     Task<string> OpenFilePanelAsync(string title, string fileTypes);
 
 }
-/*
+
 // PC용 파일 선택기 구현
 public class PCFileBrowser : IFileBrowser
 {
@@ -22,7 +22,7 @@ public class PCFileBrowser : IFileBrowser
 
         return Task.FromResult(string.IsNullOrEmpty(path) ? null : path);
     }
-}*/
+}
 
 // 안드로이드용 파일 선택기 구현
 public class MobileFileBrowser : IFileBrowser
