@@ -9,113 +9,247 @@ using Firebase.Extensions;
 using UnityEngine;
 using System.Linq;
 using System.Net.Http;
+using Firebase.Auth;
+using UnityEngine.SceneManagement;
 
-//Beatmap.cs            ºñÆ®¸ÊÀÇ Á¤º¸¸¦ º¸À¯ÇÑ Å¬·¡½º 
-//FBManager.cs          ÆÄÀÌ¾îº£ÀÌ½º °ü¸®
-//DBManager.cs          ·ÎÄÃ db °ü¸®
-//GameManager.cs        °¢Á¾ Manager¸¦ SingletoneÀ» ÅëÇØ ÅëÇÕ °ü¸®
-//BeatmapCreator.cs     ºñÆ®¸ÊÀ» »ı¼ºÇÏ°í ºñÆ®¸ÊÀ» txtÈ­ÇÑ ÆÄÀÏ, °î, ÀÌ¹ÌÁö¸¦ ·ÎÄÃ¿¡ ÀúÀåÇÏ´Â Å¬·¡½º. (»ç¿ëÀÚ ÀÔ·Â Á¤º¸ : ºñÆ®¸Ê Á¦¸ñ, ºñÆ®¸Ê ¾ÆÆ¼½ºÆ®, ºñÆ®¸Ê Á¦ÀÛÀÚ, ºñÆ®¸Ê °î(mp3), ºñÆ®¸Ê ÀÌ¹ÌÁö)
-//BeatmapUploader.cs    BeatmapCreator¿¡¼­ »ı¼ºÇÑ ·ÎÄÃ¿¡ ÀúÀåµÇ¾î ÀÖ´Â ºñÆ®¸ÊÀ» txtÈ­ÇÑ ÆÄÀÏ, °î, ÀÌ¹ÌÁö¸¦ ÆÄÀÌ¾îº£ÀÌ½º¿¡ ¾÷·ÎµåÇÏ´Â Å¬·¡½º
-//BeatmapParser.cs      ·ÎÄÃ¿¡ ÀúÀåµÈ ºñÆ®¸Ê Á¤º¸¸¦ ÀĞ¾îµéÀÌ´Â Å¬·¡½º.ºñÆ®¸ÊÀ» txtÈ­ÇÑ ÆÄÀÏµéÀ» beatmapÅ¬·¡½º·Î ÆÄ½ÌÇÏ°í, ÀÌ¹ÌÁö¿Í °î Á¤º¸¸¦ ºÒ·¯¿È
-//ResourceCache.cs      ÀÌ¹ÌÁö, °î µî ¼Ò½ºÆÄÀÏ ¹Ì¸® ·Îµå
-//Å¬·¡½ºÀÌ¸§¸øÁ¤ÇÔ.cs   ÆÄÀÌ¾îº£ÀÌ½º¿¡ ¾÷·Îµå µÈ ºñÆ®¸ÊÀ» ScrollView·Î º¸¿©ÁÖ´Â UI Å¬·¡½º(°¡Àå ÃÖ±Ù¿¡ ÆÄÀÌ¾îº£ÀÌ½º¿¡ ¾÷·Îµå µÈ ºñÆ®¸ÊÀ» ±âÁØÀ¸·Î ÃÖ´ë 30°³ ¹­À½À¸·Î. ±× ÀÌ»óÀº È­»ìÇ¥ ¹öÆ°À» ÅëÇØ ·Îµå)
-//Å¬·¡½ºÀÌ¸§¸øÁ¤ÇÔ.cs   ·ÎÄÃ¿¡ ÀúÀåµÈ ºñÆ®¸ÊÀ» ScrollView·Î º¸¿©ÁÖ´Â UI Å¬·¡½º
+//Beatmap.cs            ??????? ?????? ?????? ????? 
+//FBManager.cs          ???????? ????
+//DBManager.cs          ???? db ????
+//GameManager.cs        ???? Manager?? Singletone?? ???? ???? ????
+//BeatmapCreator.cs     ??????? ??????? ??????? txt??? ????, ??, ??????? ????? ??????? ?????. (????? ??? ???? : ????? ????, ????? ??????, ????? ??????, ????? ??(mp3), ????? ?????)
+//BeatmapUploader.cs    BeatmapCreator???? ?????? ????? ?????? ??? ??????? txt??? ????, ??, ??????? ?????????? ???ï¿½ï¿½???? ?????
+//BeatmapParser.cs      ????? ????? ????? ?????? ?ï¿½ï¿½????? ?????.??????? txt??? ??????? beatmap??????? ??????, ??????? ?? ?????? ?????
+//ResourceCache.cs      ?????, ?? ?? ??????? ??? ?ï¿½ï¿½?
+//??????????????.cs   ?????????? ???ï¿½ï¿½? ?? ??????? ScrollView?? ??????? UI ?????(???? ???? ?????????? ???ï¿½ï¿½? ?? ??????? ???????? ??? 30?? ????????. ?? ????? ???? ????? ???? ?ï¿½ï¿½?)
+//??????????????.cs   ????? ????? ??????? ScrollView?? ??????? UI ?????
 
-//(¼­¹ö¿¡ ¾÷·Îµå µÈ ºñÆ®¸ÊÀ» ScrollView·Î º¸¿©ÁÖ´Â UI Å¬·¡½º¿¡¼­ ºñÆ®¸Ê Å¬¸¯ ½Ã ·ÎÄÃ db¿¡ ºñÆ®¸ÊÀ» ´Ù¿î¹Ş´Â ¹æ½Ä) - ÀÌ°Ç ¾îµğ¿¡ ÀÛ¼ºÇÏ´Â°Ô ÁÁÀ»±î
-//(³»ºÎ ÀúÀå¼Ò¿¡ ÀúÀåµÇ¾î ÀÖ´Â ÆÄÀÏµéÀ» ·ÎÄÃ db¿¡ ÀúÀå?ÇØÁÖ´Â Å¬·¡½º. ÇâÈÄ ´Ù½Ã °ÔÀÓÀ» ½ÃÀÛÇßÀ» ¶§ ¹Ù·Î ·ÎµùÀÌ µÇ°Ô ²û ÇÏ±â À§ÇÔ.))
+//(?????? ???ï¿½ï¿½? ?? ??????? ScrollView?? ??????? UI ????????? ????? ??? ?? ???? db?? ??????? ????? ???) - ??? ??? ?????ï¿½ï¿½???????
+//(???? ?????? ?????? ??? ??????? ???? db?? ?????????? ?????. ???? ??? ?????? ???????? ?? ??? ?ï¿½ï¿½??? ??? ?? ??? ????.))
 public class FBManager
 {
-    public string FBurl = "https://rethemgame-default-rtdb.firebaseio.com/";  // ¿©±â¸¦ Firebase ConsoleÀÇ Database URL·Î º¯°æ
-    public string StorageBucketUrl = "gs://rethemgame.firebasestorage.app"; // ¿©±â¸¦ Firebase ConsoleÀÇ Storage Bucket URL·Î º¯°æ
+    private FirebaseAuth auth; // íŒŒì´ì–´ë² ì´ìŠ¤ ì¸ì¦ ê°ì²´
+    public string FBurl = "https://rethemgame-default-rtdb.firebaseio.com/";  // íŒŒì´ì–´ë² ì´ìŠ¤ ë°ì´í„°ë² ì´ìŠ¤ URL
+    public string StorageBucketUrl = "gs://rethemgame.firebasestorage.app"; // íŒŒì´ì–´ë² ì´ìŠ¤ ìŠ¤í† ë¦¬ì§€ ë²„í‚· URL
 
-    private DatabaseReference databaseRef;
-    private FirebaseStorage storage;
-    private bool isOnline = true;
-
+    private DatabaseReference databaseRef; // íŒŒì´ì–´ë² ì´ìŠ¤ ë°ì´í„°ë² ì´ìŠ¤ ì°¸ì¡°
+    private FirebaseStorage storage; // íŒŒì´ì–´ë² ì´ìŠ¤ ìŠ¤í† ë¦¬ì§€ ê°ì²´
+    private bool isOnline = true; // ì˜¨ë¼ì¸ ìƒíƒœ í™•ì¸
+    AuthResult authResult;
+    public FirebaseUser newUser;
     enum FileType
     {
         Audio,
         Image,
         Text
     }
-    // Firebase ÃÊ±âÈ­
+    // Firebase ì´ˆê¸°í™”
     public async Task InitializeFirebase()
     {
         var dependencyStatus = await FirebaseApp.CheckAndFixDependenciesAsync();
         if (dependencyStatus == DependencyStatus.Available)
         {
-            // Firebase ¾Û ÃÊ±âÈ­
             FirebaseApp app = FirebaseApp.DefaultInstance;
-
-            // Database URL°ú Storage Bucket URLÀ» ¸í½ÃÀûÀ¸·Î ¼³Á¤
             app.Options.DatabaseUrl = new Uri(FBurl);
             app.Options.StorageBucket = StorageBucketUrl;
 
-            // Firebase Database¿Í Storage ÀÎ½ºÅÏ½º ÃÊ±âÈ­
             databaseRef = FirebaseDatabase.GetInstance(app, FBurl).RootReference;
             storage = FirebaseStorage.GetInstance(app, StorageBucketUrl);
 
-            Debug.Log("Firebase°¡ ¼º°øÀûÀ¸·Î ÃÊ±âÈ­µÇ¾ú½À´Ï´Ù.");
+            auth = FirebaseAuth.GetAuth(app); // FirebaseAuth ê°ì²´ ì´ˆê¸°í™”
+
+            Debug.Log("íŒŒì´ì–´ë² ì´ìŠ¤ê°€ ì„±ê³µì ìœ¼ë¡œ ì´ˆê¸°í™”ë˜ì—ˆìŠµë‹ˆë‹¤.");
         }
         else
         {
-            Debug.LogError("Firebase ÀÇÁ¸¼º È®ÀÎ ½ÇÆĞ: " + dependencyStatus);
-            isOnline = false; // Firebase ÃÊ±âÈ­ ½ÇÆĞ ½Ã ¿ÀÇÁ¶óÀÎ »óÅÂ·Î ¼³Á¤
+            Debug.LogError("íŒŒì´ì–´ë² ì´ìŠ¤ ì¢…ì†ì„± í™•ì¸ ì‹¤íŒ¨: " + dependencyStatus);
+            isOnline = false;
         }
     }
 
+    public void login(string id, string pw)
+    {
+        // auth = FirebaseAuth.DefaultInstance;
+        // ï¿½ï¿½ï¿½ï¿½ï¿½Ç´ï¿½ ï¿½Ô¼ï¿½ : ï¿½Ì¸ï¿½ï¿½Ï°ï¿½ ï¿½ï¿½Ğ¹ï¿½È£ï¿½ï¿½ ï¿½Î±ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
+        auth.SignInWithEmailAndPasswordAsync(id, pw).ContinueWithOnMainThread(
+            task => {
+                if (task.IsCanceled)
+                {
+                    Debug.LogError("ï¿½Î±ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½");
+                    return;
+                }
+                if (task.IsFaulted)
+                {
+                    foreach (var exception in task.Exception.Flatten().InnerExceptions)
+                    {
+                        Debug.LogError($"ï¿½Î±ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½: {exception.Message}");
+                    }
+                    return;
+                }
 
-    // ¿ÀÇÁ¶óÀÎ »óÅÂ È®ÀÎ
+                authResult = task.Result;
+                newUser = authResult.User;
+
+                Debug.Log($"ï¿½Î±ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½: {newUser.Email}, UID: {newUser.UserId}");
+                SceneManager.LoadScene(SceneType.SongSelectScene.ToString());
+            });
+        
+    }
+    public void register(string id, string pw) 
+    {
+        // auth = FirebaseAuth.DefaultInstance;
+        // ï¿½ï¿½ï¿½ï¿½ï¿½Ç´ï¿½ ï¿½Ô¼ï¿½ : ï¿½Ì¸ï¿½ï¿½Ï°ï¿½ ï¿½ï¿½Ğ¹ï¿½È£ï¿½ï¿½ È¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
+        auth.CreateUserWithEmailAndPasswordAsync(id, pw).ContinueWithOnMainThread(
+            task => 
+            {
+                if (task.IsCanceled)
+                {
+                    Debug.LogError("È¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½");
+                    return;
+                }
+                if (task.IsFaulted)
+                {
+                    foreach (var exception in task.Exception.Flatten().InnerExceptions)
+                    {
+                        Debug.LogError($"È¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½: {exception.Message}");
+                    }
+                    return;
+                }
+
+                AuthResult register_authResult = task.Result;
+                FirebaseUser register_newUser = authResult.User;
+
+                Debug.Log($"È¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½: {register_newUser.Email}, UID: {register_newUser.UserId}");
+            });
+    }
+    public bool isauth()
+    {
+        if(auth == null || FirebaseApp.DefaultInstance == null) return false;
+        else return true;
+    }
+
+    // ???????? ???? ???
     public bool IsOnline()
     {
         return isOnline;
     }
+    public async Task SaveResultAsync(PlayerResult result, string beatmapName)
+    {
+        string localPath = Path.Combine(Application.persistentDataPath, "Results", beatmapName);
+        string resultFile = Path.Combine(localPath, "results.json");
 
-    // ºñÆ®¸Ê ¾÷·Îµå. ¿¹±âÄ¡ ¸øÇÑ ÀÌÀ¯·Î ½ÇÆĞ ½Ã Æú´õ ÀÌ¸§ ¹× ÅØ½ºÆ® ÆÄÀÏ º¯°æ Ãë¼Ò Ãß°¡, ÆÄÀÌ¾îº£ÀÌ½º metaData ¾÷·Îµå ½ÇÆĞ ½Ã, stroage ¾÷·Îµåµµ Ãë¼ÒÇØ¾ß ÇÔ.
+        List<PlayerResult> results = new List<PlayerResult>();
+
+        try
+        {
+            // Create directory if it doesn't exist
+            if (!Directory.Exists(localPath))
+                Directory.CreateDirectory(localPath);
+
+            // Read existing results if the file exists
+            if (File.Exists(resultFile))
+            {
+                string existingData = File.ReadAllText(resultFile);
+                results = JsonUtility.FromJson<ListWrapper<PlayerResult>>(existingData)?.Items ?? new List<PlayerResult>();
+            }
+
+            // Add new result
+            results.Add(result);
+
+            // Write back to file
+            string json = JsonUtility.ToJson(new ListWrapper<PlayerResult> { Items = results }, true);
+            File.WriteAllText(resultFile, json);
+
+            Debug.Log($"Result saved locally: {result.playerScore}");
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"Failed to save result locally: {ex.Message}");
+        }
+
+        // If online, upload the highest result
+        if (IsOnline())
+        {
+            await UploadHighestResultToServerAsync(beatmapName, results);
+        }
+    }
+
+    private async Task UploadHighestResultToServerAsync(string beatmapName, List<PlayerResult> results)
+    {
+        try
+        {
+            // Determine highest score
+            var highestResult = results.OrderByDescending(r => r.playerScore).First();
+
+            string databasePath = $"Results/{FirebaseAuth.DefaultInstance.CurrentUser.UserId}/{beatmapName}";
+
+            // FirebaseëŠ” Dictionary í˜•ì‹ì„ ê¶Œì¥
+            var resultData = new Dictionary<string, object>
+            {
+                { "playerScore", highestResult.playerScore },
+                { "playerId", highestResult.playerId },
+                { "playTime", highestResult.playTime }
+            };
+
+            await databaseRef.Child(databasePath).SetValueAsync(resultData);
+
+            Debug.Log("Highest result uploaded to server.");
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"Failed to upload result to server: {ex.Message}");
+        }
+    }
+    // Wrapper for JSON serialization
+    [Serializable]
+    public class ListWrapper<T>
+    {
+        public List<T> Items;
+    }
+    // ë¹„íŠ¸ë§µ ì—…ë¡œë“œ. ì˜ˆê¸°ì¹˜ ëª»í•œ ì´ìœ ë¡œ ì‹¤íŒ¨ ì‹œ í´ë” ì´ë¦„ ë° í…ìŠ¤íŠ¸ íŒŒì¼ ë³€ê²½ ì·¨ì†Œ ì¶”ê°€, íŒŒì´ì–´ë² ì´ìŠ¤ metaData ì—…ë¡œë“œ ì‹¤íŒ¨ ì‹œ, stroage ì—…ë¡œë“œë„ ì·¨ì†Œí•´ì•¼ í•¨.
     public async Task UploadBeatmapToFirebase(Beatmap beatmap)
     {
         if (!IsOnline())
         {
-            Debug.LogWarning("¿ÀÇÁ¶óÀÎ »óÅÂÀÔ´Ï´Ù. Firebase¿¡ ¾÷·ÎµåÇÒ ¼ö ¾ø½À´Ï´Ù.");
+            Debug.LogWarning("ì˜¤í”„ë¼ì¸ ìƒíƒœì…ë‹ˆë‹¤. Firebaseì— ì—…ë¡œë“œí•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
             return;
         }
 
         string localFolderName = GetBeatmapFolderName(beatmap);
 
-        // Firebase¿¡¼­ °íÀ¯ ID °¡Á®¿À±â
+        // Firebaseì—ì„œ ê³ ìœ  ID ê°€ì ¸ì˜¤ê¸°
         string uniqueId = await GetNextBeatmapIdAsync();
-       
-        beatmap.id = uniqueId; // Beatmap ID ¾÷µ¥ÀÌÆ®
 
-        // Æú´õ ÀÌ¸§ »ı¼º
+        beatmap.id = uniqueId; // Beatmap ID ì—…ë°ì´íŠ¸
+
+        // í´ë” ì´ë¦„ ìƒì„±
         string folderName = GetBeatmapFolderName(beatmap);
         string newFolderPath = RenameLocalBeatmapFolder(localFolderName, folderName);
 
         if (string.IsNullOrEmpty(newFolderPath))
         {
-            Debug.LogError("Æú´õ ÀÌ¸§ º¯°æ ½ÇÆĞ·Î ¾÷·Îµå¸¦ Áß´ÜÇÕ´Ï´Ù.");
+            Debug.LogError("í´ë” ì´ë¦„ ë³€ê²½ ì‹¤íŒ¨ë¡œ ì—…ë¡œë“œë¥¼ ì¤‘ë‹¨í•©ë‹ˆë‹¤.");
             return;
         }
         DirectoryInfo dirInfo = new DirectoryInfo(newFolderPath);
 
-        // ÆÄÀÏµéÀ» Firebase Storage¿¡ º´·Ä·Î ¾÷·Îµå
+        // íŒŒì¼ë“¤ì„ Firebase Storageì— ë³‘ë ¬ë¡œ ì—…ë¡œë“œ
         var uploadResults = await UploadFilesToFirebaseStorageAsync(dirInfo, beatmap, folderName);
 
-        // ¾÷·Îµå °á°ú Ã³¸® ¹× ¸ŞÅ¸µ¥ÀÌÅÍ ÁØºñ
+        // ì—…ë¡œë“œ ê²°ê³¼ ì²˜ë¦¬ ë° ë©”íƒ€ë°ì´í„° ì¤€ë¹„
         var metadata = PrepareMetadataForServer(uploadResults, beatmap);
 
         if (metadata == null)
         {
-            Debug.LogError("ÆÄÀÏ ¾÷·Îµå ½ÇÆĞ·Î ¸ŞÅ¸µ¥ÀÌÅÍ »ı¼ºÀÌ Áß´ÜµÇ¾ú½À´Ï´Ù.");
+            Debug.LogError("íŒŒì¼ ì—…ë¡œë“œ ì‹¤íŒ¨ë¡œ ë©”íƒ€ë°ì´í„° ìƒì„±ì´ ì¤‘ë‹¨ë˜ì—ˆìŠµë‹ˆë‹¤.");
             return;
         }
 
-        // ¸ŞÅ¸µ¥ÀÌÅÍ¸¦ Firebase Realtime Database¿¡ ¾÷·Îµå
+        // ë©”íƒ€ë°ì´í„°ë¥¼ Firebase Realtime Databaseì— ì—…ë¡œë“œ
         if (await UploadMetadataToDatabaseAsync(metadata, folderName))
         {
-            // ID Áõ°¡
+            // ID ì¦ê°€
             await IncrementBeatmapIdAsync(uniqueId);
-            Debug.Log("ID°¡ ¼º°øÀûÀ¸·Î Áõ°¡µÇ¾ú½À´Ï´Ù.");
+            Debug.Log("IDê°€ ì„±ê³µì ìœ¼ë¡œ ì¦ê°€ë˜ì—ˆìŠµë‹ˆë‹¤.");
         }
     }
     private string GetBeatmapFolderName(Beatmap beatmap)
@@ -131,12 +265,12 @@ public class FBManager
         try
         {
             Directory.Move(localFolderPath, newFolderPath);
-            Debug.Log("Æú´õ ÀÌ¸§ º¯°æ ¿Ï·á.");
+            Debug.Log("í´ë” ì´ë¦„ ë³€ê²½ ì™„ë£Œ.");
             return newFolderPath;
         }
         catch (Exception ex)
         {
-            Debug.LogError($"Æú´õ ÀÌ¸§ º¯°æ ½ÇÆĞ: {ex.Message}");
+            Debug.LogError($"í´ë” ì´ë¦„ ë³€ê²½ ì‹¤íŒ¨: {ex.Message}");
             return null;
         }
     }
@@ -144,7 +278,7 @@ public class FBManager
     {
         var uploadTasks = new List<Task<(FileType fileType, string fileName, string downloadUrl)>>();
 
-        // ÅØ½ºÆ® ÆÄÀÏ ¾÷·Îµå
+        // í…ìŠ¤íŠ¸ íŒŒì¼ ì—…ë¡œë“œ
         foreach (var txtFile in dirInfo.GetFiles("*.txt"))
         {
             try
@@ -155,11 +289,11 @@ public class FBManager
             }
             catch (Exception ex)
             {
-                Debug.LogError($"ÅØ½ºÆ® ÆÄÀÏ Ã³¸® Áß ¿À·ù ¹ß»ı: {txtFile.Name}, ¿À·ù: {ex.Message}");
+                Debug.LogError($"í…ìŠ¤íŠ¸ íŒŒì¼ ì²˜ë¦¬ ì¤‘ ì˜¤ë¥˜ ë°œìƒ: {txtFile.Name}, ì˜¤ë¥˜: {ex.Message}");
             }
         }
 
-        // ¿Àµğ¿À ¹× ÀÌ¹ÌÁö ÆÄÀÏ ¾÷·Îµå
+        // ì˜¤ë””ì˜¤ ë° ì´ë¯¸ì§€ íŒŒì¼ ì—…ë¡œë“œ
         foreach (var file in dirInfo.GetFiles())
         {
             if (file.Name == beatmap.audioName || file.Name == beatmap.imageName)
@@ -172,25 +306,25 @@ public class FBManager
                 }
                 catch (Exception ex)
                 {
-                    Debug.LogError($"ÆÄÀÏ ¾÷·Îµå Áß ¿À·ù ¹ß»ı: {file.Name}, ¿À·ù: {ex.Message}");
+                    Debug.LogError($"íŒŒì¼ ì—…ë¡œë“œ ì¤‘ ì˜¤ë¥˜ ë°œìƒ: {file.Name}, ì˜¤ë¥˜: {ex.Message}");
                 }
             }
         }
 
-       /* // ½ºÅ² ÆÄÀÏ ¾÷·Îµå
-        foreach (var skinFile in dirInfo.GetFiles("*.skin"))
-        {
-            try
-            {
-                string firebaseStoragePath = $"Songs/{beatmap.id} {beatmap.artist} - {beatmap.title}/{skinFile.Name}";
-                uploadTasks.Add(UploadFileToFirebaseStorage(skinFile.FullName, firebaseStoragePath, FileType.Skin));
-            }
-            catch (Exception ex)
-            {
-                Debug.LogError($"½ºÅ² ÆÄÀÏ Ã³¸® Áß ¿À·ù ¹ß»ı: {skinFile.Name}, ¿À·ù: {ex.Message}");
-            }
-        }
-      */
+        /* // ìŠ¤í‚¨ íŒŒì¼ ì—…ë¡œë“œ
+         foreach (var skinFile in dirInfo.GetFiles("*.skin"))
+         {
+             try
+             {
+                 string firebaseStoragePath = $"Songs/{beatmap.id} {beatmap.artist} - {beatmap.title}/{skinFile.Name}";
+                 uploadTasks.Add(UploadFileToFirebaseStorage(skinFile.FullName, firebaseStoragePath, FileType.Skin));
+             }
+             catch (Exception ex)
+             {
+                 Debug.LogError($"ìŠ¤í‚¨ íŒŒì¼ ì²˜ë¦¬ ì¤‘ ì˜¤ë¥˜ ë°œìƒ: {skinFile.Name}, ì˜¤ë¥˜: {ex.Message}");
+             }
+         }
+       */
 
         var results = await Task.WhenAll(uploadTasks);
 
@@ -198,7 +332,7 @@ public class FBManager
     }
 
 
-    // ÅØ½ºÆ® ÆÄÀÏ¿¡¼­ Id °ªÀ» ¾÷µ¥ÀÌÆ®
+    // í…ìŠ¤íŠ¸ íŒŒì¼ì—ì„œ Id ê°’ì„ ì—…ë°ì´íŠ¸
     private async Task UpdateIdInTextFile(string filePath, string newId)
     {
         var updatedLines = new List<string>();
@@ -234,14 +368,14 @@ public class FBManager
             }
         }
 
-        // ÆÄÀÏ ¾÷µ¥ÀÌÆ®
+        // íŒŒì¼ ì—…ë°ì´íŠ¸
         await File.WriteAllLinesAsync(filePath, updatedLines);
 
         return;
     }
 
-    // Firebase Database¿¡ ºñÆ®¸Ê ¸ŞÅ¸µ¥ÀÌÅÍ ¾÷·Îµå. beatmapÀ» ÅëÂ°·Î ¾È ¿Ã¤©¸®´Â ÀÌÀ¯´Â beatmapÀÇ ¸ğµç µ¥ÀÌÅÍ°¡ ÇÊ¿äÇÒ °Í °°Áö´Â ¾Ê°í, (audioPath, imagePath µî)
-    // ¼­¹ö¿¡¸¸ Á¸ÀçÇØ¾ß ÇÏ´Â µ¥ÀÌÅÍµéÀÌ ÀÖ±â ¶§¹®. (AudioStroageUrl, ImageStroageUrl µî)
+    // Firebase Databaseì— ë¹„íŠ¸ë§µ ë©”íƒ€ë°ì´í„° ì—…ë¡œë“œ. beatmapì„ í†µì§¸ë¡œ ì•ˆ ì˜¬ã„¹ë¦¬ëŠ” ì´ìœ ëŠ” beatmapì˜ ëª¨ë“  ë°ì´í„°ê°€ í•„ìš”í•  ê²ƒ ê°™ì§€ëŠ” ì•Šê³ , (audioPath, imagePath ë“±)
+    // ì„œë²„ì—ë§Œ ì¡´ì¬í•´ì•¼ í•˜ëŠ” ë°ì´í„°ë“¤ì´ ìˆê¸° ë•Œë¬¸. (AudioStroageUrl, ImageStroageUrl ë“±)
     private Dictionary<string, object> PrepareMetadataForServer(
     IEnumerable<(FileType fileType, string fileName, string downloadUrl)> uploadResults,
     Beatmap beatmap)
@@ -266,7 +400,7 @@ public class FBManager
         {
             if (result.downloadUrl == null)
             {
-                Debug.LogError($"ÆÄÀÏ ¾÷·Îµå ½ÇÆĞ - À¯Çü: {result.fileType}, ÆÄÀÏ¸í: {result.fileName}");
+                Debug.LogError($"íŒŒì¼ ì—…ë¡œë“œ ì‹¤íŒ¨ - ìœ í˜•: {result.fileType}, íŒŒì¼ëª…: {result.fileName}");
                 return null;
             }
 
@@ -282,9 +416,9 @@ public class FBManager
                     ((List<string>)metadata["StorageTextUrls"]).Add(result.downloadUrl);
                     ((List<string>)metadata["TextNames"]).Add(result.fileName);
                     break;
-   //             case "Skin":
-   //                 ((List<string>)metadata["StorageSkinUrls"]).Add(result.downloadUrl);
-   //                 break;
+                    //             case "Skin":
+                    //                 ((List<string>)metadata["StorageSkinUrls"]).Add(result.downloadUrl);
+                    //                 break;
             }
         }
 
@@ -295,38 +429,104 @@ public class FBManager
         try
         {
             await databaseRef.Child("Songs").Child(folderName).SetValueAsync(metadata);
-            Debug.Log("¸ŞÅ¸µ¥ÀÌÅÍ°¡ Realtime Database¿¡ ¼º°øÀûÀ¸·Î ¾÷·ÎµåµÇ¾ú½À´Ï´Ù.");
+            Debug.Log("ë©”íƒ€ë°ì´í„°ê°€ Realtime Databaseì— ì„±ê³µì ìœ¼ë¡œ ì—…ë¡œë“œë˜ì—ˆìŠµë‹ˆë‹¤.");
             return true;
         }
         catch (Exception ex)
         {
-            Debug.LogError($"¸ŞÅ¸µ¥ÀÌÅÍ ¾÷·Îµå Áß ¿À·ù ¹ß»ı: {ex.Message}");
+            Debug.LogError($"ë©”íƒ€ë°ì´í„° ì—…ë¡œë“œ ì¤‘ ì˜¤ë¥˜ ë°œìƒ: {ex.Message}");
             return false;
         }
     }
-    // Firebase Storage¿¡ ÆÄÀÏ ¾÷·Îµå ¸Ş¼­µå
+    /*
+    // Firebase Storageì— íŒŒì¼ ì—…ë¡œë“œ ë©”ì„œë“œ
+    private async Task<(FileType fileType, string fileName, string downloadUrl)> UploadFileToFirebaseStorage(string localFilePath, string firebaseStoragePath, FileType fileType)
+    {
+        var storageReference = storage.GetReferenceFromUrl(StorageBucketUrl).Child(firebaseStoragePath);
+        try
+        {
+            var reference = storage.GetReferenceFromUrl(StorageBucketUrl);
+            Debug.Log("Firebase Storage Reference ìƒì„± ì„±ê³µ!");
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"Firebase Storage Reference ìƒì„± ì‹¤íŒ¨: {ex.Message}");
+        }
+        try
+        {
+            Debug.Log($"StorageBucketUrl: {StorageBucketUrl}");
+            // Firebase Storage ê²½ë¡œ í™•ì¸ ë¡œê·¸ ì¶”ê°€
+            Debug.Log($"ì—…ë¡œë“œ ëŒ€ìƒ Firebase ê²½ë¡œ: {firebaseStoragePath}");
+
+
+            // íŒŒì¼ëª… ë””ì½”ë”©
+            string fileName = Uri.UnescapeDataString(Path.GetFileName(localFilePath));
+            Debug.Log($"ë””ì½”ë”©ëœ íŒŒì¼ëª…: {fileName}");
+
+            Debug.Log($"íŒŒì¼ ì—…ë¡œë“œ ì¤‘: {fileType} - {Path.GetFileName(localFilePath)}");
+            Debug.Log($"localFilePath : {localFilePath}");
+
+            var uriObject = GetContentUriFromFilePath(localFilePath);
+            string uriString = uriObject.Call<string>("toString");
+            uriString.Replace("%20", " ");
+            Debug.Log($"uriString : {uriString}");
+
+            await storageReference.PutFileAsync(localFilePath);
+            Uri uri = await storageReference.GetDownloadUrlAsync();
+            Debug.Log($"íŒŒì¼ ì—…ë¡œë“œ ì„±ê³µ: {fileType} - {Path.GetFileName(localFilePath)} - URL: {uri}");
+            return (fileType, Path.GetFileName(localFilePath), uri.ToString());
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"íŒŒì¼ ì—…ë¡œë“œ ì‹¤íŒ¨ - ìœ í˜•: {fileType}, íŒŒì¼ëª…: {Path.GetFileName(localFilePath)}, ì˜¤ë¥˜: {ex.Message}");
+            return (fileType, Path.GetFileName(localFilePath), null);
+        }
+    }*/
+
+    // Firebase Storageì— íŒŒì¼ ì—…ë¡œë“œ ë©”ì„œë“œ
     private async Task<(FileType fileType, string fileName, string downloadUrl)> UploadFileToFirebaseStorage(string localFilePath, string firebaseStoragePath, FileType fileType)
     {
         var storageReference = storage.GetReferenceFromUrl(StorageBucketUrl).Child(firebaseStoragePath);
 
         try
         {
-            Debug.Log($"ÆÄÀÏ ¾÷·Îµå Áß: {fileType} - {Path.GetFileName(localFilePath)}");
+            Debug.Log($"íŒŒì¼ ì—…ë¡œë“œ ì¤‘: {fileType} - {Path.GetFileName(localFilePath)}");
 
-            await storageReference.PutFileAsync(localFilePath);
+            var uriObject = GetContentUriFromFilePath(localFilePath);
+            string uriString = uriObject.Call<string>("toString").Replace("%20", " ");
+            Debug.Log($"uriString : {uriString}");
+        
+            await storageReference.PutFileAsync(uriString);
+            //PC ì—ë””í„°ë¡œ ëŒë¦´ ë•Œ
+            //await storageReference.PutFileAsync(localFilePath);
             Uri uri = await storageReference.GetDownloadUrlAsync();
-            Debug.Log($"ÆÄÀÏ ¾÷·Îµå ¼º°ø: {fileType} - {Path.GetFileName(localFilePath)} - URL: {uri}");
+            Debug.Log($"íŒŒì¼ ì—…ë¡œë“œ ì„±ê³µ: {fileType} - {Path.GetFileName(localFilePath)} - URL: {uri}");
             return (fileType, Path.GetFileName(localFilePath), uri.ToString());
         }
         catch (Exception ex)
         {
-            Debug.LogError($"ÆÄÀÏ ¾÷·Îµå ½ÇÆĞ - À¯Çü: {fileType}, ÆÄÀÏ¸í: {Path.GetFileName(localFilePath)}, ¿À·ù: {ex.Message}");
+            Debug.LogError($"íŒŒì¼ ì—…ë¡œë“œ ì‹¤íŒ¨ - ìœ í˜•: {fileType}, íŒŒì¼ëª…: {Path.GetFileName(localFilePath)}, ì˜¤ë¥˜: {ex.Message}");
             return (fileType, Path.GetFileName(localFilePath), null);
         }
     }
 
 
-    // Firebase¿¡¼­ ´ÙÀ½ °íÀ¯ ID °¡Á®¿À±â
+
+
+    private AndroidJavaObject GetContentUriFromFilePath(string filePath)
+    {
+        // Create a Java File object
+        using (var file = new AndroidJavaObject("java.io.File", filePath))
+        {
+            // Get the Uri from android.net.Uri.fromFile(File)
+            var uri = new AndroidJavaClass("android.net.Uri")
+                .CallStatic<AndroidJavaObject>("fromFile", file);
+            return uri;
+        }
+    }
+
+
+    // Firebaseì—ì„œ ë‹¤ìŒ ê³ ìœ  ID ê°€ì ¸ì˜¤ê¸°
     private async Task<string> GetNextBeatmapIdAsync()
     {
         var idSnapshot = await databaseRef.Child("NextBeatmapId").GetValueAsync();
@@ -335,25 +535,31 @@ public class FBManager
         return currentId.ToString();
     }
 
-    // ¾÷·Îµå ¼º°ø ½Ã °íÀ¯ ID¸¦ Áõ°¡
+    // ì—…ë¡œë“œ ì„±ê³µ ì‹œ ê³ ìœ  IDë¥¼ ì¦ê°€
     private async Task IncrementBeatmapIdAsync(string currentId)
     {
         int nextId = int.Parse(currentId) + 1;
         await databaseRef.Child("NextBeatmapId").SetValueAsync(nextId);
-        Debug.Log($"NextBeatmapId idÁõ°¡ {nextId}");
+        Debug.Log($"NextBeatmapId idì¦ê°€ {nextId}");
     }
 
-    //ºñÆ®¸Ê Á¤º¸ ºÒ·¯¿À±â
+    //ë¹„íŠ¸ë§µ ì •ë³´ ë¶ˆëŸ¬ì˜¤ê¸°
     public async Task<List<Beatmap>> FetchBeatmapMetadataAsync(int startIndex = 0, int limit = 10)
     {
+        if (databaseRef != null)
+            Debug.Log($"databaseRef : {databaseRef }");
+        else
+        {
+            Debug.Log("databaseRef is null");
+        }
         var beatmaps = new List<Beatmap>();
         try
         {
-            // Firebase¿¡¼­ Songs ³ëµåÀÇ µ¥ÀÌÅÍ¸¦ ³¯Â¥ ±âÁØÀ¸·Î Á¤·Ä
+            // Firebaseì—ì„œ Songs ë…¸ë“œì˜ ë°ì´í„°ë¥¼ ë‚ ì§œ ê¸°ì¤€ìœ¼ë¡œ ì •ë ¬
             var snapshot = await databaseRef
                 .Child("Songs")
                 .OrderByChild("DateAdded")
-                .LimitToLast(startIndex + limit) // ½ÃÀÛ ÀÎµ¦½º + Á¦ÇÑ °¹¼ö
+                .LimitToLast(startIndex + limit) // ì‹œì‘ ì¸ë±ìŠ¤ + ì œí•œ ê°¯ìˆ˜
                 .GetValueAsync();
 
             if (snapshot.Exists)
@@ -361,7 +567,7 @@ public class FBManager
                 var allData = snapshot.Children
                     .Select(child => child.Value as Dictionary<string, object>)
                     .Where(data => data != null)
-                    .OrderByDescending(data => data["DateAdded"].ToString()) // ÃÖ½Å ¼ø Á¤·Ä
+                    .OrderByDescending(data => data["DateAdded"].ToString()) // ìµœì‹  ìˆœ ì •ë ¬
                     .Skip(startIndex)
                     .Take(limit)
                     .ToList();
@@ -375,26 +581,26 @@ public class FBManager
                     }
                     catch (Exception ex)
                     {
-                        Debug.LogError($"ºñÆ®¸Ê µ¥ÀÌÅÍ¸¦ º¯È¯ Áß ¿À·ù ¹ß»ı: {ex.Message}");
+                        Debug.LogError($"ë¹„íŠ¸ë§µ ë°ì´í„°ë¥¼ ë³€í™˜ ì¤‘ ì˜¤ë¥˜ ë°œìƒ: {ex.Message}");
                     }
                 }
 
-                Debug.Log($"ÃÑ {allData.Count}°³ÀÇ ºñÆ®¸Ê µ¥ÀÌÅÍ¸¦ ºÒ·¯¿Ô½À´Ï´Ù.");
+                Debug.Log($"ì´ {allData.Count}ê°œì˜ ë¹„íŠ¸ë§µ ë°ì´í„°ë¥¼ ë¶ˆëŸ¬ì™”ìŠµë‹ˆë‹¤.");
             }
             else
             {
-                Debug.LogWarning("ºñÆ®¸Ê µ¥ÀÌÅÍ°¡ ¾ø½À´Ï´Ù.");
+                Debug.LogWarning("ë¹„íŠ¸ë§µ ë°ì´í„°ê°€ ì—†ìŠµë‹ˆë‹¤.");
             }
         }
         catch (Exception ex)
         {
-            Debug.LogError($"ºñÆ®¸Ê µ¥ÀÌÅÍ¸¦ ºÒ·¯¿À´Â Áß ¿À·ù ¹ß»ı: {ex.Message}");
+            Debug.LogError($"ë¹„íŠ¸ë§µ ë°ì´í„°ë¥¼ ë¶ˆëŸ¬ì˜¤ëŠ” ì¤‘ ì˜¤ë¥˜ ë°œìƒ: {ex.Message}");
         }
         return beatmaps;
     }
     private Beatmap ParseBeatmapFromMetadata(Dictionary<string, object> data)
     {
-        // TextNames ÆÄ½Ì
+        // TextNames íŒŒì‹±
         var textNames = data.ContainsKey("TextNames")
             ? (data["TextNames"] as List<object>)?.Select(o => o.ToString()).ToList()
             : new List<string>();
@@ -424,7 +630,7 @@ public class FBManager
 
         string localFolderPath = Path.Combine(Application.persistentDataPath, "Songs", firebaseFolderName).Replace("\\", "/");
 
-        // ·ÎÄÃ Æú´õ°¡ ¾øÀ¸¸é »ı¼º
+        // ë¡œì»¬ í´ë”ê°€ ì—†ìœ¼ë©´ ìƒì„±
         if (!Directory.Exists(localFolderPath))
         {
             Directory.CreateDirectory(localFolderPath);
@@ -437,25 +643,25 @@ public class FBManager
             {
                 string audioUrl = snapshot.Child("StorageAudioUrl").Value?.ToString().Replace(" ", "%20");
                 string imageUrl = snapshot.Child("StorageImageUrl").Value?.ToString().Replace(" ", "%20");
-                
+
                 imageUrl.Replace(" ", "%20");
                 Debug.Log($"audioUrl : {audioUrl}");
                 Debug.Log($"imageUrl : {imageUrl}");
                 var downloadTasks = new List<Task>();
 
-                // ¿Àµğ¿À ÆÄÀÏ ´Ù¿î·Îµå
+                // ì˜¤ë””ì˜¤ íŒŒì¼ ë‹¤ìš´ë¡œë“œ
                 if (!string.IsNullOrEmpty(audioUrl))
                 {
                     downloadTasks.Add(DownloadFileFromUrlAsync(audioUrl, localFolderPath, beatmap.audioName));
                 }
 
-                // ÀÌ¹ÌÁö ÆÄÀÏ ´Ù¿î·Îµå
+                // ì´ë¯¸ì§€ íŒŒì¼ ë‹¤ìš´ë¡œë“œ
                 if (!string.IsNullOrEmpty(imageUrl))
                 {
                     downloadTasks.Add(DownloadFileFromUrlAsync(imageUrl, localFolderPath, beatmap.imageName));
                 }
 
-                // ÅØ½ºÆ® ÆÄÀÏ ´Ù¿î·Îµå
+                // í…ìŠ¤íŠ¸ íŒŒì¼ ë‹¤ìš´ë¡œë“œ
                 foreach (string textName in beatmap.textNames)
                 {
                     string textUrl = snapshot.Child("StorageTextUrls")
@@ -465,29 +671,29 @@ public class FBManager
 
                     if (!string.IsNullOrEmpty(textUrl))
                     {
-                        Debug.Log($"´Ù¿î·ÎµåÇÒ ÅØ½ºÆ® ÆÄÀÏ URL: {textUrl}, ÆÄÀÏ ÀÌ¸§: {textName}");
+                        Debug.Log($"ë‹¤ìš´ë¡œë“œí•  í…ìŠ¤íŠ¸ íŒŒì¼ URL: {textUrl}, íŒŒì¼ ì´ë¦„: {textName}");
                         downloadTasks.Add(DownloadFileFromUrlAsync(textUrl, localFolderPath, textName));
                     }
                     else
                     {
-                        Debug.LogWarning($"URLÀÌ Á¸ÀçÇÏÁö ¾Ê°Å³ª ÅØ½ºÆ® ÆÄÀÏ ÀÌ¸§À» Ã£À» ¼ö ¾ø½À´Ï´Ù: {textName}");
+                        Debug.LogWarning($"URLì´ ì¡´ì¬í•˜ì§€ ì•Šê±°ë‚˜ í…ìŠ¤íŠ¸ íŒŒì¼ ì´ë¦„ì„ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤: {textName}");
                     }
                 }
 
-                Debug.Log($"ºñÆ®¸Ê {firebaseFolderName} ´Ù¿î·Îµå Áß...");
+                Debug.Log($"ë¹„íŠ¸ë§µ {firebaseFolderName} ë‹¤ìš´ë¡œë“œ ì¤‘...");
 
                 await Task.WhenAll(downloadTasks);
 
-                Debug.Log($"ºñÆ®¸Ê {firebaseFolderName}ÀÇ ¸ğµç ÆÄÀÏÀÌ ´Ù¿î·ÎµåµÇ¾ú½À´Ï´Ù.");
+                Debug.Log($"ë¹„íŠ¸ë§µ {firebaseFolderName}ì˜ ëª¨ë“  íŒŒì¼ì´ ë‹¤ìš´ë¡œë“œë˜ì—ˆìŠµë‹ˆë‹¤.");
             }
             else
             {
-                Debug.LogWarning($"ºñÆ®¸Ê {firebaseFolderName}¿¡ ÇØ´çÇÏ´Â µ¥ÀÌÅÍ°¡ ¾ø½À´Ï´Ù.");
+                Debug.LogWarning($"ë¹„íŠ¸ë§µ {firebaseFolderName}ì— í•´ë‹¹í•˜ëŠ” ë°ì´í„°ê°€ ì—†ìŠµë‹ˆë‹¤.");
             }
         }
         catch (Exception ex)
         {
-            Debug.LogError($"ÆÄÀÏ ´Ù¿î·Îµå Áß ¿À·ù ¹ß»ı: {ex.Message}");
+            Debug.LogError($"íŒŒì¼ ë‹¤ìš´ë¡œë“œ ì¤‘ ì˜¤ë¥˜ ë°œìƒ: {ex.Message}");
         }
     }
     private async Task DownloadFileFromUrlAsync(string url, string localFolderPath, string fileName)
@@ -501,15 +707,15 @@ public class FBManager
 
             using (HttpClient client = new HttpClient())
             {
-                var fileBytes = await client.GetByteArrayAsync(url); 
+                var fileBytes = await client.GetByteArrayAsync(url);
                 await File.WriteAllBytesAsync(localFilePath, fileBytes);
             }
 
-            Debug.Log($"ÆÄÀÏ ´Ù¿î·Îµå ¿Ï·á: {fileName}");
+            Debug.Log($"íŒŒì¼ ë‹¤ìš´ë¡œë“œ ì™„ë£Œ: {fileName}");
         }
         catch (Exception ex)
         {
-            Debug.LogError($"ÆÄÀÏ ´Ù¿î·Îµå Áß ¿À·ù ¹ß»ı ({fileName}): {ex.Message}");
+            Debug.LogError($"íŒŒì¼ ë‹¤ìš´ë¡œë“œ ì¤‘ ì˜¤ë¥˜ ë°œìƒ ({fileName}): {ex.Message}");
         }
     }
 

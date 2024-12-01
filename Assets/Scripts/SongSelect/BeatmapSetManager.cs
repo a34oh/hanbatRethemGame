@@ -16,51 +16,26 @@ public class BeatmapSetManager : MonoBehaviour
     public RawImage backgroundImage;
 
  //   private List<BeatmapSetNode> beatmapSetNodes;
-    private BeatmapParser beatmapParser;
 
   //  private int currentFocusIndex = 0;
-    private Beatmap currentBeatmap; // ÇöÀç Àç»ı ÁßÀÎ °î
+    private Beatmap currentBeatmap; // í˜„ì¬ ì¬ìƒ ì¤‘ì¸ ê³¡
 
     private void Start()
     {
-        beatmapParser = new BeatmapParser();
-        InitializeBeatmapSetsAsync().ConfigureAwait(false);
-        //µ¥ÀÌÅÍ ÃÊ±âÈ­¸¦ GameManager¿¡¼­ ¼öÇàÇÏ°Ô º¯°æ, BeatmapSetList¸¦ ÅëÇØ ºñÆ®¸Ê µ¥ÀÌÅÍ °ü¸®.
+        UpdateScrollView();
+        //ë°ì´í„° ì´ˆê¸°í™”ë¥¼ GameManagerì—ì„œ ìˆ˜í–‰í•˜ê²Œ ë³€ê²½, BeatmapSetListë¥¼ í†µí•´ ë¹„íŠ¸ë§µ ë°ì´í„° ê´€ë¦¬.
     }
 
-    // °î ·Îµå
-    private async Task InitializeBeatmapSetsAsync()
-    {
-        // BeatmapParser¸¦ ÅëÇØ BeatmapÀ» ·ÎµåÇÏ°í, BeatmapSetList¿¡ Ãß°¡
-        try
-        {
-            // BeatmapParser¸¦ ÅëÇØ ºñÆ®¸Ê µ¥ÀÌÅÍ ·Îµå
-            List<Beatmap> beatmaps = await beatmapParser.ParserAllBeatmapsAsync();
-
-            if (beatmaps.Count == 0)
-            {
-                messageText.text = "ÇöÀç Ãß°¡µÈ °îÀÌ ¾ø½À´Ï´Ù.";
-                return;
-            }
-
-            messageText.text = "";
-
-            // ScrollView¿¡ ºñÆ®¸Ê µ¥ÀÌÅÍ¸¦ Ã¤¿ò
-            UpdateScrollView(beatmaps);
-        }
-        catch (Exception ex)
-        {
-            Debug.LogError($"ºñÆ®¸Ê ÃÊ±âÈ­ Áß ¿À·ù ¹ß»ı: {ex.Message}");
-        }
+    // ê³¡ ë¡œë“œ
 
         /*
         Debug.Log($"beatmaps count : {beatmaps.Count}");
-        // BeatmapSetList¿¡ Beatmap Ãß°¡
-        // ¿©±â¼­´Â ´Ü¼øÈ÷ ¸ğµç BeatmapÀ» ÇÏ³ªÀÇ BeatmapSetÀ¸·Î Ãß°¡ÇÏÁö¸¸,
-        // ½ÇÁ¦·Î´Â ¾ÆÆ¼½ºÆ®¿Í Á¦¸ñÀ» ±âÁØÀ¸·Î ±×·ìÈ­ÇØ¾ß ÇÕ´Ï´Ù.
+        // BeatmapSetListì— Beatmap ì¶”ê°€
+        // ì—¬ê¸°ì„œëŠ” ë‹¨ìˆœíˆ ëª¨ë“  Beatmapì„ í•˜ë‚˜ì˜ BeatmapSetìœ¼ë¡œ ì¶”ê°€í•˜ì§€ë§Œ,
+        // ì‹¤ì œë¡œëŠ” ì•„í‹°ìŠ¤íŠ¸ì™€ ì œëª©ì„ ê¸°ì¤€ìœ¼ë¡œ ê·¸ë£¹í™”í•´ì•¼ í•©ë‹ˆë‹¤.
         //GameManager.BeatmapSetList.AddSongGroup(beatmaps);
 
-        // BeatmapµéÀ» ¾ÆÆ¼½ºÆ®¿Í Á¦¸ñÀ» ±âÁØÀ¸·Î ±×·ìÈ­
+        // Beatmapë“¤ì„ ì•„í‹°ìŠ¤íŠ¸ì™€ ì œëª©ì„ ê¸°ì¤€ìœ¼ë¡œ ê·¸ë£¹í™”
         Dictionary<string, List<Beatmap>> beatmapGroups = new Dictionary<string, List<Beatmap>>();
 
         foreach (Beatmap beatmap in beatmaps)
@@ -73,19 +48,19 @@ public class BeatmapSetManager : MonoBehaviour
             beatmapGroups[key].Add(beatmap);
         }
 
-        // BeatmapSetList¿¡ ±×·ìÈ­µÈ BeatmapSet Ãß°¡
+        // BeatmapSetListì— ê·¸ë£¹í™”ëœ BeatmapSet ì¶”ê°€
         foreach (var group in beatmapGroups)
         {
             GameManager.BeatmapSetList.AddSongGroup(group.Value);
         }
 
-        // ¸®½ºÆ®¸¦ Àç±¸¼ºÇÏ±â À§ÇØ Reset È£Ãâ
+        // ë¦¬ìŠ¤íŠ¸ë¥¼ ì¬êµ¬ì„±í•˜ê¸° ìœ„í•´ Reset í˜¸ì¶œ
          GameManager.BeatmapSetList.Reset();
 
-        // Á¤·Ä ¹× ÃÊ±âÈ­
+        // ì •ë ¬ ë° ì´ˆê¸°í™”
         GameManager.BeatmapSetList.Init();
 
-        // ³ëµå ¸ñ·Ï °¡Á®¿À±â
+        // ë…¸ë“œ ëª©ë¡ ê°€ì ¸ì˜¤ê¸°
         beatmapSetNodes = new List<BeatmapSetNode>();
         Debug.Log($"GameManager.BeatmapSetList.Size() : {GameManager.BeatmapSetList.Size()}");
 
@@ -95,24 +70,34 @@ public class BeatmapSetManager : MonoBehaviour
             node.InitializeUI(beatmapSetNodePrefab, scrollViewContent);
             beatmapSetNodes.Add(node);
 
-            // Å¬¸¯ ÀÌº¥Æ® µî·Ï
+            // í´ë¦­ ì´ë²¤íŠ¸ ë“±ë¡
             node.OnClick += OnBeatmapSetNodeClick;
         }
 
-        // Ã¹ ¹øÂ° ³ëµå¿¡ Æ÷Ä¿½º ¼³Á¤
+        // ì²« ë²ˆì§¸ ë…¸ë“œì— í¬ì»¤ìŠ¤ ì„¤ì •
         SetFocusNode(0);
     }
     else
     {
-        Debug.LogError("°î ·Îµù Áß ¿À·ù ¹ß»ı: " + task.Exception.Message);
+        Debug.LogError("ê³¡ ë¡œë”© ì¤‘ ì˜¤ë¥˜ ë°œìƒ: " + task.Exception.Message);
     }
        */
-    }
     
-    // ½ºÅ©·Ñºä¿¡ °î ¸ñ·Ï Ç¥½Ã
-    private void UpdateScrollView(List<Beatmap> beatmaps)
+    // ìŠ¤í¬ë¡¤ë·°ì— ê³¡ ëª©ë¡ í‘œì‹œ
+    public void UpdateScrollView()
     {
-        // ±âÁ¸¿¡ »ı¼ºµÈ °î ¾ÆÀÌÅÛ Á¦°Å (°»½Å ½Ã Áßº¹ ¹æÁö)
+        var beatmaps = GameManager.BeatmapRepository.Beatmaps;
+
+        if (beatmaps.Count == 0)
+        {
+            messageText.text = "í˜„ì¬ ì¶”ê°€ëœ ê³¡ì´ ì—†ìŠµë‹ˆë‹¤.";
+            return;
+        }
+
+        messageText.text = "";
+
+
+        // ê¸°ì¡´ì— ìƒì„±ëœ ê³¡ ì•„ì´í…œ ì œê±° (ê°±ì‹  ì‹œ ì¤‘ë³µ ë°©ì§€)
         foreach (Transform child in scrollViewContent)
         {
             Destroy(child.gameObject);
@@ -127,60 +112,60 @@ public class BeatmapSetManager : MonoBehaviour
             songItem.transform.Find("Version").GetComponent<TextMeshProUGUI>().text = beatmap.version;
 
             songItem.transform.Find("Image").GetComponent<RawImage>().texture = GameManager.ResourceCache.GetCachedImage(beatmap.localImagePath, SourceType.Local);
-            // °î ¾ÆÀÌÅÛ Å¬¸¯ ÀÌº¥Æ® µî·Ï
+            // ê³¡ ì•„ì´í…œ í´ë¦­ ì´ë²¤íŠ¸ ë“±ë¡
             songItem.GetComponent<Button>().onClick.AddListener(() => OnSongItemClick(beatmap));
 
         }
     }
-    // °î ¾ÆÀÌÅÛ Å¬¸¯ ½Ã Ã³¸®
+    // ê³¡ ì•„ì´í…œ í´ë¦­ ì‹œ ì²˜ë¦¬
     private void OnSongItemClick(Beatmap beatmap)
     {
-        Debug.Log($"{beatmap.title} °î Å¬¸¯");
+        Debug.Log($"{beatmap.title} ê³¡ í´ë¦­");
 
-        // µ¿ÀÏÇÑ °îÀÎÁö È®ÀÎ
+        // ë™ì¼í•œ ê³¡ì¸ì§€ í™•ì¸
         if (currentBeatmap == beatmap)
         {
-            SceneManager.LoadScene(SceneType.Editor.ToString());
+            SceneManager.LoadScene(SceneType.GameScene.ToString());
             return;
         }
 
         GameManager.AudioManager.PlayPreview(beatmap, SourceType.Local);
         GameManager.BackgroundManager.SetBackgroundImage(beatmap, backgroundImage, SourceType.Local);
 
-        // ÇöÀç Àç»ı ÁßÀÎ °î ¾÷µ¥ÀÌÆ®
+        // í˜„ì¬ ì¬ìƒ ì¤‘ì¸ ê³¡ ì—…ë°ì´íŠ¸
         currentBeatmap = beatmap;
     }
 
     /*
-    // Æ÷Ä¿½ºµÈ ³ëµå ¼³Á¤
+    // í¬ì»¤ìŠ¤ëœ ë…¸ë“œ ì„¤ì •
     public void SetFocusNode(int index)
     {
         if (index < 0 || index >= beatmapSetNodes.Count)
             return;
         Debug.Log($"SetFocusNode index : {index}, currentFocusIndex : {currentFocusIndex}");
-        // ÀÌÀü Æ÷Ä¿½ºµÈ ³ëµåÀÇ Æ÷Ä¿½º ÇØÁ¦
+        // ì´ì „ í¬ì»¤ìŠ¤ëœ ë…¸ë“œì˜ í¬ì»¤ìŠ¤ í•´ì œ
         beatmapSetNodes[currentFocusIndex].SetFocus(false);
 
-        // »õ·Î¿î ³ëµå¿¡ Æ÷Ä¿½º ¼³Á¤
+        // ìƒˆë¡œìš´ ë…¸ë“œì— í¬ì»¤ìŠ¤ ì„¤ì •
         currentFocusIndex = index;
         beatmapSetNodes[currentFocusIndex].SetFocus(true);
     }
 
-    // BeatmapSetNode Å¬¸¯ ½Ã Ã³¸®
+    // BeatmapSetNode í´ë¦­ ì‹œ ì²˜ë¦¬
     private void OnBeatmapSetNodeClick(BeatmapSetNode node)
     {
         Debug.Log("OnBeatmapSetNodeClick");
-        // Æ÷Ä¿½ºµÈ ³ëµå ¼³Á¤
+        // í¬ì»¤ìŠ¤ëœ ë…¸ë“œ ì„¤ì •
         int index = beatmapSetNodes.IndexOf(node);
         SetFocusNode(index);
 
-        // ³ëµå È®Àå
+        // ë…¸ë“œ í™•ì¥
         GameManager.BeatmapSetList.Expand(index);
 
-        // UI °»½Å
+        // UI ê°±ì‹ 
         RefreshUI();
 
-        // ¿Àµğ¿À ¹× ¹è°æ ÀÌ¹ÌÁö ¼³Á¤
+        // ì˜¤ë””ì˜¤ ë° ë°°ê²½ ì´ë¯¸ì§€ ì„¤ì •
         Beatmap selectedBeatmap = node.GetSelectedBeatmap();
         if (selectedBeatmap != null)
         {
@@ -189,26 +174,26 @@ public class BeatmapSetManager : MonoBehaviour
         }
     }
 
-    // UI °»½Å ¸Ş¼­µå (È®Àå/Ãà¼Ò ½Ã È£Ãâ)
+    // UI ê°±ì‹  ë©”ì„œë“œ (í™•ì¥/ì¶•ì†Œ ì‹œ í˜¸ì¶œ)
     private void RefreshUI()
     {
-        // ±âÁ¸ UI Á¦°Å
+        // ê¸°ì¡´ UI ì œê±°
         foreach (Transform child in scrollViewContent)
         {
             Destroy(child.gameObject);
         }
 
-        // ³ëµå ¸ñ·Ï °»½Å
+        // ë…¸ë“œ ëª©ë¡ ê°±ì‹ 
         beatmapSetNodes = new List<BeatmapSetNode>();
         Debug.Log($" GameManager.BeatmapSetList.Size() : { GameManager.BeatmapSetList.Size()}");
         for (int i = 0; i < GameManager.BeatmapSetList.Size(); i++)
         {
             BeatmapSetNode node = GameManager.BeatmapSetList.GetBaseNode(i) ?? GameManager.BeatmapSetList.GetNode(i);
-            Debug.Log("³ëÆ® »ı¼º");
+            Debug.Log("ë…¸íŠ¸ ìƒì„±");
             node.InitializeUI(beatmapSetNodePrefab, scrollViewContent);
             beatmapSetNodes.Add(node);
 
-            // Å¬¸¯ ÀÌº¥Æ® µî·Ï
+            // í´ë¦­ ì´ë²¤íŠ¸ ë“±ë¡
             node.OnClick += OnBeatmapSetNodeClick;
         }
     }

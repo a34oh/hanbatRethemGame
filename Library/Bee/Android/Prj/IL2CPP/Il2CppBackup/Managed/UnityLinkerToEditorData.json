@@ -6,12 +6,44 @@
         "dependencies": []
       },
       {
+        "name": "Animation",
+        "dependencies": [
+          {
+            "name": "Animator",
+            "scenes": [],
+            "dependencyType": 0,
+            "icon": null
+          },
+          {
+            "name": "AnimatorController",
+            "scenes": [],
+            "dependencyType": 1,
+            "icon": null
+          },
+          {
+            "name": "AnimatorOverrideController",
+            "scenes": [],
+            "dependencyType": 0,
+            "icon": null
+          },
+          {
+            "name": "RuntimeAnimatorController",
+            "scenes": [],
+            "dependencyType": 1,
+            "icon": null
+          }
+        ]
+      },
+      {
         "name": "Audio",
         "dependencies": [
           {
             "name": "AudioBehaviour",
             "scenes": [
-              "Assets/Scenes/SampleScene.unity"
+              "Assets/Scenes/EditorScene.unity",
+              "Assets/Scenes/OpenUI.unity",
+              "Assets/Scenes/ScoreScene.unity",
+              "Assets/Scenes/SongSelectScene.unity"
             ],
             "dependencyType": 0,
             "icon": null
@@ -25,7 +57,10 @@
           {
             "name": "AudioListener",
             "scenes": [
-              "Assets/Scenes/SampleScene.unity"
+              "Assets/Scenes/EditorScene.unity",
+              "Assets/Scenes/OpenUI.unity",
+              "Assets/Scenes/ScoreScene.unity",
+              "Assets/Scenes/SongSelectScene.unity"
             ],
             "dependencyType": 0,
             "icon": null
@@ -37,10 +72,22 @@
             "icon": null
           },
           {
+            "name": "AudioSource",
+            "scenes": [],
+            "dependencyType": 0,
+            "icon": null
+          },
+          {
             "name": "SampleClip",
             "scenes": [],
             "dependencyType": 1,
             "icon": null
+          },
+          {
+            "name": "Required by UnityWebRequestAudio Module",
+            "scenes": [],
+            "dependencyType": 2,
+            "icon": "package/com.unity.modules.unitywebrequestaudio"
           }
         ]
       },
@@ -62,7 +109,10 @@
           {
             "name": "Camera",
             "scenes": [
-              "Assets/Scenes/SampleScene.unity"
+              "Assets/Scenes/EditorScene.unity",
+              "Assets/Scenes/OpenUI.unity",
+              "Assets/Scenes/ScoreScene.unity",
+              "Assets/Scenes/SongSelectScene.unity"
             ],
             "dependencyType": 0,
             "icon": null
@@ -82,7 +132,10 @@
           {
             "name": "Cubemap",
             "scenes": [
-              "Assets/Scenes/SampleScene.unity"
+              "Assets/Scenes/EditorScene.unity",
+              "Assets/Scenes/OpenUI.unity",
+              "Assets/Scenes/ScoreScene.unity",
+              "Assets/Scenes/SongSelectScene.unity"
             ],
             "dependencyType": 0,
             "icon": null
@@ -102,7 +155,10 @@
           {
             "name": "EditorExtension",
             "scenes": [
-              "Assets/Scenes/SampleScene.unity"
+              "Assets/Scenes/EditorScene.unity",
+              "Assets/Scenes/OpenUI.unity",
+              "Assets/Scenes/ScoreScene.unity",
+              "Assets/Scenes/SongSelectScene.unity"
             ],
             "dependencyType": 1,
             "icon": null
@@ -116,7 +172,10 @@
           {
             "name": "GameObject",
             "scenes": [
-              "Assets/Scenes/SampleScene.unity"
+              "Assets/Scenes/EditorScene.unity",
+              "Assets/Scenes/OpenUI.unity",
+              "Assets/Scenes/ScoreScene.unity",
+              "Assets/Scenes/SongSelectScene.unity"
             ],
             "dependencyType": 0,
             "icon": null
@@ -142,7 +201,10 @@
           {
             "name": "LevelGameManager",
             "scenes": [
-              "Assets/Scenes/SampleScene.unity"
+              "Assets/Scenes/EditorScene.unity",
+              "Assets/Scenes/OpenUI.unity",
+              "Assets/Scenes/ScoreScene.unity",
+              "Assets/Scenes/SongSelectScene.unity"
             ],
             "dependencyType": 1,
             "icon": null
@@ -150,7 +212,9 @@
           {
             "name": "Light",
             "scenes": [
-              "Assets/Scenes/SampleScene.unity"
+              "Assets/Scenes/EditorScene.unity",
+              "Assets/Scenes/OpenUI.unity",
+              "Assets/Scenes/ScoreScene.unity"
             ],
             "dependencyType": 0,
             "icon": null
@@ -170,7 +234,10 @@
           {
             "name": "LightmapSettings",
             "scenes": [
-              "Assets/Scenes/SampleScene.unity"
+              "Assets/Scenes/EditorScene.unity",
+              "Assets/Scenes/OpenUI.unity",
+              "Assets/Scenes/ScoreScene.unity",
+              "Assets/Scenes/SongSelectScene.unity"
             ],
             "dependencyType": 0,
             "icon": null
@@ -184,33 +251,45 @@
           {
             "name": "Material",
             "scenes": [
-              "Assets/Scenes/SampleScene.unity"
+              "Assets/Scenes/EditorScene.unity",
+              "Assets/Scenes/OpenUI.unity",
+              "Assets/Scenes/ScoreScene.unity",
+              "Assets/Scenes/SongSelectScene.unity"
             ],
             "dependencyType": 0,
             "icon": null
           },
           {
             "name": "Mesh",
-            "scenes": [],
+            "scenes": [
+              "Assets/Scenes/EditorScene.unity"
+            ],
             "dependencyType": 0,
             "icon": null
           },
           {
             "name": "MeshFilter",
-            "scenes": [],
+            "scenes": [
+              "Assets/Scenes/EditorScene.unity"
+            ],
             "dependencyType": 0,
             "icon": null
           },
           {
             "name": "MeshRenderer",
-            "scenes": [],
+            "scenes": [
+              "Assets/Scenes/EditorScene.unity"
+            ],
             "dependencyType": 0,
             "icon": null
           },
           {
             "name": "MonoBehaviour",
             "scenes": [
-              "Assets/Scenes/SampleScene.unity"
+              "Assets/Scenes/EditorScene.unity",
+              "Assets/Scenes/OpenUI.unity",
+              "Assets/Scenes/ScoreScene.unity",
+              "Assets/Scenes/SongSelectScene.unity"
             ],
             "dependencyType": 0,
             "icon": null
@@ -224,7 +303,10 @@
           {
             "name": "MonoScript",
             "scenes": [
-              "Assets/Scenes/SampleScene.unity"
+              "Assets/Scenes/EditorScene.unity",
+              "Assets/Scenes/OpenUI.unity",
+              "Assets/Scenes/ScoreScene.unity",
+              "Assets/Scenes/SongSelectScene.unity"
             ],
             "dependencyType": 1,
             "icon": null
@@ -232,7 +314,10 @@
           {
             "name": "NamedObject",
             "scenes": [
-              "Assets/Scenes/SampleScene.unity"
+              "Assets/Scenes/EditorScene.unity",
+              "Assets/Scenes/OpenUI.unity",
+              "Assets/Scenes/ScoreScene.unity",
+              "Assets/Scenes/SongSelectScene.unity"
             ],
             "dependencyType": 1,
             "icon": null
@@ -263,7 +348,12 @@
           },
           {
             "name": "RectTransform",
-            "scenes": [],
+            "scenes": [
+              "Assets/Scenes/EditorScene.unity",
+              "Assets/Scenes/OpenUI.unity",
+              "Assets/Scenes/ScoreScene.unity",
+              "Assets/Scenes/SongSelectScene.unity"
+            ],
             "dependencyType": 0,
             "icon": null
           },
@@ -276,7 +366,10 @@
           {
             "name": "RenderSettings",
             "scenes": [
-              "Assets/Scenes/SampleScene.unity"
+              "Assets/Scenes/EditorScene.unity",
+              "Assets/Scenes/OpenUI.unity",
+              "Assets/Scenes/ScoreScene.unity",
+              "Assets/Scenes/SongSelectScene.unity"
             ],
             "dependencyType": 0,
             "icon": null
@@ -308,7 +401,10 @@
           {
             "name": "Shader",
             "scenes": [
-              "Assets/Scenes/SampleScene.unity"
+              "Assets/Scenes/EditorScene.unity",
+              "Assets/Scenes/OpenUI.unity",
+              "Assets/Scenes/ScoreScene.unity",
+              "Assets/Scenes/SongSelectScene.unity"
             ],
             "dependencyType": 0,
             "icon": null
@@ -320,7 +416,30 @@
             "icon": null
           },
           {
+            "name": "Skybox",
+            "scenes": [],
+            "dependencyType": 0,
+            "icon": null
+          },
+          {
+            "name": "SortingGroup",
+            "scenes": [],
+            "dependencyType": 0,
+            "icon": null
+          },
+          {
             "name": "Sprite",
+            "scenes": [
+              "Assets/Scenes/EditorScene.unity",
+              "Assets/Scenes/OpenUI.unity",
+              "Assets/Scenes/ScoreScene.unity",
+              "Assets/Scenes/SongSelectScene.unity"
+            ],
+            "dependencyType": 0,
+            "icon": null
+          },
+          {
+            "name": "SpriteAtlas",
             "scenes": [],
             "dependencyType": 0,
             "icon": null
@@ -375,10 +494,8 @@
           },
           {
             "name": "Transform",
-            "scenes": [
-              "Assets/Scenes/SampleScene.unity"
-            ],
-            "dependencyType": 0,
+            "scenes": [],
+            "dependencyType": 1,
             "icon": null
           },
           {
@@ -388,10 +505,40 @@
             "icon": "package/com.unity.modules.androidjni"
           },
           {
+            "name": "Required by Animation Module",
+            "scenes": [],
+            "dependencyType": 2,
+            "icon": "package/com.unity.modules.animation"
+          },
+          {
             "name": "Required by Audio Module",
             "scenes": [],
             "dependencyType": 2,
             "icon": "package/com.unity.modules.audio"
+          },
+          {
+            "name": "Required by IMGUI Module",
+            "scenes": [],
+            "dependencyType": 2,
+            "icon": "package/com.unity.modules.imgui"
+          },
+          {
+            "name": "Required by ImageConversion Module",
+            "scenes": [],
+            "dependencyType": 2,
+            "icon": "package/com.unity.modules.imageconversion"
+          },
+          {
+            "name": "Required by Input Module",
+            "scenes": [],
+            "dependencyType": 2,
+            "icon": "package/com.unity.modules.input"
+          },
+          {
+            "name": "Required by InputLegacy Module",
+            "scenes": [],
+            "dependencyType": 2,
+            "icon": "package/com.unity.modules.inputlegacy"
           },
           {
             "name": "Required by JSONSerialize Module",
@@ -400,10 +547,162 @@
             "icon": "package/com.unity.modules.jsonserialize"
           },
           {
+            "name": "Required by Physics Module",
+            "scenes": [],
+            "dependencyType": 2,
+            "icon": "package/com.unity.modules.physics"
+          },
+          {
+            "name": "Required by Physics2D Module",
+            "scenes": [],
+            "dependencyType": 2,
+            "icon": "package/com.unity.modules.physics2d"
+          },
+          {
             "name": "Required by RuntimeInitializeOnLoadManagerInitializer Module",
             "scenes": [],
             "dependencyType": 2,
             "icon": "package/com.unity.modules.runtimeinitializeonloadmanagerinitializer"
+          },
+          {
+            "name": "Required by SpriteMask Module",
+            "scenes": [],
+            "dependencyType": 2,
+            "icon": "package/com.unity.modules.spritemask"
+          },
+          {
+            "name": "Required by Subsystems Module",
+            "scenes": [],
+            "dependencyType": 2,
+            "icon": "package/com.unity.modules.subsystems"
+          },
+          {
+            "name": "Required by TLS Module",
+            "scenes": [],
+            "dependencyType": 2,
+            "icon": "package/com.unity.modules.tls"
+          },
+          {
+            "name": "Required by TextCoreFontEngine Module",
+            "scenes": [],
+            "dependencyType": 2,
+            "icon": "package/com.unity.modules.textcorefontengine"
+          },
+          {
+            "name": "Required by TextCoreTextEngine Module",
+            "scenes": [],
+            "dependencyType": 2,
+            "icon": "package/com.unity.modules.textcoretextengine"
+          },
+          {
+            "name": "Required by TextRendering Module",
+            "scenes": [],
+            "dependencyType": 2,
+            "icon": "package/com.unity.modules.textrendering"
+          },
+          {
+            "name": "Required by UI Module",
+            "scenes": [],
+            "dependencyType": 2,
+            "icon": "package/com.unity.modules.ui"
+          },
+          {
+            "name": "Required by UIElements Module",
+            "scenes": [],
+            "dependencyType": 2,
+            "icon": "package/com.unity.modules.uielements"
+          },
+          {
+            "name": "Required by UnityWebRequest Module",
+            "scenes": [],
+            "dependencyType": 2,
+            "icon": "package/com.unity.modules.unitywebrequest"
+          },
+          {
+            "name": "Required by UnityWebRequestAudio Module",
+            "scenes": [],
+            "dependencyType": 2,
+            "icon": "package/com.unity.modules.unitywebrequestaudio"
+          },
+          {
+            "name": "Required by UnityWebRequestTexture Module",
+            "scenes": [],
+            "dependencyType": 2,
+            "icon": "package/com.unity.modules.unitywebrequesttexture"
+          },
+          {
+            "name": "Required by VFX Module",
+            "scenes": [],
+            "dependencyType": 2,
+            "icon": "package/com.unity.modules.vfx"
+          },
+          {
+            "name": "Required by VR Module",
+            "scenes": [],
+            "dependencyType": 2,
+            "icon": "package/com.unity.modules.vr"
+          },
+          {
+            "name": "Required by XR Module",
+            "scenes": [],
+            "dependencyType": 2,
+            "icon": "package/com.unity.modules.xr"
+          }
+        ]
+      },
+      {
+        "name": "IMGUI",
+        "dependencies": [
+          {
+            "name": "Required by UIElements Module",
+            "scenes": [],
+            "dependencyType": 2,
+            "icon": "package/com.unity.modules.uielements"
+          }
+        ]
+      },
+      {
+        "name": "ImageConversion",
+        "dependencies": [
+          {
+            "name": "Required by UnityWebRequestTexture Module",
+            "scenes": [],
+            "dependencyType": 2,
+            "icon": "package/com.unity.modules.unitywebrequesttexture"
+          }
+        ]
+      },
+      {
+        "name": "Input",
+        "dependencies": [
+          {
+            "name": "Required by VR Module",
+            "scenes": [],
+            "dependencyType": 2,
+            "icon": "package/com.unity.modules.vr"
+          },
+          {
+            "name": "Required by XR Module",
+            "scenes": [],
+            "dependencyType": 2,
+            "icon": "package/com.unity.modules.xr"
+          }
+        ]
+      },
+      {
+        "name": "InputLegacy",
+        "dependencies": [
+          {
+            "name": "Required by IMGUI Module",
+            "scenes": [],
+            "dependencyType": 2,
+            "icon": "package/com.unity.modules.imgui"
+          },
+          {
+            "name": "Required by UIElements Module",
+            "scenes": [],
+            "dependencyType": 2,
+            "icon": "package/com.unity.modules.uielements"
           }
         ]
       },
@@ -411,10 +710,110 @@
         "name": "JSONSerialize",
         "dependencies": [
           {
+            "name": "Required by Input Module",
+            "scenes": [],
+            "dependencyType": 2,
+            "icon": "package/com.unity.modules.input"
+          },
+          {
             "name": "Required by RuntimeInitializeOnLoadManagerInitializer Module",
             "scenes": [],
             "dependencyType": 2,
             "icon": "package/com.unity.modules.runtimeinitializeonloadmanagerinitializer"
+          },
+          {
+            "name": "Required by Subsystems Module",
+            "scenes": [],
+            "dependencyType": 2,
+            "icon": "package/com.unity.modules.subsystems"
+          },
+          {
+            "name": "Required by UIElements Module",
+            "scenes": [],
+            "dependencyType": 2,
+            "icon": "package/com.unity.modules.uielements"
+          },
+          {
+            "name": "Required by VR Module",
+            "scenes": [],
+            "dependencyType": 2,
+            "icon": "package/com.unity.modules.vr"
+          },
+          {
+            "name": "Required by XR Module",
+            "scenes": [],
+            "dependencyType": 2,
+            "icon": "package/com.unity.modules.xr"
+          }
+        ]
+      },
+      {
+        "name": "Physics",
+        "dependencies": [
+          {
+            "name": "BoxCollider",
+            "scenes": [
+              "Assets/Scenes/EditorScene.unity"
+            ],
+            "dependencyType": 0,
+            "icon": null
+          },
+          {
+            "name": "Collider",
+            "scenes": [],
+            "dependencyType": 1,
+            "icon": null
+          },
+          {
+            "name": "MeshCollider",
+            "scenes": [
+              "Assets/Scenes/EditorScene.unity"
+            ],
+            "dependencyType": 0,
+            "icon": null
+          },
+          {
+            "name": "PhysicsManager",
+            "scenes": [],
+            "dependencyType": 1,
+            "icon": null
+          },
+          {
+            "name": "Rigidbody",
+            "scenes": [
+              "Assets/Scenes/EditorScene.unity"
+            ],
+            "dependencyType": 0,
+            "icon": null
+          },
+          {
+            "name": "Required by VR Module",
+            "scenes": [],
+            "dependencyType": 2,
+            "icon": "package/com.unity.modules.vr"
+          },
+          {
+            "name": "Required by XR Module",
+            "scenes": [],
+            "dependencyType": 2,
+            "icon": "package/com.unity.modules.xr"
+          }
+        ]
+      },
+      {
+        "name": "Physics2D",
+        "dependencies": [
+          {
+            "name": "Collider2D",
+            "scenes": [],
+            "dependencyType": 0,
+            "icon": null
+          },
+          {
+            "name": "Physics2DSettings",
+            "scenes": [],
+            "dependencyType": 1,
+            "icon": null
           }
         ]
       },
@@ -439,6 +838,12 @@
             "icon": "package/com.unity.modules.androidjni"
           },
           {
+            "name": "Required by Animation Module",
+            "scenes": [],
+            "dependencyType": 2,
+            "icon": "package/com.unity.modules.animation"
+          },
+          {
             "name": "Required by Audio Module",
             "scenes": [],
             "dependencyType": 2,
@@ -451,16 +856,360 @@
             "icon": "package/com.unity.modules.core"
           },
           {
+            "name": "Required by IMGUI Module",
+            "scenes": [],
+            "dependencyType": 2,
+            "icon": "package/com.unity.modules.imgui"
+          },
+          {
+            "name": "Required by ImageConversion Module",
+            "scenes": [],
+            "dependencyType": 2,
+            "icon": "package/com.unity.modules.imageconversion"
+          },
+          {
+            "name": "Required by Input Module",
+            "scenes": [],
+            "dependencyType": 2,
+            "icon": "package/com.unity.modules.input"
+          },
+          {
+            "name": "Required by InputLegacy Module",
+            "scenes": [],
+            "dependencyType": 2,
+            "icon": "package/com.unity.modules.inputlegacy"
+          },
+          {
             "name": "Required by JSONSerialize Module",
             "scenes": [],
             "dependencyType": 2,
             "icon": "package/com.unity.modules.jsonserialize"
           },
           {
+            "name": "Required by Physics Module",
+            "scenes": [],
+            "dependencyType": 2,
+            "icon": "package/com.unity.modules.physics"
+          },
+          {
+            "name": "Required by Physics2D Module",
+            "scenes": [],
+            "dependencyType": 2,
+            "icon": "package/com.unity.modules.physics2d"
+          },
+          {
             "name": "Required by RuntimeInitializeOnLoadManagerInitializer Module",
             "scenes": [],
             "dependencyType": 2,
             "icon": "package/com.unity.modules.runtimeinitializeonloadmanagerinitializer"
+          },
+          {
+            "name": "Required by SpriteMask Module",
+            "scenes": [],
+            "dependencyType": 2,
+            "icon": "package/com.unity.modules.spritemask"
+          },
+          {
+            "name": "Required by Subsystems Module",
+            "scenes": [],
+            "dependencyType": 2,
+            "icon": "package/com.unity.modules.subsystems"
+          },
+          {
+            "name": "Required by TLS Module",
+            "scenes": [],
+            "dependencyType": 2,
+            "icon": "package/com.unity.modules.tls"
+          },
+          {
+            "name": "Required by TextCoreFontEngine Module",
+            "scenes": [],
+            "dependencyType": 2,
+            "icon": "package/com.unity.modules.textcorefontengine"
+          },
+          {
+            "name": "Required by TextCoreTextEngine Module",
+            "scenes": [],
+            "dependencyType": 2,
+            "icon": "package/com.unity.modules.textcoretextengine"
+          },
+          {
+            "name": "Required by TextRendering Module",
+            "scenes": [],
+            "dependencyType": 2,
+            "icon": "package/com.unity.modules.textrendering"
+          },
+          {
+            "name": "Required by UI Module",
+            "scenes": [],
+            "dependencyType": 2,
+            "icon": "package/com.unity.modules.ui"
+          },
+          {
+            "name": "Required by UIElements Module",
+            "scenes": [],
+            "dependencyType": 2,
+            "icon": "package/com.unity.modules.uielements"
+          },
+          {
+            "name": "Required by UnityWebRequest Module",
+            "scenes": [],
+            "dependencyType": 2,
+            "icon": "package/com.unity.modules.unitywebrequest"
+          },
+          {
+            "name": "Required by UnityWebRequestAudio Module",
+            "scenes": [],
+            "dependencyType": 2,
+            "icon": "package/com.unity.modules.unitywebrequestaudio"
+          },
+          {
+            "name": "Required by UnityWebRequestTexture Module",
+            "scenes": [],
+            "dependencyType": 2,
+            "icon": "package/com.unity.modules.unitywebrequesttexture"
+          },
+          {
+            "name": "Required by VFX Module",
+            "scenes": [],
+            "dependencyType": 2,
+            "icon": "package/com.unity.modules.vfx"
+          },
+          {
+            "name": "Required by VR Module",
+            "scenes": [],
+            "dependencyType": 2,
+            "icon": "package/com.unity.modules.vr"
+          },
+          {
+            "name": "Required by XR Module",
+            "scenes": [],
+            "dependencyType": 2,
+            "icon": "package/com.unity.modules.xr"
+          }
+        ]
+      },
+      {
+        "name": "SpriteMask",
+        "dependencies": []
+      },
+      {
+        "name": "Subsystems",
+        "dependencies": [
+          {
+            "name": "Required by XR Module",
+            "scenes": [],
+            "dependencyType": 2,
+            "icon": "package/com.unity.modules.xr"
+          }
+        ]
+      },
+      {
+        "name": "TLS",
+        "dependencies": [
+          {
+            "name": "Required by UnityWebRequest Module",
+            "scenes": [],
+            "dependencyType": 2,
+            "icon": "package/com.unity.modules.unitywebrequest"
+          }
+        ]
+      },
+      {
+        "name": "TextCoreFontEngine",
+        "dependencies": [
+          {
+            "name": "Required by TextCoreTextEngine Module",
+            "scenes": [],
+            "dependencyType": 2,
+            "icon": "package/com.unity.modules.textcoretextengine"
+          },
+          {
+            "name": "Required by UIElements Module",
+            "scenes": [],
+            "dependencyType": 2,
+            "icon": "package/com.unity.modules.uielements"
+          }
+        ]
+      },
+      {
+        "name": "TextCoreTextEngine",
+        "dependencies": [
+          {
+            "name": "Required by IMGUI Module",
+            "scenes": [],
+            "dependencyType": 2,
+            "icon": "package/com.unity.modules.imgui"
+          },
+          {
+            "name": "Required by UIElements Module",
+            "scenes": [],
+            "dependencyType": 2,
+            "icon": "package/com.unity.modules.uielements"
+          }
+        ]
+      },
+      {
+        "name": "TextRendering",
+        "dependencies": [
+          {
+            "name": "Font",
+            "scenes": [
+              "Assets/Scenes/EditorScene.unity",
+              "Assets/Scenes/OpenUI.unity",
+              "Assets/Scenes/ScoreScene.unity",
+              "Assets/Scenes/SongSelectScene.unity"
+            ],
+            "dependencyType": 0,
+            "icon": null
+          },
+          {
+            "name": "TextMesh",
+            "scenes": [],
+            "dependencyType": 0,
+            "icon": null
+          },
+          {
+            "name": "Required by IMGUI Module",
+            "scenes": [],
+            "dependencyType": 2,
+            "icon": "package/com.unity.modules.imgui"
+          },
+          {
+            "name": "Required by TextCoreFontEngine Module",
+            "scenes": [],
+            "dependencyType": 2,
+            "icon": "package/com.unity.modules.textcorefontengine"
+          },
+          {
+            "name": "Required by TextCoreTextEngine Module",
+            "scenes": [],
+            "dependencyType": 2,
+            "icon": "package/com.unity.modules.textcoretextengine"
+          },
+          {
+            "name": "Required by UI Module",
+            "scenes": [],
+            "dependencyType": 2,
+            "icon": "package/com.unity.modules.ui"
+          },
+          {
+            "name": "Required by UIElements Module",
+            "scenes": [],
+            "dependencyType": 2,
+            "icon": "package/com.unity.modules.uielements"
+          }
+        ]
+      },
+      {
+        "name": "UI",
+        "dependencies": [
+          {
+            "name": "Canvas",
+            "scenes": [
+              "Assets/Scenes/EditorScene.unity",
+              "Assets/Scenes/OpenUI.unity",
+              "Assets/Scenes/ScoreScene.unity",
+              "Assets/Scenes/SongSelectScene.unity"
+            ],
+            "dependencyType": 0,
+            "icon": null
+          },
+          {
+            "name": "CanvasGroup",
+            "scenes": [],
+            "dependencyType": 0,
+            "icon": null
+          },
+          {
+            "name": "CanvasRenderer",
+            "scenes": [
+              "Assets/Scenes/EditorScene.unity",
+              "Assets/Scenes/OpenUI.unity",
+              "Assets/Scenes/ScoreScene.unity",
+              "Assets/Scenes/SongSelectScene.unity"
+            ],
+            "dependencyType": 0,
+            "icon": null
+          },
+          {
+            "name": "Required by UIElements Module",
+            "scenes": [],
+            "dependencyType": 2,
+            "icon": "package/com.unity.modules.uielements"
+          }
+        ]
+      },
+      {
+        "name": "UIElements",
+        "dependencies": []
+      },
+      {
+        "name": "UnityWebRequest",
+        "dependencies": [
+          {
+            "name": "Required by UnityWebRequestAudio Module",
+            "scenes": [],
+            "dependencyType": 2,
+            "icon": "package/com.unity.modules.unitywebrequestaudio"
+          },
+          {
+            "name": "Required by UnityWebRequestTexture Module",
+            "scenes": [],
+            "dependencyType": 2,
+            "icon": "package/com.unity.modules.unitywebrequesttexture"
+          }
+        ]
+      },
+      {
+        "name": "UnityWebRequestAudio",
+        "dependencies": []
+      },
+      {
+        "name": "UnityWebRequestTexture",
+        "dependencies": []
+      },
+      {
+        "name": "VFX",
+        "dependencies": [
+          {
+            "name": "VFXManager",
+            "scenes": [],
+            "dependencyType": 1,
+            "icon": null
+          },
+          {
+            "name": "VisualEffect",
+            "scenes": [],
+            "dependencyType": 0,
+            "icon": null
+          },
+          {
+            "name": "VisualEffectAsset",
+            "scenes": [],
+            "dependencyType": 0,
+            "icon": null
+          },
+          {
+            "name": "VisualEffectObject",
+            "scenes": [],
+            "dependencyType": 1,
+            "icon": null
+          }
+        ]
+      },
+      {
+        "name": "VR",
+        "dependencies": []
+      },
+      {
+        "name": "XR",
+        "dependencies": [
+          {
+            "name": "Required by VR Module",
+            "scenes": [],
+            "dependencyType": 2,
+            "icon": "package/com.unity.modules.vr"
           }
         ]
       }

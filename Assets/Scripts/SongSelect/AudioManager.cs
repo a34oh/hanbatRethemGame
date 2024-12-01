@@ -6,14 +6,14 @@ using UnityEngine.Networking;
 
 public class AudioManager
 {
-    //³ë·¡ Àç»ı ¿Àµğ¿À¼Ò½º.   È¿°úÀ½ÀÌ³ª ±âÅ¸ ¼Ò¸®´Â º°µµ ¿Àµğ¿À ¼Ò½º »ç¿ë
+    //ë…¸ë˜ ì¬ìƒ ì˜¤ë””ì˜¤ì†ŒìŠ¤.   íš¨ê³¼ìŒì´ë‚˜ ê¸°íƒ€ ì†Œë¦¬ëŠ” ë³„ë„ ì˜¤ë””ì˜¤ ì†ŒìŠ¤ ì‚¬ìš©
     public AudioSource audioSource { get;  private set; }
 
     public void Init()
     {
         GameObject audioManagerObject = new GameObject { name = "AudioManager" };
         audioSource = audioManagerObject.AddComponent<AudioSource>();
-        Debug.Log("audioSourceµî·Ï");
+        Debug.Log("audioSourceë“±ë¡");
         Object.DontDestroyOnLoad(audioManagerObject);
     }
 
@@ -23,13 +23,14 @@ public class AudioManager
         if (audioclip == null)
             Debug.Log("audioClip is null");
         else 
-            Debug.Log("audioClip ÀúÀå ¿Ï·á");
+            Debug.Log("audioClip ì €ì¥ ì™„ë£Œ");
+        audioSource.Stop();
     }
     public void PlayorStop()
     {   
         if (audioSource.isPlaying)
         {
-            audioSource.Pause(); // Àç»ı ÁßÀÌ¸é ÀÏ½ÃÁ¤Áö
+            audioSource.Pause(); // ì¬ìƒ ì¤‘ì´ë©´ ì¼ì‹œì •ì§€
         }
         else
         {
@@ -38,16 +39,16 @@ public class AudioManager
     }
     public void PlayPreview(Beatmap beatmap, SourceType sourceType)
     {
-        // ·ÎÄÃ ¶Ç´Â ¼­¹öÀÇ ¿Àµğ¿À °æ·Î¸¦ ¼±ÅÃ
+        // ë¡œì»¬ ë˜ëŠ” ì„œë²„ì˜ ì˜¤ë””ì˜¤ ê²½ë¡œë¥¼ ì„ íƒ
         string audioPath = sourceType == SourceType.Server ? beatmap.StorageAudioUrl : beatmap.localAudioPath;
 
         if (string.IsNullOrEmpty(audioPath))
         {
-            Debug.LogError("¿Àµğ¿À URLÀÌ ºñ¾î ÀÖ½À´Ï´Ù.");
+            Debug.LogError("ì˜¤ë””ì˜¤ URLì´ ë¹„ì–´ ìˆìŠµë‹ˆë‹¤.");
             return;
         }
 
-        // ResourceCache¿¡¼­ ¿Àµğ¿À Å¬¸³ °¡Á®¿À±â
+        // ResourceCacheì—ì„œ ì˜¤ë””ì˜¤ í´ë¦½ ê°€ì ¸ì˜¤ê¸°
         AudioClip audioClip = GameManager.ResourceCache.GetCachedAudio(audioPath, sourceType);
 
         if (audioClip != null)
@@ -63,7 +64,7 @@ public class AudioManager
         }
         else
         {
-            Debug.LogError("¿Àµğ¿À Å¬¸³ ·Îµå¿¡ ½ÇÆĞÇß½À´Ï´Ù.");
+            Debug.LogError("ì˜¤ë””ì˜¤ í´ë¦½ ë¡œë“œì— ì‹¤íŒ¨í–ˆìŠµë‹ˆë‹¤.");
         }
     }
 
@@ -74,6 +75,7 @@ public class AudioManager
 
     public void ClearAudio()
     {
+        audioSource.Stop();
         audioSource.clip = null;
     }
 

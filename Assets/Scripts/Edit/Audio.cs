@@ -8,18 +8,18 @@ public class Audio : MonoBehaviour
     public SheetEditor sheetEditor;
     public Beatmap beatmap;
     public AudioSource audioSource;
-    public AudioClip audioClip;
+    private AudioClip audioClip;
 
     public event Action OnAudioSetting;
 
     private float bpm;
     public float Offset { get; set; }
 
-    // 1 ¸¶µğ
+    // 1 ë§ˆë””
     public float BarPerSec { get; set; }
-    // 1 ¹ÚÀÚ
+    // 1 ë°•ì
     public float BeatPerSec { get; set; }
-    // 32 ºñÆ®
+    // 32 ë¹„íŠ¸
     public float BeatPerSec32rd { get; set; }
 
     public float audioLength;
@@ -27,7 +27,7 @@ public class Audio : MonoBehaviour
     private void Start()
     {
         audioSource = GameManager.AudioManager.audioSource;
-        Debug.Log("¿Àµğ¿À Àû¿ë");
+        Debug.Log("ì˜¤ë””ì˜¤ ì ìš©");
     }
 
 
@@ -36,18 +36,19 @@ public class Audio : MonoBehaviour
         Stop();
         this.beatmap = beatmap;
         // bpm = beatmap.bpm;
-        bpm = 120f;  //ÀÓÀÇ·Î ¼³Á¤
+        bpm = 120f;  //ì„ì˜ë¡œ ì„¤ì •
         //Offset = beatmap.offset;
-        Offset = 2f; //ÀÓÀÇ·Î ¼³Á¤
+        Offset = 2f; //ì„ì˜ë¡œ ì„¤ì •
 
+        //audioLength = audioClip.length;
+        audioClip = GameManager.ResourceCache.GetCachedAudio(beatmap.localAudioPath, SourceType.Local);
         audioLength = audioClip.length;
-        //audioClip = GameManager.ResourceCache.GetCachedAudio(beatmap.localAudioPath, SourceType.Local);
         
         GameManager.AudioManager.SetAudioClip(audioClip);
+        InitializeAudioSource(); // ì´ˆê¸°í™”
 
 
-
-        BarPerSec = 240f / bpm; // 4/4±âÁØ = 60*4, 3/4 = 60*3
+        BarPerSec = 240f / bpm; // 4/4ê¸°ì¤€ = 60*4, 3/4 = 60*3
 
         BeatPerSec = 60f / bpm;
 
@@ -55,18 +56,28 @@ public class Audio : MonoBehaviour
 
         Offset *= BarPerSec;
 
-        //Debug.Log("1¸¶µğ : " + BarPerSec);
-        //Debug.Log("32ºñÆ®: " + BeatPerSec32rd);
-        //Debug.Log("¿ÀÇÁ¼Â : " + Offset);
+        //Debug.Log("1ë§ˆë”” : " + BarPerSec);
+        //Debug.Log("32ë¹„íŠ¸: " + BeatPerSec32rd);
+        //Debug.Log("ì˜¤í”„ì…‹ : " + Offset);
         OnAudioSetting.Invoke();
     }
 
+    // ì´ê±¸ í•´ì¤˜ì•¼ ê³¡ì„ ì¬ìƒì‹œí‚¤ì§€ ì•Šì•„ë„ ìŠ¤í¬ë¡¤ ë°”ë¡œ ì´ë™ ê°€ëŠ¥
+    public void InitializeAudioSource()
+    {
+        if (!audioSource.isPlaying && audioSource.time == 0f)
+        {
+            audioSource.Play();
+            audioSource.Pause();
+            audioSource.time = 0f;
+        }
+    }
     public void PlayorPause()
     {
         //Debug.Log(audioSource.clip);
-        //Debug.Log("ÇöÀç Å¸ÀÓ»ùÇÃ Æ÷Áö¼Ç : " + audioSource.timeSamples);
-        //Debug.Log("Å¸ÀÓ»ùÇÃ ÀüÃ¼ : " + audioClip.samples);
-        //Debug.Log("Å¬¸³ ÁÖÆÄ¼ö : " + audioClip.frequency);
+        //Debug.Log("í˜„ì¬ íƒ€ì„ìƒ˜í”Œ í¬ì§€ì…˜ : " + audioSource.timeSamples);
+        //Debug.Log("íƒ€ì„ìƒ˜í”Œ ì „ì²´ : " + audioClip.samples);
+        //Debug.Log("í´ë¦½ ì£¼íŒŒìˆ˜ : " + audioClip.frequency);
 
         //if (audioClip == null)
         //    Init();
@@ -86,8 +97,8 @@ public class Audio : MonoBehaviour
     {
         if (audioClip != null)
         {
-            audioSource.timeSamples = 0;
             audioSource.Stop();
+            audioSource.timeSamples = 0;
         }
 
         sheetEditor.isPlay = false;
@@ -99,9 +110,9 @@ public class Audio : MonoBehaviour
         float currentTime = audioSource.time;
 
         currentTime += time;
-        currentTime = Mathf.Clamp(currentTime, 0f, audioClip.length - 0.0001f); // Å¬¸³ ±æÀÌ¿¡ µü ¸Â°Ô ÀÚ¸£¸é ¿À·ù°¡ ¹ß»ıÇÏ¿© ²ôÆ®¸Ó¸® Á¶±İ ½Ï¶Ò
+        currentTime = Mathf.Clamp(currentTime, 0f, audioClip.length - 0.0001f); // í´ë¦½ ê¸¸ì´ì— ë”± ë§ê²Œ ìë¥´ë©´ ì˜¤ë¥˜ê°€ ë°œìƒí•˜ì—¬ ë„íŠ¸ë¨¸ë¦¬ ì¡°ê¸ˆ ì‹¹ëš
 
-        audioSource.time = currentTime; //Debug.Log("ÇöÀç À½¾Ç À§Ä¡ " + audioSource.time);
+        audioSource.time = currentTime; //Debug.Log("í˜„ì¬ ìŒì•… ìœ„ì¹˜ " + audioSource.time);
     }
 
     public void ChangePosByProgressBar(float pos)

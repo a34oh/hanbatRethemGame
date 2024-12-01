@@ -13,7 +13,12 @@ public class GameManager : MonoBehaviour
     public static AudioManager AudioManager { get { return Instance.audioManager; } }
     public static BackgroundManager BackgroundManager { get { return Instance.backgroundManager; } }
     public static ResourceCache ResourceCache { get {return Instance.resourceCache; } }
+    public static BeatmapParser BeatmapParser { get{ return Instance.beatmapParser; } }
+    public static BeatmapRepository BeatmapRepository { get { return Instance.beatmapRepository; } }
 
+    private BeatmapRepository beatmapRepository = new BeatmapRepository();
+
+    private BeatmapParser beatmapParser = new BeatmapParser();
     private FBManager fbManager = new FBManager();
     private BeatmapSetList beatmapSetList = new BeatmapSetList();
     private AudioManager audioManager = new AudioManager();
@@ -47,5 +52,6 @@ public class GameManager : MonoBehaviour
     {
         audioManager.Init();
         await fbManager.InitializeFirebase();
+        await beatmapParser.ParserAllBeatmapsAsync();
     }
 }

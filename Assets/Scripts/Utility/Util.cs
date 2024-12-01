@@ -5,9 +5,14 @@ using UnityEngine;
 public enum SceneType
 {
     None,
-    Title,
-    SongSelect,
-    Game,
-    Result,
-    Editor
+    TitleScene,
+    SongSelectScene,
+    GameScene,
+    ResultScene,
+    EditorScene
+}
+
+public enum LayerTypes
+{
+    Grid = 8,
 }

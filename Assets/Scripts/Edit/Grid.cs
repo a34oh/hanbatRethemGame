@@ -22,6 +22,10 @@ public class Grid : MonoBehaviour
 
             lastAudioTime = currentAudioTime;
         }
+        else
+        {
+            lastAudioTime = gridGenerator.a.audioSource.time;
+        }
     }
 }
 

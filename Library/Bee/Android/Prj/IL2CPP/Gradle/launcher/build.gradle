@@ -5,7 +5,7 @@ dependencies {
     }
 
 android {
-    namespace "com.DefaultCompany.template_2024"
+    namespace "com.DefaultCompany.RethemGame"
     ndkPath "F:/Unity/Hub/Editor/2022.3.23f1/Editor/Data/PlaybackEngines/AndroidPlayer/NDK"
 
     compileSdkVersion 34
@@ -19,9 +19,9 @@ android {
     defaultConfig {
         minSdkVersion 28
         targetSdkVersion 34
-        applicationId 'com.DefaultCompany.template_2024'
+        applicationId 'com.DefaultCompany.RethemGame'
         ndk {
-            abiFilters 'armeabi-v7a'
+            abiFilters 'armeabi-v7a', 'arm64-v8a'
         }
         versionCode 1
         versionName '0.1'
@@ -52,6 +52,7 @@ android {
 
     packagingOptions {
         doNotStrip '*/armeabi-v7a/*.so'
+        doNotStrip '*/arm64-v8a/*.so'
         jniLibs {
             useLegacyPackaging true
         }

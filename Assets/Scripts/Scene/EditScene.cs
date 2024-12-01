@@ -1,27 +1,25 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class EditScene : BaseScene
 {
     public BeatmapCreator beatmapCreator;
     public ScrollViewManager scrollViewManager;
+    public Button BeatmapCreateCanvasButton;
+    public GameObject BeatmapCreateCanvas;
     protected override void Init()
     {
         base.Init();
 
-        SceneType = SceneType.Editor;
+        SceneType = SceneType.EditorScene;
         beatmapCreator.OnBeatmapCreated += scrollViewManager.InitializeWithBeatmap;
+        BeatmapCreateCanvasButton.onClick.AddListener(OnBeatmapCreateCanvasButton);
 
     }
-    void Start()
+    public void OnBeatmapCreateCanvasButton()
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        BeatmapCreateCanvas.SetActive(true);
     }
 }

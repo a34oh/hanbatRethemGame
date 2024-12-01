@@ -18,77 +18,75 @@ public class ResourceCache
     private Dictionary<string, AudioClip> serverAudioCache = new Dictionary<string, AudioClip>();
     private Dictionary<string, Texture2D> serverImageCache = new Dictionary<string, Texture2D>();
 
-    // Ä³½Ã ÃÊ±âÈ­
+    // ìºì‹œ ì´ˆê¸°í™”
     public void ClearCache(SourceType sourceType)
     {
         if (sourceType == SourceType.Server)
         {
             serverAudioCache.Clear();
             serverImageCache.Clear();
-            Debug.Log("¼­¹ö Ä³½Ã ÃÊ±âÈ­ ¿Ï·á.");
+            Debug.Log("ì„œë²„ ìºì‹œ ì´ˆê¸°í™” ì™„ë£Œ.");
         }
         else
         {
             localAudioCache.Clear();
             localImageCache.Clear();
-            Debug.Log("·ÎÄÃ Ä³½Ã ÃÊ±âÈ­ ¿Ï·á.");
+            Debug.Log("ë¡œì»¬ ìºì‹œ ì´ˆê¸°í™” ì™„ë£Œ.");
         }
     }
 
     public async Task PreloadResourcesAsync(List<string> audioPaths, List<string> imagePaths, SourceType sourceType)
     {
-        var audioTasks = new List<Task<AudioClip>>();
-        var imageTasks = new List<Task<Texture2D>>();
+        var audioTasks = new Dictionary<string, Task<AudioClip>>();
+        var imageTasks = new Dictionary<string, Task<Texture2D>>();
 
-        // ¿Àµğ¿À ·Îµå ÀÛ¾÷ »ı¼º
+        // ì˜¤ë””ì˜¤ ë¡œë“œ ì‘ì—… ìƒì„±
         foreach (string audioPath in audioPaths)
         {
             if (!GetCache(sourceType).audioCache.ContainsKey(audioPath))
             {
-                audioTasks.Add(LoadAudioAsync(audioPath, sourceType));
+                audioTasks[audioPath] = LoadAudioAsync(audioPath, sourceType);
             }
         }
 
-        // ÀÌ¹ÌÁö ·Îµå ÀÛ¾÷ »ı¼º
+        // ì´ë¯¸ì§€ ë¡œë“œ ì‘ì—… ìƒì„±
         foreach (string imagePath in imagePaths)
         {
             if (!GetCache(sourceType).imageCache.ContainsKey(imagePath))
             {
-                imageTasks.Add(LoadImageAsync(imagePath, sourceType));
+                imageTasks[imagePath] = LoadImageAsync(imagePath, sourceType);
             }
         }
 
-        // ¿Àµğ¿À¿Í ÀÌ¹ÌÁö¸¦ º´·Ä·Î Ã³¸®
+        // ì˜¤ë””ì˜¤ì™€ ì´ë¯¸ì§€ë¥¼ ë³‘ë ¬ë¡œ ì²˜ë¦¬
         var audioTask = Task.Run(async () =>
         {
-            var audioResults = await Task.WhenAll(audioTasks);
-
-            for (int i = 0; i < audioPaths.Count; i++)
+            foreach (var kvp in audioTasks)
             {
-                if (audioResults[i] != null)
+                var audioResult = await kvp.Value;
+                if (audioResult != null)
                 {
-                    GetCache(sourceType).audioCache[audioPaths[i]] = audioResults[i];
+                    GetCache(sourceType).audioCache[kvp.Key] = audioResult;
                 }
             }
         });
 
         var imageTask = Task.Run(async () =>
         {
-            var imageResults = await Task.WhenAll(imageTasks);
-
-            for (int i = 0; i < imagePaths.Count; i++)
+            foreach (var kvp in imageTasks)
             {
-                if (imageResults[i] != null)
+                var imageResult = await kvp.Value;
+                if (imageResult != null)
                 {
-                    GetCache(sourceType).imageCache[imagePaths[i]] = imageResults[i];
+                    GetCache(sourceType).imageCache[kvp.Key] = imageResult;
                 }
             }
         });
 
-        // µÎ ÀÛ¾÷À» º´·Ä·Î Ã³¸®
-        Debug.Log("¿Àµğ¿À, ÀÌ¹ÌÁö ·Îµå ÀÛ¾÷ ½ÃÀÛ");
+        // ë‘ ì‘ì—…ì„ ë³‘ë ¬ë¡œ ì²˜ë¦¬
+        Debug.Log("ì˜¤ë””ì˜¤, ì´ë¯¸ì§€ ë¡œë“œ ì‘ì—… ì‹œì‘");
         await Task.WhenAll(audioTask, imageTask);
-        Debug.Log("¿Àµğ¿À, ÀÌ¹ÌÁö ·Îµå ÀÛ¾÷ ³¡");
+        Debug.Log("ì˜¤ë””ì˜¤, ì´ë¯¸ì§€ ë¡œë“œ ì‘ì—… ë");
     }
 
     public async Task PreloadResourcesAsync(string audioPath, string imagePath, SourceType sourceType)
@@ -100,7 +98,7 @@ public class ResourceCache
     }
 
 
-    // ¹Ì¸® ·ÎµåµÈ ¿Àµğ¿À Å¬¸³À» ¹İÈ¯ÇÏ´Â ¸Ş¼­µå
+    // ë¯¸ë¦¬ ë¡œë“œëœ ì˜¤ë””ì˜¤ í´ë¦½ì„ ë°˜í™˜í•˜ëŠ” ë©”ì„œë“œ
     public AudioClip GetCachedAudio(string audioPath, SourceType sourceType)
     {
         var cache = GetCache(sourceType).audioCache;
@@ -110,12 +108,12 @@ public class ResourceCache
         }
         else
         {
-            Debug.Log("¿Àµğ¿À Å¬¸³ÀÌ ¾øÀ½." + audioPath);
+            Debug.Log("ì˜¤ë””ì˜¤ í´ë¦½ì´ ì—†ìŒ." + audioPath);
         }
         return null;
     }
 
-    // ¹Ì¸® ·ÎµåÇÑ ÀÌ¹ÌÁö ÅØ½ºÃ³¸¦ ¹İÈ¯ÇÏ´Â ¸Ş¼­µå
+    // ë¯¸ë¦¬ ë¡œë“œí•œ ì´ë¯¸ì§€ í…ìŠ¤ì²˜ë¥¼ ë°˜í™˜í•˜ëŠ” ë©”ì„œë“œ
     public Texture2D GetCachedImage(string imagePath, SourceType sourceType)
     {
         var cache = GetCache(sourceType).imageCache;
@@ -126,13 +124,13 @@ public class ResourceCache
         return null;
     }
 
-    // ¿Àµğ¿À ÆÄÀÏ ·Îµå
+    // ì˜¤ë””ì˜¤ íŒŒì¼ ë¡œë“œ
     private async Task<AudioClip> LoadAudioAsync(string path, SourceType sourceType)
     {
         var cache = GetCache(sourceType).audioCache;
         if (cache.TryGetValue(path, out AudioClip cachedClip))
         {
-            return cachedClip; // Ä³½Ã¿¡ Á¸ÀçÇÏ¸é ¹İÈ¯
+            return cachedClip; // ìºì‹œì— ì¡´ì¬í•˜ë©´ ë°˜í™˜
         }
 
         string finalPath = sourceType == SourceType.Server ? path.Replace(" ", "%20") : "file://" + path;
@@ -143,24 +141,24 @@ public class ResourceCache
             if (www.result == UnityWebRequest.Result.Success)
             {
                 AudioClip clip = DownloadHandlerAudioClip.GetContent(www);
-                cache[path] = clip; // Ä³½Ã¿¡ ÀúÀå
+                cache[path] = clip; // ìºì‹œì— ì €ì¥
                 return clip;
             }
             else
             {
-                Debug.LogError($"¿Àµğ¿À ·Îµå ½ÇÆĞ: {www.error} - {finalPath}");
+                Debug.LogError($"ì˜¤ë””ì˜¤ ë¡œë“œ ì‹¤íŒ¨: {www.error} - {finalPath}");
                 return null;
             }
         }
     }
 
-    // ÀÌ¹ÌÁö ÆÄÀÏ ·Îµå
+    // ì´ë¯¸ì§€ íŒŒì¼ ë¡œë“œ
     private async Task<Texture2D> LoadImageAsync(string path, SourceType sourceType)
     {
         var cache = GetCache(sourceType).imageCache;
         if (cache.TryGetValue(path, out Texture2D cachedTexture))
         {
-            return cachedTexture; // Ä³½Ã¿¡ Á¸ÀçÇÏ¸é ¹İÈ¯
+            return cachedTexture; // ìºì‹œì— ì¡´ì¬í•˜ë©´ ë°˜í™˜
         }
 
         string finalPath = sourceType == SourceType.Server ? path.Replace(" ", "%20") : "file://" + path;
@@ -171,18 +169,18 @@ public class ResourceCache
             if (www.result == UnityWebRequest.Result.Success)
             {
                 Texture2D texture = DownloadHandlerTexture.GetContent(www);
-                cache[path] = texture; // Ä³½Ã¿¡ ÀúÀå
+                cache[path] = texture; // ìºì‹œì— ì €ì¥
                 return texture;
             }
             else
             {
-                Debug.LogError($"ÀÌ¹ÌÁö ·Îµå ½ÇÆĞ: {www.error} - {finalPath}");
+                Debug.LogError($"ì´ë¯¸ì§€ ë¡œë“œ ì‹¤íŒ¨: {www.error} - {finalPath}");
                 return null;
             }
         }
     }
 
-    // Ä³½Ã ¼±ÅÃ ¸Ş¼­µå
+    // ìºì‹œ ì„ íƒ ë©”ì„œë“œ
     private (Dictionary<string, AudioClip> audioCache, Dictionary<string, Texture2D> imageCache) GetCache(SourceType sourceType)
     {
         return sourceType == SourceType.Server
@@ -191,12 +189,12 @@ public class ResourceCache
     }
 
 
-    // PreloadResourcesAsyncÀ» ¸ŞÀÎ ¾²·¹µå·Î º´·Ä Ã³¸® ÇÏ´Â ÄÚµå. À§¿¡ ÄÚµå°¡ ¿À·ù°¡ ³­´Ù¸é ºñ»ó¿ëÀ¸·Î »ç¿ë
+    // PreloadResourcesAsyncì„ ë©”ì¸ ì“°ë ˆë“œë¡œ ë³‘ë ¬ ì²˜ë¦¬ í•˜ëŠ” ì½”ë“œ. ìœ„ì— ì½”ë“œê°€ ì˜¤ë¥˜ê°€ ë‚œë‹¤ë©´ ë¹„ìƒìš©ìœ¼ë¡œ ì‚¬ìš©
     /*public async Task PreloadResourcesAsync(List<string> audioPaths, List<string> imagePaths, SourceType sourceType)
 {
     var preloadTasks = new List<Task>();
 
-    // ¿Àµğ¿À ·Îµå ÀÛ¾÷ Ãß°¡
+    // ì˜¤ë””ì˜¤ ë¡œë“œ ì‘ì—… ì¶”ê°€
     foreach (string audioPath in audioPaths)
     {
         if (!GetCache(sourceType).audioCache.ContainsKey(audioPath))
@@ -207,11 +205,11 @@ public class ResourceCache
                 {
                     GetCache(sourceType).audioCache[audioPath] = task.Result;
                 }
-            }, TaskScheduler.FromCurrentSynchronizationContext())); // ¸ŞÀÎ ½º·¹µå¿¡¼­ ½ÇÇà º¸Àå
+            }, TaskScheduler.FromCurrentSynchronizationContext())); // ë©”ì¸ ìŠ¤ë ˆë“œì—ì„œ ì‹¤í–‰ ë³´ì¥
         }
     }
 
-    // ÀÌ¹ÌÁö ·Îµå ÀÛ¾÷ Ãß°¡
+    // ì´ë¯¸ì§€ ë¡œë“œ ì‘ì—… ì¶”ê°€
     foreach (string imagePath in imagePaths)
     {
         if (!GetCache(sourceType).imageCache.ContainsKey(imagePath))
@@ -222,11 +220,11 @@ public class ResourceCache
                 {
                     GetCache(sourceType).imageCache[imagePath] = task.Result;
                 }
-            }, TaskScheduler.FromCurrentSynchronizationContext())); // ¸ŞÀÎ ½º·¹µå¿¡¼­ ½ÇÇà º¸Àå
+            }, TaskScheduler.FromCurrentSynchronizationContext())); // ë©”ì¸ ìŠ¤ë ˆë“œì—ì„œ ì‹¤í–‰ ë³´ì¥
         }
     }
 
-    // ¸ğµç ÀÛ¾÷ÀÌ ¿Ï·áµÉ ¶§±îÁö ´ë±â
+    // ëª¨ë“  ì‘ì—…ì´ ì™„ë£Œë  ë•Œê¹Œì§€ ëŒ€ê¸°
     await Task.WhenAll(preloadTasks);
 }*/
 }

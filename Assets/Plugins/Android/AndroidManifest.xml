@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          xmlns:tools="http://schemas.android.com/tools"
+          package="com.example.filepicker">
+
+    <!-- 앱에서 필요한 권한들 -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" tools:targetApi="30" />
+
+    <!-- Legacy External Storage를 요청 -->
+    <application android:requestLegacyExternalStorage="true"
+                 android:debuggable="true"> <!-- 디버그 설정 추가 -->
+
+        <!-- CustomUnityPlayerActivity 추가 -->
+        <activity android:name="com.unity3d.player.CustomUnityPlayerActivity"
+                  android:exported="true" 
+                  android:launchMode="singleTask"
+                  android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
+                  android:screenOrientation="landscape">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+    </application>
+</manifest>

@@ -8,6 +8,7 @@ pluginManagement {
 }
 
 include ':launcher', ':unityLibrary'
+include 'unityLibrary:FirebaseApp.androidlib'
 
 
 dependencyResolutionManagement {
@@ -16,6 +17,13 @@ dependencyResolutionManagement {
         
         google()
         mavenCentral()
+// Android Resolver Repos Start
+        def unityProjectPath = $/file:///C:/Users/a34oh/Downloads/12_01_hanbatRethemGame-main/12_01_hanbatRethemGame-main/$.replace("\\", "/")
+        maven {
+            url (unityProjectPath + "/Assets/GeneratedLocalRepo/Firebase/m2repository") // Assets/Firebase/Editor/AppDependencies.xml:22, Assets/Firebase/Editor/AuthDependencies.xml:20, Assets/Firebase/Editor/DatabaseDependencies.xml:22, Assets/Firebase/Editor/StorageDependencies.xml:20
+        }
+        mavenLocal()
+// Android Resolver Repos End
         flatDir {
             dirs "${project(':unityLibrary').projectDir}/libs"
         }
