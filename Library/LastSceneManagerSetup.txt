@@ -1,9 +1,5 @@
 sceneSetups:
-<<<<<<< HEAD
-- path: Assets/Scenes/OpenUI.unity
-=======
-- path: Assets/Scenes/SongSelectScene.unity
->>>>>>> 2927fa60ea270ff585b6a85fb81e1646c6121636
+- path: Assets/Scenes/ScoreScene.unity
   isLoaded: 1
   isActive: 1
   isSubScene: 0
