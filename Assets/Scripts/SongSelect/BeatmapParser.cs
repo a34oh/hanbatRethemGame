@@ -69,11 +69,44 @@ public class BeatmapParser
         {
             string[] lines = await File.ReadAllLinesAsync(filePath);
             Beatmap beatmap = new Beatmap();
+            bool parsingNotes = false;
+
 
             foreach (string line in lines)
             {
                 if (string.IsNullOrWhiteSpace(line) || line.StartsWith("//"))
                     continue;
+
+                // `[Notes]` 섹션인지 확인
+                if (line.StartsWith("[Notes]"))
+                {
+                    parsingNotes = true;
+                    continue;
+                }
+
+                if (parsingNotes)
+                {
+                    // `[Notes]` 섹션에 있는 데이터를 처리
+                    string[] noteParts = line.Split(',');
+                    if (noteParts.Length == 2)
+                    {
+                        if (float.TryParse(noteParts[0], out float xPosition) &&
+                            float.TryParse(noteParts[1], out float spawnTime))
+                        {
+                            NoteData note = new NoteData
+                            {
+                                xPosition = xPosition,
+                                spawnTime = spawnTime
+                            };
+                            beatmap.noteDataList.Add(note);
+                        }
+                        else
+                        {
+                            Debug.LogWarning($"노트 데이터를 파싱할 수 없습니다: {line}");
+                        }
+                    }
+                    continue;
+                }
 
                 // 첫 번째 콜론 위치 찾기
                 int colonIndex = line.IndexOf(':');

@@ -62,6 +62,11 @@ fileBrowser = new MobileFileBrowser();
         uploadMusicButton.onClick.AddListener(() => StartCoroutine(OnUploadMusic()));
         uploadImageButton.onClick.AddListener(() => StartCoroutine(OnUploadImage()));
 
+        // TMP_InputField에 UID 설정
+        creatorInput.text = GameManager.FBManager.newUser.UserId;
+
+        // TMP_InputField를 비활성화하여 사용자가 수정하지 못하도록 설정
+        creatorInput.interactable = false;
     }
 
 
@@ -206,6 +211,7 @@ fileBrowser = new MobileFileBrowser();
 
         return beatmap;
     }
+
     // Firebase에 비트맵 업로드
     private async Task UploadBeatmapToFirebase(Beatmap beatmap)
     {

@@ -3,7 +3,7 @@
     "m_SelectedProcess": {
         "deviceId": "R3CR50GLN1Z",
         "name": "com.DefaultCompany.RethemGame",
-        "processId": 10450,
+        "processId": 4872,
         "exited": false
     },
     "m_SelectedPriority": 0,
@@ -60,6 +60,12 @@
             "deviceId": "R3CR50GLN1Z",
             "name": "com.DefaultCompany.RethemGame",
             "processId": 10450,
+            "exited": false
+        },
+        {
+            "deviceId": "R3CR50GLN1Z",
+            "name": "com.DefaultCompany.RethemGame",
+            "processId": 4872,
             "exited": false
         }
     ],

@@ -26,8 +26,6 @@ public class Beatmap
     public List<NoteData> noteDataList = new List<NoteData>(); // 노트 데이터 추가
 
     public string tags;
-
-
  
     public bool favorite;
 
