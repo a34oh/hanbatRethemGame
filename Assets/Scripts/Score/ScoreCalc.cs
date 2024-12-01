@@ -4,8 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
-using System.IO;
+using UnityEngine.SceneManagement;
 [Serializable]
 public class PlayerResult
 {
@@ -26,6 +25,7 @@ public class ScoreCalc : MonoBehaviour
     double final_score;
     public List<GameObject> rank_count;
     public List<GameObject> record_image;
+    float touch_able_count = 5.0f;
     
     // Start is called before the first frame update
     async void Start()
@@ -46,7 +46,14 @@ public class ScoreCalc : MonoBehaviour
     }
 
     // Update is called once per frame
-
+    void Update()
+    {
+        touch_able_count -= Time.deltaTime;
+        if(touch_able_count < 0 && Input.anyKeyDown)
+        {
+            SceneManager.LoadScene("SongSelectScene");
+        }
+    }
     double Score(float perfect_count, float  cool_count, float good_count,float bad_count, float miss_count , float max_combo)
     {
         List <float> count = new List <float>{perfect_count,cool_count,good_count,bad_count,miss_count};
@@ -65,9 +72,6 @@ public class ScoreCalc : MonoBehaviour
         Double player_score =  Math.Round(score,1);
         return player_score;
     }
-
-    
-    
     void Rank(double score)
     {
         switch (score)

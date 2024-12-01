@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-// °î µ¥ÀÌÅÍ Å¬·¡½º
+// ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½
 [System.Serializable]
 public class Beatmap
 {
@@ -11,14 +11,14 @@ public class Beatmap
     public string title;        
     public string artist;
     public string creator;
-    public string version;           //³­ÀÌµµ
-    public string audioName;         //¿Àµð¿À ÀÌ¸§
-    public string imageName;         //ÀÌ¹ÌÁö ÀÌ¸§
-    public List<string> textNames;   // ³­ÀÌµµ ÆÄÀÏ ÀÌ¸§
-    public string localAudioPath;   // ·ÎÄÃ ¿Àµð¿À ÁÖ¼Ò
-    public string localImagePath;   // ·ÎÄÃ ÀÌ¹ÌÁö ÁÖ¼Ò
-    public string StorageAudioUrl;  // ¼­¹ö ¿Àµð¿À ÁÖ¼Ò
-    public string StorageImageUrl;  // ¼­¹ö ÀÌ¹ÌÁö ÁÖ¼Ò
+    public string version;           //ï¿½ï¿½ï¿½Ìµï¿½
+    public string audioName;         //ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¸ï¿½
+    public string imageName;         //ï¿½Ì¹ï¿½ï¿½ï¿½ ï¿½Ì¸ï¿½
+    public List<string> textNames;   // ï¿½ï¿½ï¿½Ìµï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¸ï¿½
+    public string localAudioPath;   // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö¼ï¿½
+    public string localImagePath;   // ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½ ï¿½Ö¼ï¿½
+    public string StorageAudioUrl;  // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö¼ï¿½
+    public string StorageImageUrl;  // ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½ ï¿½Ö¼ï¿½
     public int audioLength;
     public int previewTime;
     public string tags;
@@ -27,7 +27,7 @@ public class Beatmap
  
     public bool favorite;
 
-    // Ãß°¡µÈ ¼Ó¼ºµé
+    // ï¿½ß°ï¿½ï¿½ï¿½ ï¿½Ó¼ï¿½ï¿½ï¿½
     public int bpm;
     public int endTime;
     public DateTime dateAdded;
@@ -35,7 +35,7 @@ public class Beatmap
     public DateTime lastPlayed;
     public double starRating = -1;
 
-    // »ý¼ºÀÚ
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     public Beatmap()
     {
    //     dateAdded = DateTime.Now;
@@ -47,19 +47,19 @@ public class Beatmap
     {
 
     }
-    // ÇÃ·¹ÀÌ Ä«¿îÅÍ Áõ°¡
+    // ï¿½Ã·ï¿½ï¿½ï¿½ Ä«ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     public void IncrementPlayCounter()
     {
         playCount++;
         lastPlayed = DateTime.Now;
     }
 
-    // Áñ°ÜÃ£±â Åä±Û
+    // ï¿½ï¿½ï¿½Ã£ï¿½ï¿½ ï¿½ï¿½ï¿½
     public void ToggleFavorite()
     {
         favorite = !favorite;
     }
 }
 
-//   public AudioClip audioClip;     //À½¾Ç
-//public Texture2D imageTexture;  //ÀÌ¹ÌÁö
+//   public AudioClip audioClip;     //ï¿½ï¿½ï¿½ï¿½
+//public Texture2D imageTexture;  //ï¿½Ì¹ï¿½ï¿½ï¿½

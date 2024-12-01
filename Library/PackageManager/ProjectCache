@@ -5,26 +5,16 @@ m_ProjectFiles:
     m_ContentTrackingEnabled: 1
     m_ModificationDate:
       serializedVersion: 2
-<<<<<<< HEAD
-      ticks: 638682970113520963
-    m_Hash: 84251036
-=======
-      ticks: 638686390360070246
-    m_Hash: 3989749328
->>>>>>> 2927fa60ea270ff585b6a85fb81e1646c6121636
+      ticks: 638686441805891965
+    m_Hash: 684926191
   m_LockFileStatus:
     m_FilePath: C:/Users/admin/Documents/GitHub/hanbatRethemGame/Packages/packages-lock.json
     m_PathExists: 1
     m_ContentTrackingEnabled: 1
     m_ModificationDate:
       serializedVersion: 2
-<<<<<<< HEAD
-      ticks: 638682970113526144
-    m_Hash: 2298056944
-=======
-      ticks: 638686390360153952
-    m_Hash: 1402599989
->>>>>>> 2927fa60ea270ff585b6a85fb81e1646c6121636
+      ticks: 638686441805901935
+    m_Hash: 312732901
 m_EmbeddedPackageManifests:
   m_ManifestsStatus: {}
 m_LocalPackages:
@@ -280,7 +270,7 @@ m_ResolvedPackages:
   isDirectDependency: 1
   version: 1.4.3
   source: 1
-  resolvedPath: F:\Unity\Hub\Editor\Project\hanbatRethemGame\Library\PackageCache\com.unity.mobile.android-logcat@1.4.3
+  resolvedPath: C:\Users\admin\Documents\GitHub\hanbatRethemGame\Library\PackageCache\com.unity.mobile.android-logcat@1.4.3
   assetPath: Packages/com.unity.mobile.android-logcat
   name: com.unity.mobile.android-logcat
   displayName: Android Logcat
