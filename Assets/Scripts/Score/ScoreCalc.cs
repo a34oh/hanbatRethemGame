@@ -31,7 +31,13 @@ public class ScoreCalc : MonoBehaviour
     async void Start()
     {
         fBManager = new FBManager();
-        double finalScore = Score(1531,0, 0, 0, 0, 1531);
+        double finalScore = Score(PlayerPrefs.GetInt("PerfectCount"),
+                                  PlayerPrefs.GetInt("GreatCount"),
+                                  PlayerPrefs.GetInt("GoodCount"),
+                                  PlayerPrefs.GetInt("BadCount"),
+                                  PlayerPrefs.GetInt("MissCount"),
+                                  PlayerPrefs.GetInt("MaxCombo"));
+        string beatmapid = PlayerPrefs.GetString("BeatmapId");
         Rank(finalScore);
         PlayerResult playerResult = new PlayerResult(finalScore, GameManager.FBManager.newUser.UserId);
         await GameManager.FBManager.SaveResultAsync(playerResult,"beatmapid");
@@ -81,6 +87,7 @@ public class ScoreCalc : MonoBehaviour
                 Debug.Log("Rank: SSS");
                 break;
             case var _ when score > 900000:
+                record_image[1].SetActive(true);
                 Debug.Log("Rank: SS");
                 break;
             case var _ when score > 850000:
