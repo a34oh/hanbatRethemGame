@@ -98,6 +98,16 @@ public class SheetEditor : MonoBehaviour
         Vector3 hitToGrid = hitPoint - gridObject.transform.position;
         ProcessSnapPos(hitToGrid, gridObject, hit);
 
+        // 미리 보기 노트가 이미 존재할 경우 생성 x
+        foreach (var note in previewNotes)
+        {
+            if (Mathf.Approximately(note.transform.position.x, snapPos.x) &&
+                Mathf.Approximately(note.transform.position.y, snapPos.y))
+            {
+                Debug.Log("이미 해당 위치에 미리보기 노트가 있습니다.");
+                return; // 이미 존재하면 함수 종료
+            }
+        }
         // 미리보기 노트를 생성
         GameObject previewNote = Instantiate(prevNotePrefab, snapPos, Quaternion.identity, noteContainer.transform);
         previewNotes.Add(previewNote);

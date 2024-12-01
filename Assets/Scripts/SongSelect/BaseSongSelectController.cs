@@ -26,6 +26,7 @@ public class BaseBeatmapSelectController : MonoBehaviour
     }
     void OnOpenBeatmapBrowserCanvas()
     {
+        GameManager.AudioManager.ClearAudio();
         beatmapBrowserCanvas.SetActive(true);
     }
 

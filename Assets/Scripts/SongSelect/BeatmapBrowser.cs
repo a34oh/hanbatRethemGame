@@ -15,7 +15,7 @@ public class BeatmapBrowser : MonoBehaviour
     public Button backButton;
     public Button downloadButton;
     public RawImage backgroundImage;
-
+    public TextMeshProUGUI detailsText;
     private int currentPageItemCount = 0; // 한 페이지의 아이템 갯수
     private int currentPage = 1;
     private Beatmap currentBeatmap; // 현재 클릭 된 곡
@@ -128,10 +128,17 @@ public class BeatmapBrowser : MonoBehaviour
         // 현재 클릭 된 곡 업데이트
         currentBeatmap = beatmap;
 
+        // 비트맵 세부내용
+        UpdateDetailsText(currentBeatmap);
+
         // 다운로드 버튼 활성화
         downloadButton.interactable = true;
     }
 
+    private void UpdateDetailsText(Beatmap beatmap)
+    {
+        detailsText.text = $"id : {beatmap.id}\ncreator\n{beatmap.creator}\ndateAdded\n{beatmap.dateAdded}";
+    }
     private void UpdateNavigationButtons()
     {
         // 이전 페이지 버튼
@@ -164,6 +171,7 @@ public class BeatmapBrowser : MonoBehaviour
 
     void OnCloseBeatmapBrowserCanvas()
     {
+        GameManager.AudioManager.ClearAudio();
         gameObject.SetActive(false);
     }
 }

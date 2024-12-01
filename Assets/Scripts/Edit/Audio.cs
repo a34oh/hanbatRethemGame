@@ -8,7 +8,7 @@ public class Audio : MonoBehaviour
     public SheetEditor sheetEditor;
     public Beatmap beatmap;
     public AudioSource audioSource;
-    private AudioClip audioClip;
+    public AudioClip audioClip;
 
     public event Action OnAudioSetting;
 

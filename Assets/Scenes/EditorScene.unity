@@ -2724,6 +2724,7 @@ MonoBehaviour:
     playCount: 0
     starRating: -1
   audioSource: {fileID: 0}
+  audioClip: {fileID: 8300000, guid: f25463d10e415dc4e9ad49c84bf3b727, type: 3}
   audioLength: 0
 --- !u!4 &643010904
 Transform:

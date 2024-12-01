@@ -19,8 +19,8 @@ public class EditScene : BaseScene
         beatmapCreator.OnBeatmapCreated += scrollViewManager.InitializeWithBeatmap;
         SaveEditorButton.onClick.AddListener(sheetEditor.OnSaveNotesButtonClick);
         BeatmapCreateCanvasButton.onClick.AddListener(OnBeatmapCreateCanvasButton);
-     //   scrollViewManager.InitializeWithBeatmap(new Beatmap());
-
+        //   scrollViewManager.InitializeWithBeatmap(new Beatmap());
+        scrollViewManager.InitializeWithBeatmap(new Beatmap());
     }
     public void OnBeatmapCreateCanvasButton()
     {

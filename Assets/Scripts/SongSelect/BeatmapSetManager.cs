@@ -108,7 +108,7 @@ public class BeatmapSetManager : MonoBehaviour
 
             GameObject songItem = Instantiate(beatmapPrefab, scrollViewContent);
             songItem.transform.Find("Title").GetComponent<TextMeshProUGUI>().text = beatmap.title;
-            songItem.transform.Find("Artist").GetComponent<TextMeshProUGUI>().text = beatmap.artist;
+            songItem.transform.Find("Artist").GetComponent<TextMeshProUGUI>().text = $"{beatmap.artist} // {beatmap.creator} ";
             songItem.transform.Find("Version").GetComponent<TextMeshProUGUI>().text = beatmap.version;
 
             songItem.transform.Find("Image").GetComponent<RawImage>().texture = GameManager.ResourceCache.GetCachedImage(beatmap.localImagePath, SourceType.Local);
@@ -125,7 +125,9 @@ public class BeatmapSetManager : MonoBehaviour
         // 동일한 곡인지 확인
         if (currentBeatmap == beatmap)
         {
+            GameManager.AudioManager.ClearAudio();
             GameManager.BeatmapRepository.SetSelectedBeatmap(beatmap);
+            
             SceneManager.LoadScene(SceneType.GameScene.ToString());
             return;
         }
