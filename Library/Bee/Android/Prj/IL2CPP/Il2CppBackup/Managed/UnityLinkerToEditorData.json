@@ -50,7 +50,9 @@
           },
           {
             "name": "AudioClip",
-            "scenes": [],
+            "scenes": [
+              "Assets/Scenes/EditorScene.unity"
+            ],
             "dependencyType": 0,
             "icon": null
           },
@@ -79,7 +81,9 @@
           },
           {
             "name": "SampleClip",
-            "scenes": [],
+            "scenes": [
+              "Assets/Scenes/EditorScene.unity"
+            ],
             "dependencyType": 1,
             "icon": null
           },

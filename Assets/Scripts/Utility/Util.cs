@@ -15,4 +15,6 @@ public enum SceneType
 public enum LayerTypes
 {
     Grid = 8,
+    PreviewNote = 9,
+    ActualNote = 10,
 }

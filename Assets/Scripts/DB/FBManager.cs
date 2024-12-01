@@ -493,7 +493,7 @@ public class FBManager
             Debug.Log($"파일 업로드 중: {fileType} - {Path.GetFileName(localFilePath)}");
 
             //모바일로 돌릴 때
-          /*  var uriObject = GetContentUriFromFilePath(localFilePath);
+            /*var uriObject = GetContentUriFromFilePath(localFilePath);
             string uriString = uriObject.Call<string>("toString").Replace("%20", " ");
             Debug.Log($"uriString : {uriString}");
         
@@ -686,6 +686,7 @@ public class FBManager
                 await Task.WhenAll(downloadTasks);
 
                 Debug.Log($"비트맵 {firebaseFolderName}의 모든 파일이 다운로드되었습니다.");
+                await GameManager.BeatmapParser.ParserAllBeatmapsAsync();
             }
             else
             {

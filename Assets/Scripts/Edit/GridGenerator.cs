@@ -12,9 +12,9 @@ public class GridGenerator : MonoBehaviour
 
     public int maxBeatCnt = 32;
 
-    float scrollSpeed = 4f; // ±×¸®µå ³»·Á°¡´Â ¼Óµµ
+    float scrollSpeed = 4f; // ê·¸ë¦¬ë“œ ë‚´ë ¤ê°€ëŠ” ì†ë„
 
-    float snapAmount = 8f; // ¸¶¿ì½º ½ºÅ©·Ñ½Ã ±×¸®µå ¿òÁ÷ÀÌ´Â ¾ç 1 (32ºñÆ®), 2 (16ºñÆ®), 4(8ºñÆ®), 8(4ºñÆ®), 16(2ºñÆ®), 32(1ºñÆ®=1±×¸®µå) 
+    float snapAmount = 8f; // ë§ˆìš°ìŠ¤ ìŠ¤í¬ë¡¤ì‹œ ê·¸ë¦¬ë“œ ì›€ì§ì´ëŠ” ì–‘ 1 (32ë¹„íŠ¸), 2 (16ë¹„íŠ¸), 4(8ë¹„íŠ¸), 8(4ë¹„íŠ¸), 16(2ë¹„íŠ¸), 32(1ë¹„íŠ¸=1ê·¸ë¦¬ë“œ) 
 
     public float ScrollSnapAmount
     {
@@ -33,7 +33,7 @@ public class GridGenerator : MonoBehaviour
         ChangeSnap();
     }
 
-    // ±×¸®µå »ı¼º
+    // ê·¸ë¦¬ë“œ ìƒì„±
     void Create()
     {   
         int totalBars = Mathf.CeilToInt(a.audioLength / a.BarPerSec) + 2;
@@ -47,7 +47,7 @@ public class GridGenerator : MonoBehaviour
             obj.SetActive(false);
         }
     }
-    // ±×¸®µå ÀüÃ¼ ÆÄ±«
+    // ê·¸ë¦¬ë“œ ì „ì²´ íŒŒê´´
     void Destroy()
     {
         for (int i = 0; i < grids.Count; i++)
@@ -61,7 +61,7 @@ public class GridGenerator : MonoBehaviour
         grids.Clear();
     }
 
-    // ±×¸®µå ÁÂÇ¥ ÃÊ±âÈ­
+    // ê·¸ë¦¬ë“œ ì¢Œí‘œ ì´ˆê¸°í™”
     void InitPos()
     {
         for (int i = 0; i < grids.Count; i++)
@@ -77,7 +77,7 @@ public class GridGenerator : MonoBehaviour
             obj.SetActive(true);
         }
     }
-    // °¢ ±×¸®µåµéÀÇ 32°³ÀÇ ºñÆ®¹Ù Æ÷Áö¼ÇÀ» Ã³¸®ÇÑ´Ù.
+    // ê° ê·¸ë¦¬ë“œë“¤ì˜ 32ê°œì˜ ë¹„íŠ¸ë°” í¬ì§€ì…˜ì„ ì²˜ë¦¬í•œë‹¤.
     void Process32rd(GameObject grid)
     {
         for (int i = 0; i < maxBeatCnt; i++)
@@ -86,25 +86,25 @@ public class GridGenerator : MonoBehaviour
             obj.transform.localPosition = new Vector3(0f, a.BeatPerSec32rd * i * scrollSpeed, -0.1f);
         }
     }
-    // ÇöÀç À§Ä¡·ÎºÎÅÍ À§³ª ¾Æ·¡·Î ¿øÇÏ´Â¸¸Å­ ¿òÁ÷ÀÎ´Ù.
+    // í˜„ì¬ ìœ„ì¹˜ë¡œë¶€í„° ìœ„ë‚˜ ì•„ë˜ë¡œ ì›í•˜ëŠ”ë§Œí¼ ì›€ì§ì¸ë‹¤.
     public void ChangePos(float dir)
     {
-        // ÀÌµ¿ÇÒ °Å¸® °è»ê
+        // ì´ë™í•  ê±°ë¦¬ ê³„ì‚°
         float moveAmount = dir * a.BeatPerSec32rd * scrollSpeed * snapAmount;
 
-        // ÇÑ°è °Ë»ç: Ã¹ ¹øÂ° ±×¸®µå°¡ È­¸é À§·Î ¹ş¾î³ªÁö ¾Êµµ·Ï Á¦ÇÑ
+        // í•œê³„ ê²€ì‚¬: ì²« ë²ˆì§¸ ê·¸ë¦¬ë“œê°€ í™”ë©´ ìœ„ë¡œ ë²—ì–´ë‚˜ì§€ ì•Šë„ë¡ ì œí•œ
         if (grids[0].transform.position.y + moveAmount > 0f && dir > 0f)
         {
-            moveAmount = -grids[0].transform.position.y; // Ã¹ ¹øÂ° ±×¸®µå°¡ 0¿¡ ¸ÂÃçÁöµµ·Ï º¸Á¤
+            moveAmount = -grids[0].transform.position.y; // ì²« ë²ˆì§¸ ê·¸ë¦¬ë“œê°€ 0ì— ë§ì¶°ì§€ë„ë¡ ë³´ì •
         }
 
-        // ÇÑ°è °Ë»ç: ¸¶Áö¸· ±×¸®µå°¡ È­¸é ¾Æ·¡·Î ¹ş¾î³ªÁö ¾Êµµ·Ï Á¦ÇÑ
+        // í•œê³„ ê²€ì‚¬: ë§ˆì§€ë§‰ ê·¸ë¦¬ë“œê°€ í™”ë©´ ì•„ë˜ë¡œ ë²—ì–´ë‚˜ì§€ ì•Šë„ë¡ ì œí•œ
         if (grids[grids.Count - 1].transform.position.y + moveAmount < 0f && dir < 0f)
         {
-            moveAmount = -grids[grids.Count - 1].transform.position.y; // ¸¶Áö¸· ±×¸®µå°¡ 0¿¡ ¸ÂÃçÁöµµ·Ï º¸Á¤
+            moveAmount = -grids[grids.Count - 1].transform.position.y; // ë§ˆì§€ë§‰ ê·¸ë¦¬ë“œê°€ 0ì— ë§ì¶°ì§€ë„ë¡ ë³´ì •
         }
 
-        // ¸ğµç ±×¸®µå ÀÌµ¿
+        // ëª¨ë“  ê·¸ë¦¬ë“œ ì´ë™
         for (int i = 0; i < grids.Count; i++)
         {
             GameObject obj = grids[i];
@@ -131,12 +131,12 @@ public class GridGenerator : MonoBehaviour
         for (int i = 0; i < grids.Count; i++)
         {
             GameObject obj = grids[i];
-            for (int j = 0; j < maxBeatCnt; j++) // ÀüºÎ Áö¿ü´Ù°¡
+            for (int j = 0; j < maxBeatCnt; j++) // ì „ë¶€ ì§€ì› ë‹¤ê°€
             {
                 GameObject child = obj.transform.GetChild(j).gameObject;
                 child.SetActive(false);
             }
-            for (int j = 0; j < maxSnapAmount; j++) // ÇÊ¿äÇÑ ºÎºĞ¸¸ ±×·ÁÁØ´Ù
+            for (int j = 0; j < maxSnapAmount; j++) // í•„ìš”í•œ ë¶€ë¶„ë§Œ ê·¸ë ¤ì¤€ë‹¤
             {
                 index = j * (int)snapAmount;
 

@@ -3,7 +3,7 @@
     "m_SelectedProcess": {
         "deviceId": "R3CR50GLN1Z",
         "name": "com.DefaultCompany.RethemGame",
-        "processId": 4459,
+        "processId": 22068,
         "exited": false
     },
     "m_SelectedPriority": 0,
@@ -12,6 +12,30 @@
             "deviceId": "R3CR50GLN1Z",
             "name": "com.DefaultCompany.RethemGame",
             "processId": 4459,
+            "exited": false
+        },
+        {
+            "deviceId": "R3CR50GLN1Z",
+            "name": "com.DefaultCompany.RethemGame",
+            "processId": 17050,
+            "exited": false
+        },
+        {
+            "deviceId": "R3CR50GLN1Z",
+            "name": "com.DefaultCompany.RethemGame",
+            "processId": 13820,
+            "exited": false
+        },
+        {
+            "deviceId": "R3CR50GLN1Z",
+            "name": "com.DefaultCompany.RethemGame",
+            "processId": 15680,
+            "exited": false
+        },
+        {
+            "deviceId": "R3CR50GLN1Z",
+            "name": "com.DefaultCompany.RethemGame",
+            "processId": 22068,
             "exited": false
         }
     ],

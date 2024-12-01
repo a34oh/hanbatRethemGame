@@ -6,6 +6,8 @@ using System.IO;
 using System.Threading.Tasks;
 using System;
 using UnityEngine.SceneManagement;
+using System.Linq;
+using System.Collections.Generic;
 
 // 곡 입력 처리 클래스
 public class BeatmapCreator : MonoBehaviour
@@ -33,7 +35,7 @@ public class BeatmapCreator : MonoBehaviour
     void Awake()
     {
         // 모바일로 돌릴 때
-        /*
+      /*  
         MobileFileBrowser mobileFileBrowser = new MobileFileBrowser();
         handler.Initialize(mobileFileBrowser);
         fileUploader = new FileUploader(mobileFileBrowser);*/
@@ -145,9 +147,6 @@ fileBrowser = new MobileFileBrowser();
             await GameManager.ResourceCache.PreloadResourcesAsync(beatmap.localAudioPath, beatmap.localImagePath, SourceType.Local);
 
             OnBeatmapCreated?.Invoke(beatmap); // Beatmap 생성 이벤트 호출
-
-            // 곡 생성 성공 시 Firebase 업로드
-            await UploadBeatmapToFirebase(beatmap);
 
 
             debugText.text = "곡 생성이 완료되었습니다!";
@@ -310,6 +309,43 @@ PreviewTime:{beatmap.previewTime}"
             throw;
         }
     }
+
+    // 레벨 파일에 노트 추가
+    public async Task AppendNoteDataToLevelFileAsync(Beatmap beatmap)
+    {
+        try
+        {
+            string folderName = $"{beatmap.id} {beatmap.artist} - {beatmap.title}";
+
+            string folderPath = Path.Combine(Application.persistentDataPath, "Songs", folderName).Replace("\\", "/");
+
+            string levelFileName = $"{beatmap.artist} - {beatmap.title} ({beatmap.creator}) {beatmap.version}.txt";
+            string levelFilePath = Path.Combine(folderPath, levelFileName).Replace("\\", "/");
+
+            // 노트 데이터를 시간 순서대로 정렬
+            var sortedNotes = beatmap.noteDataList.OrderBy(note => note.spawnTime).ToList();
+
+            // 노트 데이터 텍스트 구성
+            List<string> noteLines = new List<string> { "\n[Notes]" };
+            foreach (var note in sortedNotes)
+            {
+                noteLines.Add($"{note.xPosition},{note.spawnTime}");
+            }
+
+            // 파일에 추가
+            await File.AppendAllLinesAsync(levelFilePath, noteLines);
+            Debug.Log($"노트 데이터가 레벨 파일에 추가되었습니다: {levelFilePath}");
+
+            // 전부 완료 시 Firebase에 업로드
+            await UploadBeatmapToFirebase(beatmap);
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError("노트 데이터를 파일에 추가하는 중 오류 발생: " + ex.Message);
+            throw;
+        }
+    }
+
 
     private async Task AssignPreviewTimeAsync(Beatmap beatmap)
     {

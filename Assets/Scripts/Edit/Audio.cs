@@ -42,6 +42,7 @@ public class Audio : MonoBehaviour
 
         //audioLength = audioClip.length;
         audioClip = GameManager.ResourceCache.GetCachedAudio(beatmap.localAudioPath, SourceType.Local);
+       
         audioLength = audioClip.length;
         
         GameManager.AudioManager.SetAudioClip(audioClip);

@@ -16,9 +16,9 @@ public class BeatmapBrowser : MonoBehaviour
     public Button downloadButton;
     public RawImage backgroundImage;
 
-    private int currentPageItemCount = 0; // ÇÑ ÆäÀÌÁöÀÇ ¾ÆÀÌÅÛ °¹¼ö
+    private int currentPageItemCount = 0; // í•œ í˜ì´ì§€ì˜ ì•„ì´í…œ ê°¯ìˆ˜
     private int currentPage = 1;
-    private Beatmap currentBeatmap; // ÇöÀç Å¬¸¯ µÈ °î
+    private Beatmap currentBeatmap; // í˜„ì¬ í´ë¦­ ëœ ê³¡
     private const int itemsPerPage = 10;
 
     private async void Start()
@@ -26,7 +26,7 @@ public class BeatmapBrowser : MonoBehaviour
         await LoadBeatmapPage(currentPage);
 
         
-        // È­»ìÇ¥ ¹öÆ° ÀÌº¥Æ® µî·Ï
+        // í™”ì‚´í‘œ ë²„íŠ¼ ì´ë²¤íŠ¸ ë“±ë¡
         nextPageButton.onClick.AddListener(() => ChangePage(1));
         prevPageButton.onClick.AddListener(() => ChangePage(-1));
 
@@ -34,7 +34,7 @@ public class BeatmapBrowser : MonoBehaviour
         downloadButton.onClick.AddListener(OnDownloadButtonClick);
 
         downloadButton.interactable = false;
-        // ¹öÆ° ÃÊ±â »óÅÂ ¼³Á¤
+        // ë²„íŠ¼ ì´ˆê¸° ìƒíƒœ ì„¤ì •
         UpdateNavigationButtons();
 
 
@@ -59,7 +59,7 @@ public class BeatmapBrowser : MonoBehaviour
         
         if (beatmapData != null && beatmapData.Count > 0)
         {
-            // ºñÆ®¸ÊÀÇ ¿Àµğ¿À ¹× ÀÌ¹ÌÁö URL ¸®½ºÆ® »ı¼º
+            // ë¹„íŠ¸ë§µì˜ ì˜¤ë””ì˜¤ ë° ì´ë¯¸ì§€ URL ë¦¬ìŠ¤íŠ¸ ìƒì„±
             var audioUrls = new List<string>();
             var imageUrls = new List<string>();
 
@@ -75,22 +75,22 @@ public class BeatmapBrowser : MonoBehaviour
                 }
             }
 
-            // ¸®¼Ò½º Ä³½Ã¿¡ ¹Ì¸® ·Îµå
+            // ë¦¬ì†ŒìŠ¤ ìºì‹œì— ë¯¸ë¦¬ ë¡œë“œ
             await GameManager.ResourceCache.PreloadResourcesAsync(audioUrls, imageUrls, SourceType.Server);
 
-            // ½ºÅ©·Ñ ºä ¾÷µ¥ÀÌÆ®
+            // ìŠ¤í¬ë¡¤ ë·° ì—…ë°ì´íŠ¸
             UpdateScrollView(beatmapData);
         }
         else
         {
-            Debug.LogWarning("ÇØ´ç ÆäÀÌÁö¿¡ ºñÆ®¸Ê µ¥ÀÌÅÍ°¡ ¾ø½À´Ï´Ù.");
+            Debug.LogWarning("í•´ë‹¹ í˜ì´ì§€ì— ë¹„íŠ¸ë§µ ë°ì´í„°ê°€ ì—†ìŠµë‹ˆë‹¤.");
         }
         currentPageItemCount = beatmapData.Count;
     }
 
     private void UpdateScrollView(List<Beatmap> beatmaps)
     {
-        // ±âÁ¸¿¡ »ı¼ºµÈ °î ¾ÆÀÌÅÛ Á¦°Å (°»½Å ½Ã Áßº¹ ¹æÁö)
+        // ê¸°ì¡´ì— ìƒì„±ëœ ê³¡ ì•„ì´í…œ ì œê±° (ê°±ì‹  ì‹œ ì¤‘ë³µ ë°©ì§€)
         foreach (Transform child in scrollViewContent)
         {
             Destroy(child.gameObject);
@@ -105,39 +105,39 @@ public class BeatmapBrowser : MonoBehaviour
             songItem.transform.Find("Version").GetComponent<TextMeshProUGUI>().text = beatmap.version;
 
             songItem.transform.Find("Image").GetComponent<RawImage>().texture = GameManager.ResourceCache.GetCachedImage(beatmap.StorageImageUrl, SourceType.Server);
-            // °î ¾ÆÀÌÅÛ Å¬¸¯½Ã ÀÌº¥Æ® µî·Ï.. 
+            // ê³¡ ì•„ì´í…œ í´ë¦­ì‹œ ì´ë²¤íŠ¸ ë“±ë¡.. 
             songItem.GetComponent<Button>().onClick.AddListener(() => OnBeatmapItemClick(beatmap));
 
         }
     }
 
-    // °î ¾ÆÀÌÅÛ Å¬¸¯ ½Ã Ã³¸®
+    // ê³¡ ì•„ì´í…œ í´ë¦­ ì‹œ ì²˜ë¦¬
     private void OnBeatmapItemClick(Beatmap beatmap)
     {
-        Debug.Log($"{beatmap.title} °î Å¬¸¯");
+        Debug.Log($"{beatmap.title} ê³¡ í´ë¦­");
 
-        // µ¿ÀÏÇÑ °îÀÎÁö È®ÀÎ
+        // ë™ì¼í•œ ê³¡ì¸ì§€ í™•ì¸
         if (currentBeatmap == beatmap)
         {
             return;
         }
-        // Firebase Storage¿¡¼­ ¿Àµğ¿À ¹× ÀÌ¹ÌÁö ·Îµå
+        // Firebase Storageì—ì„œ ì˜¤ë””ì˜¤ ë° ì´ë¯¸ì§€ ë¡œë“œ
         GameManager.AudioManager.PlayPreview(beatmap, SourceType.Server);
         GameManager.BackgroundManager.SetBackgroundImage(beatmap, backgroundImage, SourceType.Server);
 
-        // ÇöÀç Å¬¸¯ µÈ °î ¾÷µ¥ÀÌÆ®
+        // í˜„ì¬ í´ë¦­ ëœ ê³¡ ì—…ë°ì´íŠ¸
         currentBeatmap = beatmap;
 
-        // ´Ù¿î·Îµå ¹öÆ° È°¼ºÈ­
+        // ë‹¤ìš´ë¡œë“œ ë²„íŠ¼ í™œì„±í™”
         downloadButton.interactable = true;
     }
 
     private void UpdateNavigationButtons()
     {
-        // ÀÌÀü ÆäÀÌÁö ¹öÆ°
+        // ì´ì „ í˜ì´ì§€ ë²„íŠ¼
         prevPageButton.gameObject.SetActive(currentPage > 1);
 
-        // ´ÙÀ½ ÆäÀÌÁö ¹öÆ°
+        // ë‹¤ìŒ í˜ì´ì§€ ë²„íŠ¼
         nextPageButton.gameObject.SetActive(currentPageItemCount == itemsPerPage);
     }
 
@@ -145,16 +145,19 @@ public class BeatmapBrowser : MonoBehaviour
     {
         if (currentBeatmap == null)
         {
-            Debug.LogWarning("´Ù¿î·ÎµåÇÒ °îÀÌ ¼±ÅÃµÇÁö ¾Ê¾Ò½À´Ï´Ù.");
+            Debug.LogWarning("ë‹¤ìš´ë¡œë“œí•  ê³¡ì´ ì„ íƒë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤.");
             return;
         }
         try
         {
             await GameManager.FBManager.DownloadBeatmapAsync(currentBeatmap);
+
+            //ê³¡ ë‹¤ìš´ì´ ì™„ë£Œë˜ì—ˆìŠµë‹ˆë‹¤ ì°½ì„ ë„ìš°ê±°ë‚˜ í•´ì„œ ì•Œë ¤ì£¼ê¸°
+
         }
         catch (Exception ex)
         {
-            Debug.LogError($"´Ù¿î·Îµå Áß ¿À·ù ¹ß»ı: {ex.Message}");
+            Debug.LogError($"ë‹¤ìš´ë¡œë“œ ì¤‘ ì˜¤ë¥˜ ë°œìƒ: {ex.Message}");
         }
     }
 

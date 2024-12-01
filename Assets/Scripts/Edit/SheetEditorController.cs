@@ -1,23 +1,29 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class SheetEditorController : MonoBehaviour
 {
     public Camera mainCam;
-    public GameObject cursurObj;
-
+    public SheetEditor sheetEditor;
+    public Button generateActualNotesButton;
+    public Button deleteSelectedNoteButton;
     public RaycastHit mRay;
-    public Vector3 CursurEffectPos { get; set; }
     public int ScrollDir { get; set; }
 
+    private void Start()
+    {
+        generateActualNotesButton.onClick.AddListener(sheetEditor.GenerateActualNotes);
+        deleteSelectedNoteButton.onClick.AddListener(sheetEditor.DeleteSelectedNote);
+
+    }
     void Update()
     {
-        OnTouchInput();
+     //   OnTouchInput();
     }
 
     void LateUpdate()
     {
-        OnTouchRay();
-        OnCursurEffect();
+     //   OnTouchRay();
     }
 
     void OnTouchInput()
@@ -28,18 +34,18 @@ public class SheetEditorController : MonoBehaviour
 
             if (touch.phase == TouchPhase.Began)
             {
-                // ÅÍÄ¡ ½ÃÀÛ
-                Debug.Log("ÅÍÄ¡ ½ÃÀÛ: " + touch.position);
+                // í„°ì¹˜ ì‹œì‘
+                Debug.Log("í„°ì¹˜ ì‹œì‘: " + touch.position);
             }
             else if (touch.phase == TouchPhase.Moved)
             {
-                // ÅÍÄ¡ ÀÌµ¿
-                Debug.Log("ÅÍÄ¡ ÀÌµ¿: " + touch.deltaPosition);
+                // í„°ì¹˜ ì´ë™
+                Debug.Log("í„°ì¹˜ ì´ë™: " + touch.deltaPosition);
             }
             else if (touch.phase == TouchPhase.Ended)
             {
-                // ÅÍÄ¡ Á¾·á
-                Debug.Log("ÅÍÄ¡ Á¾·á");
+                // í„°ì¹˜ ì¢…ë£Œ
+                Debug.Log("í„°ì¹˜ ì¢…ë£Œ");
             }
         }
     }
@@ -54,17 +60,9 @@ public class SheetEditorController : MonoBehaviour
             Vector3 dir = mainCam.ScreenToWorldPoint(touchPos);
             if (Physics.Raycast(mainCam.transform.position, dir, out mRay))
             {
-                // ÅÍÄ¡ÇÑ ¿ÀºêÁ§Æ® Ã³¸®
-                //Debug.Log("ÅÍÄ¡ÇÑ ¿ÀºêÁ§Æ®: " + mRay.transform.name);
+                // í„°ì¹˜í•œ ì˜¤ë¸Œì íŠ¸ ì²˜ë¦¬
+                //Debug.Log("í„°ì¹˜í•œ ì˜¤ë¸Œì íŠ¸: " + mRay.transform.name);
             }
-        }
-    }
-
-    void OnCursurEffect()
-    {
-        if (cursurObj != null)
-        {
-            cursurObj.transform.position = CursurEffectPos;
         }
     }
 }

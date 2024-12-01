@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-// °î µ¥ÀÌÅÍ Å¬·¡½º
+// ê³¡ ë°ì´í„° í´ë˜ìŠ¤
 [System.Serializable]
 public class Beatmap
 {
@@ -11,23 +11,27 @@ public class Beatmap
     public string title;        
     public string artist;
     public string creator;
-    public string version;           //³­ÀÌµµ
-    public string audioName;         //¿Àµğ¿À ÀÌ¸§
-    public string imageName;         //ÀÌ¹ÌÁö ÀÌ¸§
-    public List<string> textNames;   // ³­ÀÌµµ ÆÄÀÏ ÀÌ¸§
-    public string localAudioPath;   // ·ÎÄÃ ¿Àµğ¿À ÁÖ¼Ò
-    public string localImagePath;   // ·ÎÄÃ ÀÌ¹ÌÁö ÁÖ¼Ò
-    public string StorageAudioUrl;  // ¼­¹ö ¿Àµğ¿À ÁÖ¼Ò
-    public string StorageImageUrl;  // ¼­¹ö ÀÌ¹ÌÁö ÁÖ¼Ò
+    public string version;           //ë‚œì´ë„
+    public string audioName;         //ì˜¤ë””ì˜¤ ì´ë¦„
+    public string imageName;         //ì´ë¯¸ì§€ ì´ë¦„
+    public List<string> textNames;   // ë‚œì´ë„ íŒŒì¼ ì´ë¦„
+    public string localAudioPath;   // ë¡œì»¬ ì˜¤ë””ì˜¤ ì£¼ì†Œ
+    public string localImagePath;   // ë¡œì»¬ ì´ë¯¸ì§€ ì£¼ì†Œ
+    public string StorageAudioUrl;  // ì„œë²„ ì˜¤ë””ì˜¤ ì£¼ì†Œ
+    public string StorageImageUrl;  // ì„œë²„ ì´ë¯¸ì§€ ì£¼ì†Œ
     public int audioLength;
     public int previewTime;
+
+
+    public List<NoteData> noteDataList = new List<NoteData>(); // ë…¸íŠ¸ ë°ì´í„° ì¶”ê°€
+
     public string tags;
 
 
  
     public bool favorite;
 
-    // Ãß°¡µÈ ¼Ó¼ºµé
+    // ì¶”ê°€ëœ ì†ì„±ë“¤
     public int bpm;
     public int endTime;
     public DateTime dateAdded;
@@ -35,7 +39,7 @@ public class Beatmap
     public DateTime lastPlayed;
     public double starRating = -1;
 
-    // »ı¼ºÀÚ
+    // ìƒì„±ì
     public Beatmap()
     {
    //     dateAdded = DateTime.Now;
@@ -47,19 +51,19 @@ public class Beatmap
     {
 
     }
-    // ÇÃ·¹ÀÌ Ä«¿îÅÍ Áõ°¡
+    // í”Œë ˆì´ ì¹´ìš´í„° ì¦ê°€
     public void IncrementPlayCounter()
     {
         playCount++;
         lastPlayed = DateTime.Now;
     }
 
-    // Áñ°ÜÃ£±â Åä±Û
+    // ì¦ê²¨ì°¾ê¸° í† ê¸€
     public void ToggleFavorite()
     {
         favorite = !favorite;
     }
 }
 
-//   public AudioClip audioClip;     //À½¾Ç
-//public Texture2D imageTexture;  //ÀÌ¹ÌÁö
+//   public AudioClip audioClip;     //ìŒì•…
+//public Texture2D imageTexture;  //ì´ë¯¸ì§€

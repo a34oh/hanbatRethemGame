@@ -11,7 +11,7 @@ public class ScrollViewManager : MonoBehaviour
     public void InitializeWithBeatmap(Beatmap beatmap)
     {
         a.Init(beatmap);
-       // sheetEditor.Init();
+        sheetEditor.Init();
         gridGenerator.Init();
      //   noteGenerator.GenNote();
     }
