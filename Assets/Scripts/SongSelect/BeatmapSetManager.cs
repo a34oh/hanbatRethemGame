@@ -125,6 +125,7 @@ public class BeatmapSetManager : MonoBehaviour
         // 동일한 곡인지 확인
         if (currentBeatmap == beatmap)
         {
+            GameManager.BeatmapRepository.SetSelectedBeatmap(beatmap);
             SceneManager.LoadScene(SceneType.GameScene.ToString());
             return;
         }

@@ -35,12 +35,12 @@ public class BeatmapCreator : MonoBehaviour
     void Awake()
     {
         // 모바일로 돌릴 때
-      
+     /* 
         MobileFileBrowser mobileFileBrowser = new MobileFileBrowser();
         handler.Initialize(mobileFileBrowser);
-        fileUploader = new FileUploader(mobileFileBrowser);
+        fileUploader = new FileUploader(mobileFileBrowser);*/
         //PC 에디터로 돌릴 때
-       // fileUploader = new FileUploader(new PCFileBrowser());
+        fileUploader = new FileUploader(new PCFileBrowser());
 
     }
         /*

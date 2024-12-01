@@ -5,6 +5,7 @@ using UnityEngine;
 public class BeatmapRepository
 {
     private List<Beatmap> beatmaps = new List<Beatmap>();
+    public Beatmap SelectedBeatmap { get; private set; }
 
     public IReadOnlyList<Beatmap> Beatmaps => beatmaps.AsReadOnly();
 
@@ -21,5 +22,10 @@ public class BeatmapRepository
     public bool IsEmpty()
     {
         return beatmaps.Count == 0;
+    }
+
+     public void SetSelectedBeatmap(Beatmap beatmap)
+    {
+        SelectedBeatmap = beatmap;
     }
 }
