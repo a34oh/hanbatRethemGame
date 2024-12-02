@@ -125,10 +125,21 @@ public class BeatmapSetManager : MonoBehaviour
         // 동일한 곡인지 확인
         if (currentBeatmap == beatmap)
         {
-            GameManager.AudioManager.ClearAudio();
             GameManager.BeatmapRepository.SetSelectedBeatmap(beatmap);
-            
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+
+            SceneManager.LoadScene(SceneType.GamePlay.ToString());
+=======
             SceneManager.LoadScene(SceneType.GameScene.ToString());
+>>>>>>> parent of 7f4cf836 (gameplay scene added)
+=======
+            SceneManager.LoadScene(SceneType.GameScene.ToString());
+>>>>>>> parent of 7f4cf836 (gameplay scene added)
+=======
+            SceneManager.LoadScene(SceneType.GameScene.ToString());
+>>>>>>> parent of 7f4cf836 (gameplay scene added)
             return;
         }
 

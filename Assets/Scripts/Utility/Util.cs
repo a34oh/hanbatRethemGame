@@ -7,7 +7,7 @@ public enum SceneType
     None,
     TitleScene,
     SongSelectScene,
-    GameScene,
+    GamePlay,
     ResultScene,
     EditorScene
 }

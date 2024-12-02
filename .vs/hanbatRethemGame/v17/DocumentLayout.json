@@ -1,0 +1,102 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\ghdwn\\OneDrive\\\uBB38\uC11C\\GitHub\\hanbatRethemGame\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{3278CFAB-D4FA-DCC8-92A4-B2CE8B640695}|Assembly-CSharp.csproj|C:\\Users\\ghdwn\\OneDrive\\\uBB38\uC11C\\GitHub\\hanbatRethemGame\\assets\\scripts\\songselect\\beatmapsetmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3278CFAB-D4FA-DCC8-92A4-B2CE8B640695}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\songselect\\beatmapsetmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3278CFAB-D4FA-DCC8-92A4-B2CE8B640695}|Assembly-CSharp.csproj|c:\\users\\ghdwn\\onedrive\\\uBB38\uC11C\\github\\hanbatrethemgame\\assets\\scripts\\songselect\\beatmap.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3278CFAB-D4FA-DCC8-92A4-B2CE8B640695}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\songselect\\beatmap.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3278CFAB-D4FA-DCC8-92A4-B2CE8B640695}|Assembly-CSharp.csproj|C:\\Users\\ghdwn\\OneDrive\\\uBB38\uC11C\\GitHub\\hanbatRethemGame\\assets\\scripts\\gameplay\\notespawner.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3278CFAB-D4FA-DCC8-92A4-B2CE8B640695}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\gameplay\\notespawner.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3278CFAB-D4FA-DCC8-92A4-B2CE8B640695}|Assembly-CSharp.csproj|C:\\Users\\ghdwn\\OneDrive\\\uBB38\uC11C\\GitHub\\hanbatRethemGame\\assets\\scripts\\gameplay\\gameplaymanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3278CFAB-D4FA-DCC8-92A4-B2CE8B640695}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\gameplay\\gameplaymanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3278CFAB-D4FA-DCC8-92A4-B2CE8B640695}|Assembly-CSharp.csproj|C:\\Users\\ghdwn\\OneDrive\\\uBB38\uC11C\\GitHub\\hanbatRethemGame\\assets\\scripts\\songselect\\beatmapset.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3278CFAB-D4FA-DCC8-92A4-B2CE8B640695}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\songselect\\beatmapset.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "BeatmapSetManager.cs",
+              "DocumentMoniker": "C:\\Users\\ghdwn\\OneDrive\\\uBB38\uC11C\\GitHub\\hanbatRethemGame\\Assets\\Scripts\\SongSelect\\BeatmapSetManager.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\SongSelect\\BeatmapSetManager.cs",
+              "ToolTip": "C:\\Users\\ghdwn\\OneDrive\\\uBB38\uC11C\\GitHub\\hanbatRethemGame\\Assets\\Scripts\\SongSelect\\BeatmapSetManager.cs",
+              "RelativeToolTip": "Assets\\Scripts\\SongSelect\\BeatmapSetManager.cs",
+              "ViewState": "AgIAAHUAAAAAAAAAAAAIwIYAAAAvAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-12-01T18:54:21.805Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "BeatmapSet.cs",
+              "DocumentMoniker": "C:\\Users\\ghdwn\\OneDrive\\\uBB38\uC11C\\GitHub\\hanbatRethemGame\\Assets\\Scripts\\SongSelect\\BeatmapSet.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\SongSelect\\BeatmapSet.cs",
+              "ToolTip": "C:\\Users\\ghdwn\\OneDrive\\\uBB38\uC11C\\GitHub\\hanbatRethemGame\\Assets\\Scripts\\SongSelect\\BeatmapSet.cs",
+              "RelativeToolTip": "Assets\\Scripts\\SongSelect\\BeatmapSet.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAADwvwAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-12-01T18:54:18.521Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "NoteSpawner.cs",
+              "DocumentMoniker": "C:\\Users\\ghdwn\\OneDrive\\\uBB38\uC11C\\GitHub\\hanbatRethemGame\\Assets\\Scripts\\GamePlay\\NoteSpawner.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\GamePlay\\NoteSpawner.cs",
+              "ToolTip": "C:\\Users\\ghdwn\\OneDrive\\\uBB38\uC11C\\GitHub\\hanbatRethemGame\\Assets\\Scripts\\GamePlay\\NoteSpawner.cs",
+              "RelativeToolTip": "Assets\\Scripts\\GamePlay\\NoteSpawner.cs",
+              "ViewState": "AgIAADUAAAAAAAAAAAAUwEYAAABAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-12-01T18:41:43.702Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Beatmap.cs",
+              "DocumentMoniker": "C:\\Users\\ghdwn\\OneDrive\\\uBB38\uC11C\\GitHub\\hanbatRethemGame\\Assets\\Scripts\\SongSelect\\Beatmap.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\SongSelect\\Beatmap.cs",
+              "ToolTip": "C:\\Users\\ghdwn\\OneDrive\\\uBB38\uC11C\\GitHub\\hanbatRethemGame\\Assets\\Scripts\\SongSelect\\Beatmap.cs",
+              "RelativeToolTip": "Assets\\Scripts\\SongSelect\\Beatmap.cs",
+              "ViewState": "AgIAAAMAAAAAAAAAAABIwBgAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-12-01T18:41:32.512Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "GamePlayManager.cs",
+              "DocumentMoniker": "C:\\Users\\ghdwn\\OneDrive\\\uBB38\uC11C\\GitHub\\hanbatRethemGame\\Assets\\Scripts\\GamePlay\\GamePlayManager.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\GamePlay\\GamePlayManager.cs",
+              "ToolTip": "C:\\Users\\ghdwn\\OneDrive\\\uBB38\uC11C\\GitHub\\hanbatRethemGame\\Assets\\Scripts\\GamePlay\\GamePlayManager.cs",
+              "RelativeToolTip": "Assets\\Scripts\\GamePlay\\GamePlayManager.cs",
+              "ViewState": "AgIAAEcAAAAAAAAAAAAuwGkAAAAlAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-12-01T18:34:47.497Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
